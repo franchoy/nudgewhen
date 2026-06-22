@@ -1,0 +1,86 @@
+name: Bug report
+description: Report a defect in repository content, documentation, community files, or (when an application exists) the NudgeWhen application. The project is in early experimental development. Do not include security vulnerabilities, secrets, personal information, or conduct-report details in this form. Security reports use SECURITY.md. Conduct reports use CODE_OF_CONDUCT.md.
+title: "Bug report: "
+body:
+  - type: dropdown
+    id: affected-area
+    attributes:
+      label: Affected area
+      description: Where in the repository did you observe the issue? Application-related options are not applicable until the Android baseline exists.
+      options:
+        - Documentation
+        - Repository configuration
+        - Community files (README, CONTRIBUTING, CODE_OF_CONDUCT, SECURITY)
+        - Issue forms or pull-request template
+        - Experiment records
+        - Application (post-baseline only)
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Problem description
+      description: What did you observe? Where in the repository? Link to the file or section if known.
+      placeholder: "Describe the problem you observed."
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+      description: If the issue is reproducible, list the steps. Not all documentation issues have reproduction steps. Leave blank if not applicable.
+    validations:
+      required: false
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behaviour
+      description: What did you expect to see?
+    validations:
+      required: false
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behaviour
+      description: What did you actually see?
+    validations:
+      required: false
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Include Android version, device model, or application version only if an application build exists. For documentation or community-file issues, leave blank or describe the reader environment (for example, web browser, GitHub interface).
+    validations:
+      required: false
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs, screenshots, or excerpts
+      description: Do not paste secrets, API keys, tokens, passwords, device identifiers, personal paths, or other private data. Remove sensitive content before submitting.
+    validations:
+      required: false
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Anything else that might help the maintainer understand or reproduce the issue.
+    validations:
+      required: false
+  - type: textarea
+    id: private-contact-request
+    attributes:
+      label: Private contact request (optional)
+      description: Optional. If you need to discuss this issue through a private channel, briefly state that you are requesting a private contact route. Do not include vulnerability details, secrets, personal data, harassment details, evidence, names, screenshots, or any sensitive content here. The maintainer will respond with a private contact mechanism if appropriate.
+    validations:
+      required: false
+  - type: checkboxes
+    id: confirmation
+    attributes:
+      label: Confirmation
+      description: Confirm the following before submitting.
+      options:
+        - label: I confirm this report contains no secrets, credentials, tokens, private paths, device identifiers, personal data, vulnerability details, or other sensitive information. Security vulnerabilities belong in SECURITY.md. Conduct concerns belong in CODE_OF_CONDUCT.md.
+          required: true
+    validations:
+      required: true
