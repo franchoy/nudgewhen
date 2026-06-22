@@ -1,6 +1,6 @@
 # Evaluation Template — Agent-Assisted Experiment Record
 
-**Document status:** Draft — Phase 0 — Pending maintainer review
+**Document status:** Accepted — Phase 0 complete
 
 **Usage.** Copy this template, replace every field, and save as `docs/agentic-development/experiments/EXP-NNNN.md`. Every unknown value is written as `Not available`, `Not applicable`, or `Pending maintainer input` with an inline explanation. No value is guessed.
 

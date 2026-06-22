@@ -1,6 +1,6 @@
 # Experiment Protocol — Agent-Assisted Tasks
 
-**Document status:** Draft — Phase 0 — Pending maintainer review
+**Document status:** Accepted — Phase 0 complete
 
 ## Purpose
 
