@@ -1,12 +1,12 @@
 # Phase List — NudgeWhen v0.1.0
 
-**Document status:** Accepted — Phase 0 complete
+**Document status:** Accepted — Phases 0, 1 and 2 complete
 
 ## Release-wide sequencing rules
 
 - All work for this release happens on the single branch `release/v0.1.0`. No parallel release branches are created.
 - All phases remain on the same branch. A later phase may refine an earlier document only through explicitly scoped work.
-- Exactly one pull request is opened into `main` after full pre-release validation.
+- Exactly one pull request is opened into `main` after all release phases and the full pre-release gate are complete.
 - Each phase ends with a maintainer review. Phase status transitions to `Complete` only after the review.
 - No commit, push, pull request, tag, or release may be created without explicit maintainer authorization in the current task.
 - Phase 7 covers only the final pre-release gate and the preparation of release actions. The merged pull request, the resulting `main` commit, CI on the merged `main` commit, the annotated tag, and the published GitHub release are separate post-merge release-completion actions and are not Phase 7 outputs.
@@ -23,24 +23,27 @@
   - `docs/agentic-development/experiments/EXP-0002.md`
 - **Boundaries / exclusions.** No application code, no `AGENTS.md`, no `opencode.json`, no CI files, no community-health files, no commits, no pushes, no pull requests, no tags, no releases.
 - **Completion evidence.** All six files present on `release/v0.1.0`; the phase-completion checklist for Phase 0 reports `PASS` on every applicable item; `EXP-0002` records both the Plan and Build stages; the maintainer has reviewed the checklist and final report.
-- **Initial status.** `Complete`
+- **Status.** `Complete`
 
 ## Phase 1 — Open-Source Community Baseline
 
 - **Objective.** Establish the public-project profile required for a healthy open-source repository.
 - **Principal deliverables.** Rich `README.md`, `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md`, issue templates, pull-request template, and any other community-health files required by the GitHub community profile for public repositories.
 - **Boundaries / exclusions.** No application code, no CI changes, no agent governance rules.
-- **Completion evidence.** All declared community-health files present on `release/v0.1.0`; documented review confirms consistency with `LICENSE` and the release charter; the corresponding experiment record is committed.
-- **Initial status.** `Planned`
+- **Completion evidence.** All declared community-health files present on `release/v0.1.0`; documented review confirms consistency with `LICENSE` and the release charter; the corresponding experiment record (`EXP-0003.md`) is finalized and accepted by the maintainer.
+- **Status.** `Complete`
 
 ## Phase 2 — OpenCode Governance Baseline
 
 - **Objective.** Establish the project-local OpenCode governance layer derived from the policy defined in Phase 0.
-- **Required deliverables.** `AGENTS.md`; OpenCode configuration (for example, `opencode.json` or its successor); explicit permission boundaries; basic project procedures for routine OpenCode actions.
-- **Conditional deliverables (evidence-backed).** Reusable OpenCode skills and custom commands are deliverables only when the experiment evidence available at the time of Phase 2 satisfies the promotion threshold defined in `experiment-protocol.md`. They are conditional outputs justified by the corresponding experiment records; they are not assumed to be required, and their absence is not, by itself, a Phase 2 failure.
+- **Selected architecture.** Repository-root `AGENTS.md` is the project-local OpenCode configuration and operational contract for this phase. `AGENTS.md` contains the complete four-category authorization matrix, the precedence model, the single release-branch and one-final-PR policy, the Plan/Build/post-Build/repository-action boundaries, the exact-path authorization requirements, the baseline and stop conditions, the network restrictions, the private-working-material handling, the metadata-only private-file verification, the privacy and evidence rules, the unsupported-claim prevention, the scope-deviation handling, the self-correction versus maintainer-correction rules, the validation and final-report expectations, and the explicit statement that Hermes is not integrated.
+- **Companion governance rationale.** `docs/agentic-development/opencode-governance.md` contains the rationale, the local remote-tracking-reference semantics, the tracked-only versus untracked-file verification, the command intent versus accidental raw-output metadata exposure, the valid authorization wording, the self-correction versus maintainer-correction explanation, the experiment execution versus later repository actions distinction, and the Hermes-not-integrated status. The companion does not duplicate the complete matrix.
+- **Experiment evidence.** `docs/agentic-development/experiments/EXP-0005.md` records the Phase 2 Plan and Build stages, the pre-Build and post-Build usage snapshots, the measured core-Build delta, the Stage 1 and Stage 2 event accounting, the scope-compliance assessment, the manual-review result, and the maintainer acceptance.
+- **No machine-readable OpenCode configuration required.** No `opencode.json`, `opencode.jsonc`, or `.opencode/` configuration was required for the Phase 2 baseline. The project-local OpenCode configuration role is fulfilled by `AGENTS.md`; the release charter, the experiment protocol, and the precedence model in `AGENTS.md` together govern the agent. No application code or CI work was included in Phase 2.
+- **Deferred deliverables.** Reusable OpenCode skills, custom commands, agents, plugins, MCP configuration, and Hermes integration remain deferred. They are conditional outputs justified by the corresponding experiment records; their absence is not, by itself, a Phase 2 failure.
 - **Boundaries / exclusions.** No application code, no CI changes. Any included skill or command must be justified by evidence recorded in experiment records from earlier phases.
-- **Completion evidence.** Required governance files present on `release/v0.1.0`; permissions align with the human-approval boundaries in the release charter; the corresponding experiment record is committed; any conditional skills or commands are referenced from that experiment record and from the Phase 6 evaluation summary.
-- **Initial status.** `Planned`
+- **Completion evidence.** Required governance files present on `release/v0.1.0`; permissions align with the human-approval boundaries in the release charter; the corresponding experiment record (`EXP-0005.md`) is finalized; the Stage 1 and Stage 2 event accounting is preserved; the measured core-Build delta is arithmetically verified; the maintainer has accepted `EXP-0005`.
+- **Status.** `Complete`
 
 ## Phase 3 — Android Technical Baseline
 

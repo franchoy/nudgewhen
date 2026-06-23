@@ -9,7 +9,7 @@ This project is in the very early stages of an open-source release train. At the
 - There is no Android application project, no application code, and no runnable build.
 - There is no Gradle configuration, no APK, no test suite, no CI workflow, and no published release.
 - There is no installation procedure.
-- The repository currently contains project documentation, an agentic-workflow experiment record, and the community-health files for the current phase.
+- The repository currently contains project and release documentation, community-health files, OpenCode governance documentation, and agentic-development experiment records.
 - A single maintainer is responsible for the project.
 
 ## What does not exist yet
@@ -43,12 +43,22 @@ This repository is also used to evaluate OpenCode and MiniMax M3 (3x usage) as p
 The project follows a phased release train on the single branch `release/v0.1.0`. At the time of writing:
 
 - **Phase 0** — Release charter and experiment protocol: complete.
-- **Phase 1** — Open-source community baseline: this phase.
-- **Phase 2** — OpenCode governance baseline: planned.
+- **Phase 1** — Open-source community baseline: complete.
+- **Phase 2** — OpenCode governance baseline: complete.
 - **Phase 3** — Minimal static Android technical baseline: planned.
 - Later phases — local validation, CI, evaluation evidence, and the final pre-release gate: planned.
 
 No delivery dates or completion promises are made.
+
+## Phase 2 — OpenCode governance baseline
+
+Phase 2 established the project-local OpenCode governance baseline. The Phase 2 governance baseline consists of:
+
+- Repository-root [`AGENTS.md`](AGENTS.md) — the repository-local OpenCode operational contract and the project-local OpenCode configuration for Phase 2.
+- [`docs/agentic-development/opencode-governance.md`](docs/agentic-development/opencode-governance.md) — the companion governance document that explains the rationale and selected examples.
+- `docs/agentic-development/experiments/EXP-0005.md` — the Phase 2 experiment evidence.
+
+`AGENTS.md` is the repository-local OpenCode operational contract. No machine-readable OpenCode configuration file (`opencode.json`, `opencode.jsonc`, `.opencode/`, or any successor) was added in Phase 2. OpenCode skills, custom commands, agents, plugins, MCP configuration, and Hermes integration remain deferred. There is still no Android application project or implemented application functionality. Phase 3 — Android Technical Baseline is the next planned phase.
 
 ## Contributing
 
