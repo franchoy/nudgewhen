@@ -1,6 +1,6 @@
 # Phase List — NudgeWhen v0.1.0
 
-**Document status:** Accepted — Phases 0, 1 and 2 complete
+**Document status:** Accepted — Phases 0, 1, 2 and 3 complete
 
 ## Release-wide sequencing rules
 
@@ -48,10 +48,10 @@
 ## Phase 3 — Android Technical Baseline
 
 - **Objective.** Introduce a minimal Android project that builds successfully and contains no reminder or voice behavior.
-- **Principal deliverables.** Gradle project structure, manifest, a single activity or composable that displays static baseline content, and reproducible build instructions.
-- **Boundaries / exclusions.** No reminder scheduling, no notification channels, no voice or speech APIs, no background services.
-- **Completion evidence.** A documented clean build succeeds on the supported local environment declared by Phase 3 or Phase 4; the static-baseline app launches and displays the declared content; the corresponding experiment record is committed.
-- **Initial status.** `Planned`
+- **Selected architecture.** Kotlin and Jetpack Compose in a single `:app` module; one launcher activity; one static screen displaying the string `NudgeWhen — Android technical baseline`; Gradle wrapper `9.4.1`; Android Gradle Plugin `9.2.1`; compile and target SDK `36`; minimum SDK `26`; Java source and target `17`; namespace and application ID `io.github.franchoy.nudgewhen`; AndroidX-generated merged-manifest entries limited to the exact maintainer-approved allowlist (one signature permission, one AndroidX provider with three initializer metadata entries, one AndroidX receiver, two optional libraries with `required="false"`).
+- **Boundaries / exclusions.** No reminder scheduling, no notification channels, no voice or speech APIs, no background services, no analytics, no telemetry, no application networking, no persistence, no contextual triggers.
+- **Completion evidence.** The minimal Android project exists; Gradle project discovery succeeded; debug APK assembly succeeded; Android lint succeeded; APK metadata was verified through `aapt2 dump badging`; the source and merged manifests were reviewed; physical-device installation and launch succeeded on the maintainer-provided UMIDIGI A15T running Android 13; the exact static text was visibly confirmed; `EXP-0006` is finalized and accepted.
+- **Status.** `Complete`
 
 ## Phase 4 — Local Validation Baseline
 

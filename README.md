@@ -4,25 +4,42 @@ NudgeWhen is an early-stage experimental open-source project exploring a voice-f
 
 ## Project status
 
-This project is in the very early stages of an open-source release train. At the time of writing:
+This project is in the v0.1.0 release train on the single branch `release/v0.1.0`.
 
-- There is no Android application project, no application code, and no runnable build.
-- There is no Gradle configuration, no APK, no test suite, no CI workflow, and no published release.
-- There is no installation procedure.
-- The repository currently contains project and release documentation, community-health files, OpenCode governance documentation, and agentic-development experiment records.
-- A single maintainer is responsible for the project.
+## What exists now
 
-## What does not exist yet
+- A minimal Android application project.
+- One `:app` module.
+- Kotlin and Jetpack Compose.
+- One launcher activity.
+- One static screen displaying the string: `NudgeWhen — Android technical baseline`.
+- Gradle wrapper `9.4.1`.
+- Android Gradle Plugin `9.2.1`.
+- Compile and target SDK `36`; minimum SDK `26`.
+- A locally generated debug APK at `app/build/outputs/apk/debug/app-debug.apk` (ignored and not committed).
+- Successful local project discovery, debug assembly, and Android lint.
+- Successful physical-device installation and launch on one UMIDIGI A15T running Android 13, with the exact baseline text visibly confirmed.
+- Phase 3 experiment evidence in [EXP-0006](docs/agentic-development/experiments/EXP-0006.md).
 
-The following are explicitly out of scope for the current state of the project:
+## What still does not exist
 
-- Reminder functionality (scheduling, notifications, storage of reminders, or any related behaviour).
-- Voice or speech functionality (recording, transcription, or synthesis).
-- Location, geofencing, device-state, contextual-list, or checklist functionality.
-- An Android application project, Gradle build, APK, test suite, or CI workflow.
-- A published release, installation procedure, architecture guide, API documentation, or compatibility matrix.
-- A moderation team, a multi-maintainer body, or a formal support channel.
-- A production readiness, stability, security, or support guarantee.
+The following are explicitly out of scope at this stage:
+
+- Reminder scheduling.
+- Notification functionality.
+- Voice or speech functionality.
+- Location or geofencing functionality.
+- Persistence.
+- Contextual triggers.
+- Background service.
+- Application networking.
+- Analytics or telemetry.
+- Test suite.
+- CI workflow.
+- A published APK or release.
+- A production-readiness, stability, security, or compatibility guarantee.
+
+A locally generated debug APK exists; no APK is published as a release artifact.
 
 ## Long-term design intentions
 
@@ -40,13 +57,13 @@ This repository is also used to evaluate OpenCode and MiniMax M3 (3x usage) as p
 
 ## Current release train
 
-The project follows a phased release train on the single branch `release/v0.1.0`. At the time of writing:
+The project follows a phased release train on the single branch `release/v0.1.0`:
 
 - **Phase 0** — Release charter and experiment protocol: complete.
 - **Phase 1** — Open-source community baseline: complete.
 - **Phase 2** — OpenCode governance baseline: complete.
-- **Phase 3** — Minimal static Android technical baseline: planned.
-- Later phases — local validation, CI, evaluation evidence, and the final pre-release gate: planned.
+- **Phase 3** — Minimal static Android technical baseline: complete.
+- Phase 4 and later — local validation, CI, evaluation evidence, and the final pre-release gate: planned.
 
 No delivery dates or completion promises are made.
 
@@ -58,7 +75,49 @@ Phase 2 established the project-local OpenCode governance baseline. The Phase 2 
 - [`docs/agentic-development/opencode-governance.md`](docs/agentic-development/opencode-governance.md) — the companion governance document that explains the rationale and selected examples.
 - `docs/agentic-development/experiments/EXP-0005.md` — the Phase 2 experiment evidence.
 
-`AGENTS.md` is the repository-local OpenCode operational contract. No machine-readable OpenCode configuration file (`opencode.json`, `opencode.jsonc`, `.opencode/`, or any successor) was added in Phase 2. OpenCode skills, custom commands, agents, plugins, MCP configuration, and Hermes integration remain deferred. There is still no Android application project or implemented application functionality. Phase 3 — Android Technical Baseline is the next planned phase.
+`AGENTS.md` is the repository-local OpenCode operational contract. No machine-readable OpenCode configuration file (`opencode.json`, `opencode.jsonc`, `.opencode/`, or any successor) was added in Phase 2. OpenCode skills, custom commands, agents, plugins, MCP configuration, and Hermes integration remain deferred.
+
+## Phase 3 — Android technical baseline
+
+Phase 3 established a minimal static Android technical baseline. It does not introduce any reminder, voice, location, or background functionality. The application displays a single static text string and exists only to prove the project builds, lints, installs, launches, and displays the declared content on a real device.
+
+See [EXP-0006](docs/agentic-development/experiments/EXP-0006.md) for the complete experiment evidence, including the recorded build-attempt chronology, the five Stage 2 deviations, the maintainer-approved AndroidX merged-manifest allowlist, and the physical-device launch evidence.
+
+## Reproducible local build
+
+### Prerequisites
+
+- JDK 17 or newer.
+- Android SDK Platform 36.
+- Android SDK Build Tools 36.0.0.
+- An Android SDK environment configured through `ANDROID_HOME` or `ANDROID_SDK_ROOT`.
+
+The Phase 3 build was verified using OpenJDK 25.0.2 on Linux x86_64. This does not imply that this is the only supported environment. Other configurations may work, but they were not validated during Phase 3.
+
+### Commands
+
+```bash
+./gradlew projects
+./gradlew :app:assembleDebug
+./gradlew :app:lintDebug
+```
+
+### Output
+
+The debug APK is generated at `app/build/outputs/apk/debug/app-debug.apk`. Build output and caches are ignored and not committed. No APK is published as a release artifact.
+
+## Physical-device verification
+
+The Phase 3 application was installed and launched on one physical device, not as a compatibility matrix:
+
+- Device: UMIDIGI A15T.
+- Android version: 13.
+- Processor: MediaTek Helio G95.
+- Memory: 8 GB RAM.
+- Installation and launch succeeded.
+- The exact static text was visible.
+
+This is one evidence device, not a general compatibility statement.
 
 ## Contributing
 
@@ -94,3 +153,6 @@ This project is licensed under the Apache License 2.0. See [LICENSE](LICENSE) fo
 - [Experiment protocol](docs/agentic-development/experiment-protocol.md)
 - [Evaluation template](docs/agentic-development/evaluation-template.md)
 - [Experiment records directory](docs/agentic-development/experiments/)
+- [EXP-0006 — Phase 3 evidence](docs/agentic-development/experiments/EXP-0006.md)
+- [AGENTS.md](AGENTS.md)
+- [OpenCode governance companion](docs/agentic-development/opencode-governance.md)
