@@ -1,6 +1,6 @@
 # Phase List — NudgeWhen v0.1.0
 
-**Document status:** Accepted — Phases 0, 1, 2 and 3 complete
+**Document status:** Accepted — Phases 0, 1, 2, 3 and 4 complete
 
 ## Release-wide sequencing rules
 
@@ -56,10 +56,23 @@
 ## Phase 4 — Local Validation Baseline
 
 - **Objective.** Define a repeatable local validation suite that exits successfully from a clean checkout.
-- **Principal deliverables.** Validation script(s) covering at minimum: documentation consistency, link integrity, required-files presence, and Android build. Phase 3 or Phase 4 must document the supported local environment on which the Android build portion of the local validation suite must pass before release. The exact supported environment is not decided in Phase 0.
-- **Boundaries / exclusions.** No CI integration, no Android functionality changes.
-- **Completion evidence.** Suite passes on a clean checkout on the documented supported local environment; the corresponding experiment record is committed.
-- **Initial status.** `Planned`
+- **Selected implementation.** A thin shell entry point at `scripts/validate-local.sh` invokes a Python standard-library validator at `scripts/validate_local.py` that exposes three groups — `required`, `docs`, and `android` — plus an `all` alias. The validator uses only the Python standard library and never performs network access, repository cloning, or staging. The full local validation contract is documented in `docs/local-validation.md`. The Phase 4 experiment record is `docs/agentic-development/experiments/EXP-0007.md`.
+- **Principal deliverables.**
+  - `.gitattributes` declaring the exact text- and binary-attribute contract.
+  - The shell and Python local validators.
+  - Local-validation documentation (`docs/local-validation.md`).
+  - Phase 4 experiment evidence (`docs/agentic-development/experiments/EXP-0007.md`).
+  - Governance-status synchronization across `AGENTS.md` and `docs/agentic-development/opencode-governance.md`.
+  - Repeatable `required`, `docs`, and `android` validation groups.
+  - Candidate-mode and clean-checkout modes with deterministic release-gate semantics.
+  - Exact `.gitattributes`, source-manifest, merged-manifest, and APK-metadata contracts.
+  - Tracked build-output, screenshot, bytecode, and `__pycache__` rejection.
+  - Python bytecode suppression at the shell entry point and at every Python invocation.
+  - Prerequisite exit code `2`, separated from content exit code `1`.
+  - Dynamic private-working-material invariant: every matching private session export is ignored, untracked, unstaged, and unnamed in publishable evidence.
+- **Boundaries / exclusions.** No CI integration, no Android functionality changes, no production code changes, no merging of pull requests, no commit on `main`, no tag, no release.
+- **Completion evidence.** The Phase 4 implementation scope is complete in the current release-train candidate; the local validation suite runs successfully end to end in the documented candidate environment and prints the literal `release_gate=SATISFIED` only on the complete all-groups run. The corresponding experiment record is recorded on the working tree of `release/v0.1.0`; staging, committing, the release pull request, the annotated tag, and the GitHub release are separate post-Build administrative and repository actions and are not part of the Phase 4 implementation scope. The clean-checkout proof execution and the repository commit are still pending and remain separately gated.
+- **Status.** `Complete`
 
 ## Phase 5 — GitHub Actions CI Baseline
 

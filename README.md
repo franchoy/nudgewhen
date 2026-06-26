@@ -20,15 +20,18 @@ This project is in the v0.1.0 release train on the single branch `release/v0.1.0
 - Successful local project discovery, debug assembly, and Android lint.
 - Successful physical-device installation and launch on one UMIDIGI A15T running Android 13, with the exact baseline text visibly confirmed.
 - Phase 3 experiment evidence in [EXP-0006](docs/agentic-development/experiments/EXP-0006.md).
+- A repeatable local validation suite at [`scripts/validate-local.sh`](scripts/validate-local.sh) and [`scripts/validate_local.py`](scripts/validate_local.py) covering `required`, `docs`, and `android` groups, with a deterministic `release_gate=SATISFIED` literal printed only on the all-groups run.
+- Local validation documentation in [docs/local-validation.md](docs/local-validation.md).
+- Phase 4 experiment evidence in [EXP-0007](docs/agentic-development/experiments/EXP-0007.md).
 
 ## What still does not exist
 
 The following are explicitly out of scope at this stage:
 
-- Reminder scheduling.
+- Reminder, scheduling, contextual-list, or checklist functionality.
 - Notification functionality.
 - Voice or speech functionality.
-- Location or geofencing functionality.
+- Location, geofencing, or device-state functionality.
 - Persistence.
 - Contextual triggers.
 - Background service.
@@ -39,7 +42,7 @@ The following are explicitly out of scope at this stage:
 - A published APK or release.
 - A production-readiness, stability, security, or compatibility guarantee.
 
-A locally generated debug APK exists; no APK is published as a release artifact.
+A locally generated debug APK exists; no APK is published as a release artifact. Phase 4 implementation scope is complete in the current release-train candidate; clean-checkout proof execution, the repository commit, the release pull request, the annotated tag, and the GitHub release remain separately gated and have not yet occurred.
 
 ## Long-term design intentions
 
@@ -63,7 +66,8 @@ The project follows a phased release train on the single branch `release/v0.1.0`
 - **Phase 1** — Open-source community baseline: complete.
 - **Phase 2** — OpenCode governance baseline: complete.
 - **Phase 3** — Minimal static Android technical baseline: complete.
-- Phase 4 and later — local validation, CI, evaluation evidence, and the final pre-release gate: planned.
+- Phase 4 — Local validation baseline: complete.
+- **Phase 5** and later — CI, evaluation evidence, and the final pre-release gate: planned.
 
 No delivery dates or completion promises are made.
 
@@ -82,6 +86,14 @@ Phase 2 established the project-local OpenCode governance baseline. The Phase 2 
 Phase 3 established a minimal static Android technical baseline. It does not introduce any reminder, voice, location, or background functionality. The application displays a single static text string and exists only to prove the project builds, lints, installs, launches, and displays the declared content on a real device.
 
 See [EXP-0006](docs/agentic-development/experiments/EXP-0006.md) for the complete experiment evidence, including the recorded build-attempt chronology, the five Stage 2 deviations, the maintainer-approved AndroidX merged-manifest allowlist, and the physical-device launch evidence.
+
+## Phase 4 — Local validation baseline
+
+Phase 4 established a repeatable local validation baseline. The validation suite covers required-files presence, documentation hygiene, and Android build / lint / APK / merged-manifest checks. The Phase 4 implementation scope is complete in the current release-train candidate.
+
+The local validation suite runs locally and does not require network access during ordinary execution. The literal `release_gate=SATISFIED` is printed only on the all-groups run. Partial runs and runs that include `--skip-android` do not satisfy the release gate. Clean-checkout proof execution and the repository commit remain separately gated and have not yet been performed.
+
+See [docs/local-validation.md](docs/local-validation.md) for the local validation guide and [EXP-0007](docs/agentic-development/experiments/EXP-0007.md) for the Phase 4 experiment evidence, including the recorded attempt chronology, the accepted Stage 2 result, the accepted post-Build usage evidence and Build-stage delta, and the current closure-stage state.
 
 ## Reproducible local build
 
@@ -152,7 +164,9 @@ This project is licensed under the Apache License 2.0. See [LICENSE](LICENSE) fo
 - [Phase list](docs/releases/v0.1.0/phase-list.md)
 - [Experiment protocol](docs/agentic-development/experiment-protocol.md)
 - [Evaluation template](docs/agentic-development/evaluation-template.md)
+- [Local validation guide](docs/local-validation.md)
 - [Experiment records directory](docs/agentic-development/experiments/)
 - [EXP-0006 — Phase 3 evidence](docs/agentic-development/experiments/EXP-0006.md)
+- [EXP-0007 — Phase 4 evidence](docs/agentic-development/experiments/EXP-0007.md)
 - [AGENTS.md](AGENTS.md)
 - [OpenCode governance companion](docs/agentic-development/opencode-governance.md)

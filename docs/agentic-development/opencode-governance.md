@@ -1,6 +1,6 @@
 # OpenCode Governance — Companion Document
 
-**Document status:** Draft — pending maintainer review (Phase 2 core Build)
+**Document status:** Accepted — Phase 2 complete
 
 ## Authority and link to `AGENTS.md`
 
