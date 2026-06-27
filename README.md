@@ -68,7 +68,8 @@ The project follows a phased release train on the single branch `release/v0.1.0`
 - **Phase 3** — Minimal static Android technical baseline: complete.
 - Phase 4 — Local validation baseline: complete.
 - **Phase 5** — GitHub Actions CI baseline: complete.
-- **Phase 6** and later — agent evaluation evidence and the final pre-release gate: planned.
+- **Phase 6** — Agent evaluation evidence: complete.
+- **Phase 7** and later — the final pre-release gate: planned.
 
 No delivery dates or completion promises are made.
 

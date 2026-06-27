@@ -199,11 +199,11 @@ The suite does not perform clean-checkout creation, deletion, or any related orc
 
 ## CI
 
-No CI exists at this stage. The suite is designed so that Phase 5 can call `./scripts/validate-local.sh` from a workflow step without further modification.
+Phase 5 established the GitHub Actions CI baseline on the `release/v0.1.0` branch. The committed workflow is `.github/workflows/ci.yml`; its only `validate` job step runs `./scripts/validate-local.sh --require-clean`. The shell script (`scripts/validate-local.sh`) sets `PYTHONDONTWRITEBYTECODE=1` and `exec`s `scripts/validate_local.py` with the passed arguments. The Python validator's `release_gate=SATISFIED` literal (printed by `print_summary_and_gate` at `scripts/validate_local.py` lines 1001-1014) is emitted only when all three validator groups (`required`, `docs`, `android`) are selected, no failures are recorded, the `android` group is in the selection, and `--skip-android` is not set; it is not emitted on the basis of the required and documentation groups alone. The release branch requires the `validate` check (a single required check with classic branch protection). The Phase 4 local validator remains the command executed by CI.
 
 ## Phase 5
 
-Phase 5 (GitHub Actions CI Baseline) is separate and has not begun. The Phase 4 local validation suite is designed so that Phase 5 can call `./scripts/validate-local.sh` from a workflow step without further modification, but the present document does not claim that any CI workflow exists, that any commit has been made, or that any release has been published.
+Phase 5 (GitHub Actions CI Baseline) is complete. The release branch requires the `validate` check, the Phase 4 local validator remains the command executed by CI, and Phase 6 (Agent Evaluation Evidence) remains `Planned`. The present document does not claim that any release has been published or that any release pull request has been merged.
 
 ## Product functionality
 

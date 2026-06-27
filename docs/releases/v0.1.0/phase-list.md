@@ -88,7 +88,7 @@
 - **Principal deliverables.** An evaluation summary document; any promoted project rules, validation checks, or skills; and a list of candidate follow-up experiments deferred to a future release.
 - **Boundaries / exclusions.** No new application code, no new CI changes. All changes must be justified by evidence from earlier experiment records.
 - **Completion evidence.** Evaluation summary committed on `release/v0.1.0`; every promoted artifact is referenced from the evaluation summary; the corresponding experiment record is committed.
-- **Initial status.** `Planned`
+- **Status.** `Complete`
 
 ## Phase 7 — Pre-Release Gate and Release-Pull-Request Preparation
 
