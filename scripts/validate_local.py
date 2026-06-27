@@ -473,17 +473,37 @@ def check_docs(args: argparse.Namespace, fail_fast: bool) -> bool:
             if m:
                 phase_status[n] = m.group(1).lower()
 
-    core_state = ["complete"] * 4 + ["planned"] * 4
-    closure_state = ["complete"] * 5 + ["planned"] * 3
     observed = [phase_status.get(i, "") for i in range(0, 8)]
-    if observed == core_state:
-        emit("PASS", "docs", "phase-status", "core-Build state: Phases 0-3 Complete, 4-7 Planned")
-    elif observed == closure_state:
-        emit("PASS", "docs", "phase-status", "closure state: Phases 0-4 Complete, 5-7 Planned")
-    else:
-        emit("FAIL", "docs", "phase-status", f"unexpected per-phase status: {observed}")
+
+    if len(observed) != 8:
+        emit("FAIL", "docs", "phase-status", f"expected 8 phase statuses, got {len(observed)}")
         ok = False
         if fail_fast: return False
+    else:
+        unknown = [i for i, s in enumerate(observed) if s not in ("complete", "planned")]
+        if unknown:
+            emit("FAIL", "docs", "phase-status", f"unknown phase status at indices {unknown}: {observed}")
+            ok = False
+            if fail_fast: return False
+        else:
+            complete_count = observed.count("complete")
+            planned_count = observed.count("planned")
+            contiguous_complete = all(observed[i] == "complete" for i in range(complete_count))
+            contiguous_planned = all(observed[i] == "planned" for i in range(complete_count, 8))
+            if not (contiguous_complete and contiguous_planned):
+                emit("FAIL", "docs", "phase-status", f"phase statuses not in contiguous prefix/suffix order: {observed}")
+                ok = False
+                if fail_fast: return False
+            elif complete_count < 4:
+                emit("FAIL", "docs", "phase-status", f"complete prefix length {complete_count} below minimum 4: {observed}")
+                ok = False
+                if fail_fast: return False
+            elif complete_count > 8:
+                emit("FAIL", "docs", "phase-status", f"complete prefix length {complete_count} above maximum 8: {observed}")
+                ok = False
+                if fail_fast: return False
+            else:
+                emit("PASS", "docs", "phase-status", f"contiguous phase status: {complete_count} Complete, {planned_count} Planned")
 
     readme = REPO / "README.md"
     if readme.is_file() and phase_list.is_file():

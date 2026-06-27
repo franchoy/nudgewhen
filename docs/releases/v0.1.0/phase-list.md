@@ -1,6 +1,6 @@
 # Phase List — NudgeWhen v0.1.0
 
-**Document status:** Accepted — Phases 0, 1, 2, 3 and 4 complete
+**Document status:** Accepted — Phases 0, 1, 2, 3, 4 and 5 complete
 
 ## Release-wide sequencing rules
 
@@ -80,7 +80,7 @@
 - **Principal deliverables.** Workflow file(s) under `.github/workflows/`, declared as required checks for the release branch, and any necessary permissions or secrets documentation. A debug APK may be uploaded as a workflow artifact for validation purposes.
 - **Boundaries / exclusions.** No additional release automation beyond the required checks. Phase 5 must not include publishing a public GitHub release, production signing, app-store publication, or deployment.
 - **Completion evidence.** Required checks pass on the release branch; any debug APK artifact is retained for review; the corresponding experiment record is committed.
-- **Initial status.** `Planned`
+- **Status.** `Complete`
 
 ## Phase 6 — Agent Evaluation Evidence
 
