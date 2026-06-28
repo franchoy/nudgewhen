@@ -107,7 +107,7 @@
   - The release branch is clean.
   - The maintainer has accepted the pre-release report.
   - The branch is ready for the one release-bearing pull request.
-- **Initial status.** `Planned`
+- **Status.** `Complete`
 
 ## Cross-references
 
