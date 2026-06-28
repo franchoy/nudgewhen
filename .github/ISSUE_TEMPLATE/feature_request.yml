@@ -1,0 +1,68 @@
+name: Feature request
+description: Propose an idea, scenario, or direction for NudgeWhen. The project is in early experimental development. Submitting a proposal does not imply commitment, approval, or a roadmap entry. Do not describe a feature as already planned, accepted, or implemented.
+title: "Feature request: "
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or need
+      description: What problem are you trying to solve, or what need is not addressed?
+      placeholder: "Describe the problem or need."
+    validations:
+      required: true
+  - type: textarea
+    id: proposed-outcome
+    attributes:
+      label: Proposed outcome
+      description: What would you like the project to do or provide? Describe the outcome in user terms, not in implementation terms.
+    validations:
+      required: true
+  - type: textarea
+    id: scenario
+    attributes:
+      label: Contextual trigger or reminder scenario
+      description: Optional. Describe a typical scenario in which the proposed behaviour would be useful. Voice-first and local-first scenarios are encouraged but not required.
+    validations:
+      required: false
+  - type: textarea
+    id: local-first
+    attributes:
+      label: Local-first and privacy considerations
+      description: Optional. Does the proposal depend on cloud services, accounts, telemetry, or network connectivity? If so, explain. The long-term vision is local-first.
+    validations:
+      required: false
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Optional. What alternatives did you consider? What existing tools or workflows partially address this?
+    validations:
+      required: false
+  - type: textarea
+    id: trade-offs
+    attributes:
+      label: Scope and trade-offs
+      description: Optional. What is the rough size of the change? What trade-offs does it introduce? What existing functionality, if any, would it affect?
+    validations:
+      required: false
+  - type: dropdown
+    id: contribution-interest
+    attributes:
+      label: Contribution interest
+      description: Optional. How would you like to contribute, if at all?
+      options:
+        - I plan to submit a pull request.
+        - I will help discuss and review.
+        - This is just an idea; I do not plan to contribute further.
+    validations:
+      required: false
+  - type: checkboxes
+    id: acknowledgement
+    attributes:
+      label: Acknowledgement
+      description: Confirm the following before submitting.
+      options:
+        - label: I understand this proposal is not a roadmap commitment, an approval, or a promise of implementation. The maintainer may accept, defer, decline, or substantially revise the proposal.
+          required: true
+    validations:
+      required: true

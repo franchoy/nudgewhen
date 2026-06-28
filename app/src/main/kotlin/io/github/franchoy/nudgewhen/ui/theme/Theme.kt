@@ -1,0 +1,9 @@
+package io.github.franchoy.nudgewhen.ui.theme
+
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
+
+@Composable
+fun NudgeWhenTheme(content: @Composable () -> Unit) {
+    MaterialTheme(content = content)
+}
