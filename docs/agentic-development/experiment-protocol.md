@@ -1,6 +1,6 @@
 # Experiment Protocol — Agent-Assisted Tasks
 
-**Document status:** Accepted — Phase 0 complete
+**Document status:** Draft — v0.1.1 release in progress
 
 ## Purpose
 
@@ -8,7 +8,7 @@ This protocol defines how evidence is produced and recorded for agent-assisted t
 
 ## Scope
 
-This protocol applies to every agent-assisted task on the repository, including planning, building, reviewing, and corrective work. It covers OpenCode and MiniMax M3 from the outset and is designed to extend to Hermes without modification.
+This protocol applies to every agent-assisted planning, Build, corrective, and repository-action task on the repository. It covers OpenCode and MiniMax M3 from the outset and is designed to extend to Hermes without modification.
 
 The protocol does not apply to maintainer-only actions performed entirely outside OpenCode.
 
@@ -20,6 +20,8 @@ The protocol does not apply to maintainer-only actions performed entirely outsid
 4. **Distinguish implementation failures from task-specification failures.** A model that does the wrong thing is different from a model that does the right thing for the wrong specification. The protocol tracks both.
 5. **Preserve human authority over consequential repository actions.** Commits, pushes, pull requests, tags, releases, branch changes, and tracked-file deletion or renaming always require explicit maintainer authorization.
 6. **Record unsuccessful experiments as useful evidence.** A blocked or partial outcome is information. Such records are not downgraded, hidden, or rewritten.
+7. **Preserve failed and corrected attempts.** An attempt that ends in a hard stop, a deviation, or a maintainer correction is preserved in the experiment record. A later success does not erase the earlier deviation. Maintainer-audit corrections supplement history; they do not rewrite it.
+8. **Distinguish repository result, outcome classification, and scope compliance.** These three fields are recorded separately and are not merged into a single unlabelled conclusion.
 
 ## Experiment ID convention
 
@@ -33,8 +35,9 @@ An experiment record is required for every agent-assisted task, including:
 - A corrective task within a phase.
 - A follow-up task driven by a review finding or a later defect.
 - A scope amendment granted by the maintainer.
+- A planning stage, a Build stage, or a corrective attempt within a single phase.
 
-A phase is not a sufficient unit of evidence on its own. Multiple experiment records may exist for a single phase.
+A phase is not a sufficient unit of evidence on its own. Multiple experiment records may exist for a single phase. Multiple attempts may belong to one experiment record when their chronology remains explicit and each attempt's outcome, scope compliance, and deviations are recorded separately.
 
 ## Required pre-task snapshot
 
@@ -43,7 +46,7 @@ Before the Build stage of an experiment begins, the following must be captured w
 - OpenCode version.
 - Selected model display string.
 - Displayed model variant.
-- Agent mode (`Plan` or `Build`).
+- Agent mode (`Plan` or `Build`) as actually displayed by the interface.
 - Access service or provider.
 - Usage snapshot, with units, timestamp, and measurement source.
 - Session identifier, only if it can be safely and reliably obtained.
@@ -86,6 +89,38 @@ Each experiment record maintains a concise event list of human interventions dur
 
 The counting method is described in the record alongside the event list.
 
+## Tool-mode recording
+
+Every experiment record states the OpenCode mode actually displayed by the interface for the relevant stages of the experiment. A mode mismatch between the task authorization and the displayed mode is recorded as an observable execution condition, not as a condition that prompt text can override.
+
+## Direct evidence versus inference
+
+A value is direct evidence when the OpenCode tool surfaced it explicitly in its result text. A value is inference when it is derived from indirect signals such as expected content, the absence of an error message, or later behavior. The experiment record distinguishes the two and labels each value with its source.
+
+Successful later behavior may corroborate an earlier fact but does not turn the earlier unavailable observation into direct evidence. A checklist item is not marked `PASS` when its evidence is pending, supplied only by assumption, depends on a future repository action, or was inferred rather than directly observed.
+
+## Unavailable command exit status
+
+A numeric command exit status may be recorded only when the OpenCode tool result surfaced that exit status directly. If the tool did not surface a numeric exit status, the status is recorded as `Not available` with an explanation, and the experiment does not infer the status from the absence of an error message, the expected content of the result, or the success of a later command.
+
+## Command-form deviations
+
+A command-form deviation is any change to the form of an authorized command: a wrapper, a redirection, a pipeline, a command substitution, a shell loop, a shell function, an alias, a diagnostic supplement, or any other modification. Command-form deviations are recorded with the original authorized form, the executed form, and the reason for the deviation. A successful wrapper exit does not prove the primary command succeeded; a failed wrapper exit may have failed for an unrelated reason.
+
+## Mandatory hard stops
+
+A required FAIL, BLOCKED, or unexpected command failure, a baseline mismatch, a missing required tracked file, an unavailable mandatory command exit status, or a detected scope deviation is a hard stop. The agent stops further consequential work, reports the failure neutrally, and preserves it in the experiment record. A desired final deliverable never overrides a hard stop. A standalone Python invocation, an ad hoc shell check, or a wrapper that hides the primary command's exit status does not satisfy a hard-stop requirement.
+
+## Correction preservation
+
+A self-correction is an agent-detected defect that the agent fixes entirely within the authorized path and action scope. It is recorded in the experiment record as a non-event for human-intervention counting. A maintainer correction is a maintainer turn that redirects or corrects the agent. It is recorded as a corrective-prompt event. An agent that detects a defect inside its authorized scope may correct it; an agent that detects a defect outside its authorized scope must stop and report.
+
+Maintainer-audit corrections supplement history. They do not rewrite the original record. A reclassification from `compliant` to `deviation without approval`, for example, is recorded as a new entry, not as a silent edit to the earlier record.
+
+## Final-report overstatement as a review finding
+
+A final report that marks a checklist item `PASS` based on pending, assumed, inferred, or future evidence is a review finding. The finding is recorded with the original claim, the basis on which it was unsupported, and the maintainer's later classification.
+
 ## Scope-compliance tracking
 
 Each experiment record states:
@@ -96,14 +131,17 @@ Each experiment record states:
 - The observed actual changes and actions.
 - A scope-compliance result: `compliant`, `deviation with approval`, or `deviation without approval`.
 
+The scope-compliance field is separate from the outcome classification and from the repository result. A task can be `Partially successful` and `deviation without approval`. A task can be `Successful with correction` and `compliant`. The three fields are not merged.
+
 ## Validation tracking
 
 Each experiment record lists:
 
 - Validation commands the task was required to run.
 - Validation commands actually run.
-- Validation results, including exit status and any captured output excerpts.
+- Validation results, including exit status (when directly surfaced) and any captured output excerpts.
 - Any requested validation that was not executed, with reason.
+- A clear separation between direct evidence and inferred or corroborated state.
 
 ## Review-findings tracking
 
@@ -112,6 +150,7 @@ Each experiment record includes a section for findings discovered after the expe
 - Review findings raised by the maintainer.
 - Defects discovered later.
 - Corrections applied in a follow-up experiment.
+- Maintainer-audit reclassifications.
 - Status (open, corrected, accepted, deferred).
 
 ## Classification of outcomes
@@ -149,8 +188,21 @@ Every promotion is recorded as a follow-up experiment or as an explicit entry in
 
 ## Relationship to release gates
 
-Experiment evidence informs the pre-release gates defined in the release charter. Pre-release gate 6 requires a sanitized experiment record for every agent-assisted task. Pre-release gate 7 explicitly allows blocked classifications as long as no phase objective or release gate is left unsatisfied.
+Experiment evidence informs the pre-release gates defined in the release charter. A pre-release gate may require a sanitized experiment record for every agent-assisted task. A pre-release gate may allow blocked classifications as long as no phase objective or release gate is left unsatisfied.
+
+## Mandatory phase and subphase validation checklists
+
+Every phase, subphase, and Build-stage report must end with a `Validation checklist` section as the final subsection. Each checklist item must use exactly one of:
+
+- `[x] PASS`
+- `[ ] FAIL`
+- `[ ] BLOCKED`
+- `[-] NOT APPLICABLE`
+
+Each item must contain concise, directly observed evidence. A blanket statement such as "all checks passed" is insufficient. An item must not be marked `PASS` when its evidence is pending, supplied only by assumption, depends on a future repository action, or was inferred rather than directly observed.
 
 ## Cross-reference
 
 - Evaluation template: [evaluation-template.md](./evaluation-template.md)
+- OpenCode governance companion: [opencode-governance.md](./opencode-governance.md)
+- `AGENTS.md`: [../../AGENTS.md](../../AGENTS.md)
