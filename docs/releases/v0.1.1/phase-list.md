@@ -52,15 +52,17 @@ Exactly the seven paths listed in Principal deliverables.
 - No application functionality or Android behavior change.
 - No CI, validator, dependency, workflow, or remote-setting change.
 - No change to `README.md`, `CONTRIBUTING.md`, `SECURITY.md`, `docs/local-validation.md`, `.github/workflows/ci.yml`, `scripts/validate_local.py`, `scripts/validate-local.sh`, `.gitignore`, `app/build.gradle.kts`, or any v0.1.0 document.
-- No staging, commit, push, branch operation, pull request, tag, or release action.
+- No ordinary content Build authorizes staging. Separately authorized repository-action stages performed pre-closure staging and will later perform closure-overlay restaging. Commit, push, branch, remote, pull-request, tag, and release actions remain separately authorized.
 - No network access, installation, or external lookup.
 - No claim that Phase 0 is `Complete` before evidence and maintainer acceptance exist.
 
 ### Required validation
 
-- The working tree at the end of Phase 0 contains exactly the seven authorized paths: four tracked modifications and three untracked new files.
-- `git diff --name-status` enumerates only the four tracked modifications and matches the authorized path set.
-- A direct file-by-file content read of each of the seven paths by the agent, each completed through an explicit end-of-file result.
+- The original seven-path unstaged Phase 0 candidate was directly observed.
+- The seven paths were separately staged in their pre-closure form.
+- The pre-closure staged index passed accepted mechanical validation.
+- Phase 0G created the exact four-path unstaged closure overlay.
+- The final Phase 0 commit candidate must later contain the seven staged paths with no unstaged or untracked Phase 0 path.
 - `git rev-parse HEAD` confirms HEAD is unchanged.
 - Phase 0D performs the structural and documentation validation pass and confirms that the new governance documents are mutually consistent and that the bootstrap exception has terminated.
 
@@ -77,19 +79,19 @@ Exactly the seven paths listed in Principal deliverables.
 - `AGENTS.md` no longer treats `release/v0.1.0` as the active branch.
 - Stable governance is separated from current-release context.
 - The bootstrap exception was bounded through Phase 0D and was terminated by the accepted Phase 0D evidence and the maintainer acceptance; ordinary baseline rules now apply.
-- `EXP-0013` preserves the accepted chronology through the Phase 0F-R1 maintainer audit and remains open until final Phase 0 closure.
-- Phase 0 status transitions from `Planned` to `Complete` only after accepted Phase 0D evidence, mechanical staged-index validation, final Phase 0 closure synchronization, final index validation, and maintainer acceptance.
+- `EXP-0013.md` preserves the accepted chronology through the Phase 0G maintainer audit and remains open until closure-overlay restaging, final mechanical index validation, and the separately authorized Phase 0 commit are recorded.
+- Phase 0 status transitions from `Planned` to `Complete` during the accepted final closure synchronization after accepted Phase 0D evidence and accepted pre-closure mechanical staged-index validation. Final closure restaging and final mechanical index validation verify the synchronized commit candidate before the separately authorized Phase 0 commit.
 
 ### Status
 
-Planned
+Complete
 
 ### Validation checklist
 
 - [x] PASS — The v0.1.1 charter exists, identifies the correct release (`v0.1.1`) and the correct objective (post-release closure and reusable validation baseline, no new product functionality). Directly verified by the pre-edit readback; accepted by Phase 0D and maintainer.
 - [x] PASS — The v0.1.1 phase list exists and defines Phases 0 through 7 in the required order. Directly verified by the pre-edit readback; accepted by Phase 0D and maintainer.
 - [x] PASS — Every phase ends with an explicit `Validation checklist` subsection. Directly verified by the pre-edit readback; accepted by Phase 0D and maintainer.
-- [x] PASS — Every phase contains a `### Status` subsection whose value is `Planned`. Directly verified by the pre-edit readback; accepted by Phase 0D and maintainer.
+- [x] PASS — Phase 0 has status `Complete`; Phases 1 through 7 have status `Planned`. Directly verified by the pre-edit readback; accepted by Phase 0D and maintainer.
 - [x] PASS — `AGENTS.md` no longer treats `release/v0.1.0` as the active branch. Directly verified by the pre-edit readback; accepted by Phase 0D and maintainer.
 - [x] PASS — Stable governance is separated from current-release context in `AGENTS.md`. Directly verified by the pre-edit readback; accepted by Phase 0D and maintainer.
 - [x] PASS — Current release context identifies `v0.1.1`, `release/v0.1.1`, the charter path, and the phase-list path. Directly verified by the pre-edit readback; accepted by Phase 0D and maintainer.
@@ -100,10 +102,10 @@ Planned
 - [x] PASS — Historical v0.1.0 evidence remains unmodified. Directly verified by the pre-edit readback; accepted by Phase 0D and maintainer.
 - [x] PASS — No application, Android, CI, dependency, workflow, validator, or remote-setting change occurred in Phase 0. Directly verified by the pre-edit readback; accepted by Phase 0D and maintainer.
 - [x] PASS — Only the seven authorized Phase 0 paths were modified or created. Directly verified by the pre-edit readback; accepted by Phase 0D and maintainer.
-- [ ] BLOCKED — Required structural and documentation validation passes (mechanical staged-index validation and final closure synchronization remain pending). Pending mechanical staged-index validation, final closure synchronization, final index validation, and maintainer acceptance.
-- [ ] BLOCKED — Final repository state and all repository actions are accurately reported. Pending staging, final closure synchronization, final index validation, and the separately authorized Phase 0 commit.
-- [ ] BLOCKED — No unresolved contradiction remains among the charter, phase list, `AGENTS.md`, experiment protocol, evaluation template, and governance companion. Pending completion of the current evidence correction's seven-file post-edit readback, maintainer acceptance, and the later staged-state and final-closure evidence.
-- [x] PASS — Phase 0 is not marked `Complete` before Phase 0D evidence and maintainer acceptance exist. Phase 0 remains `Planned` after accepted Phase 0D evidence and maintainer acceptance.
+- [x] PASS — Structural and documentation validation is supported by accepted Phase 0D evidence, accepted pre-closure staged-index validation, the maintainer-accepted Phase 0G core closure overlay, and the corrected evidence now present in the documents.
+- [x] PASS — Repository state and repository actions through Phase 0G are accurately reported. Restaging, final index validation, and commit remain later separate actions.
+- [x] PASS — The seven Phase 0 documents contain no unresolved lifecycle or evidence-record contradiction.
+- [x] PASS — Phase 0 was not marked complete before accepted structural evidence and accepted pre-closure staged-index validation existed.
 
 ## Phase 1 — Post-Release State and Documentation Closure
 

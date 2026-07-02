@@ -15,6 +15,10 @@ The NudgeWhen project has two long-term intended outcomes:
 
 `v0.1.0` was the first release of the project and was merged into `main` after the full pre-release gate and the single release-bearing pull request. The remote `release/v0.1.0` branch was deleted after release completion; the state of the old local `release/v0.1.0` branch was not established by Phase 0B. The `v0.1.0` release charter, phase list, and experiment records remain in `docs/releases/v0.1.0/` for traceability and are historical evidence.
 
+## Phase 0 status
+
+Phase 0 is `Complete`. Phase 0 completed through the accepted Phase 0D evidence, the accepted pre-closure staged-index validation, and the authorized final closure synchronization. Final closure restaging, final mechanical index validation, and the Phase 0 commit remain separately authorized repository actions. The current phase is Phase 1. Phase 1 has not started implementation work beyond becoming the current phase.
+
 `v0.1.1` is a patch release with no new product functionality. It does not introduce reminder scheduling, notifications, voice or speech behavior, location handling, contextual triggers, persistence, networking, services, receivers, providers, background execution, or analytics. It exists only to convert the successful but release-specific `v0.1.0` repository into a durable baseline for future development.
 
 ## Release identity
@@ -24,7 +28,7 @@ The NudgeWhen project has two long-term intended outcomes:
 - Active release branch: `release/v0.1.1`
 - Active release charter: `docs/releases/v0.1.1/release-charter.md`
 - Active phase list: `docs/releases/v0.1.1/phase-list.md`
-- Current phase: Phase 0 — Release Definition and Governance Bootstrap
+- Current phase: Phase 1 — Post-Release State and Documentation Closure
 
 ## Exact release objective
 
