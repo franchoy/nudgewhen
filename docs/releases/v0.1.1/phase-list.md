@@ -1,6 +1,6 @@
 # Phase List — NudgeWhen v0.1.1
 
-**Document status:** Draft — v0.1.1 release in progress
+**Document status:** Accepted — Phase 0 complete; v0.1.1 release in progress
 **Active release branch:** release/v0.1.1
 **Active release charter:** docs/releases/v0.1.1/release-charter.md
 
@@ -52,7 +52,7 @@ Exactly the seven paths listed in Principal deliverables.
 - No application functionality or Android behavior change.
 - No CI, validator, dependency, workflow, or remote-setting change.
 - No change to `README.md`, `CONTRIBUTING.md`, `SECURITY.md`, `docs/local-validation.md`, `.github/workflows/ci.yml`, `scripts/validate_local.py`, `scripts/validate-local.sh`, `.gitignore`, `app/build.gradle.kts`, or any v0.1.0 document.
-- No ordinary content Build authorizes staging. Separately authorized repository-action stages performed pre-closure staging and will later perform closure-overlay restaging. Commit, push, branch, remote, pull-request, tag, and release actions remain separately authorized.
+- No ordinary content Build authorizes staging. The historical pre-closure staging and the two observed Phase 0 commits (`c2011b10…` and `aa5fc6e…`) have already occurred. The current seven-path post-Phase-0 recovery candidate is evidence synchronization after Phase 0, not Phase 1 implementation; its future staging, cached-index validation, and commit remain separate Category C actions. Commit, push, branch, remote, pull-request, tag, and release actions remain separately authorized.
 - No network access, installation, or external lookup.
 - No claim that Phase 0 is `Complete` before evidence and maintainer acceptance exist.
 
@@ -60,16 +60,17 @@ Exactly the seven paths listed in Principal deliverables.
 
 - The original seven-path unstaged Phase 0 candidate was directly observed.
 - The seven paths were separately staged in their pre-closure form.
-- The pre-closure staged index passed accepted mechanical validation.
-- Phase 0G created the exact four-path unstaged closure overlay.
-- The final Phase 0 commit candidate must later contain the seven staged paths with no unstaged or untracked Phase 0 path.
-- `git rev-parse HEAD` confirms HEAD is unchanged.
-- Phase 0D performs the structural and documentation validation pass and confirms that the new governance documents are mutually consistent and that the bootstrap exception has terminated.
+- The pre-closure staged index passed accepted mechanical validation; the retained `Phase 0 staged-index validation` evidence records the cached name-status set, the cached whitespace-check output, the absence of an unstaged tracked diff, and seven stage-zero index records; numeric exit statuses were not surfaced and remain `Not available`.
+- Phase 0G created the exact four-path unstaged closure overlay; the four-path overlay was later committed in `aa5fc6e42a85ecd00aaec4e86ed5d75c06bb4b1a`.
+- The two-commit history on `release/v0.1.1` (parent `2a092ed013d21f49044142395a8fedd24f9432b5`, then `c2011b10c10fbd04b9911876bcf3d71f8c317d48`, then `aa5fc6e42a85ecd00aaec4e86ed5d75c06bb4b1a`) commits the seven authorized Phase 0 paths in full: the initial content commit modified the seven paths (4 modifications, 3 additions), and the closure-synchronization commit modified the four overlay paths. The complete two-commit range contains exactly seven distinct Phase 0 paths; four paths were modified in both commits.
+- No retained direct evidence establishes a cached/index validation of the four-path closure overlay immediately before `aa5fc6e…`; the later two-commit-range `git diff --check` result is post-commit whitespace evidence and is not a substitute for the unavailable pre-commit cached validation.
+- `git rev-parse HEAD` confirms HEAD is `aa5fc6e42a85ecd00aaec4e86ed5d75c06bb4b1a` on `release/v0.1.1`; HEAD^ is `c2011b10c10fbd04b9911876bcf3d71f8c317d48`; HEAD^^ is `2a092ed013d21f49044142395a8fedd24f9432b5`. HEAD has advanced from the starting commit; that advance is the expected outcome of the two-commit history and is not a deviation.
+- Phase 0D performed the structural and documentation validation pass and confirmed that the new governance documents are mutually consistent and that the bootstrap exception has terminated.
 
-**Current-validator limitations**
+**Historical Phase 0 validator context**
 
-- While untracked, the three new Phase 0 files are excluded from the current fixed candidate allowlist.
-- After separately authorized staging, the three new Phase 0 files become visible through `git ls-files` before commit.
+- The three new Phase 0 files were excluded from the current fixed candidate allowlist while untracked.
+- They became visible through `git ls-files` after separately authorized staging.
 - Phase 3 generalizes candidate-mode inventory and v0.1.1 semantic checks.
 - The existing validator was not run in Phase 0C, Phase 0C2, Phase 0C3, or Phase 0C4.
 
@@ -79,8 +80,8 @@ Exactly the seven paths listed in Principal deliverables.
 - `AGENTS.md` no longer treats `release/v0.1.0` as the active branch.
 - Stable governance is separated from current-release context.
 - The bootstrap exception was bounded through Phase 0D and was terminated by the accepted Phase 0D evidence and the maintainer acceptance; ordinary baseline rules now apply.
-- `EXP-0013.md` preserves the accepted chronology through the Phase 0G maintainer audit and remains open until closure-overlay restaging, final mechanical index validation, and the separately authorized Phase 0 commit are recorded.
-- Phase 0 status transitions from `Planned` to `Complete` during the accepted final closure synchronization after accepted Phase 0D evidence and accepted pre-closure mechanical staged-index validation. Final closure restaging and final mechanical index validation verify the synchronized commit candidate before the separately authorized Phase 0 commit.
+- `EXP-0013.md` preserves the accepted chronology through the Phase 0G-R1 maintainer audit and the two-commit reconciliation. The seven authorized paths are committed in the observed two-commit history on `release/v0.1.1`. The current phase is Phase 1.
+- Phase 0 remains `Complete`; the observed two-commit history (`c2011b10…` then `aa5fc6e…`) is retained; the seven-path pre-closure staged validation is retained in the `Phase 0 staged-index validation` record; the four-path pre-commit cached/index validation remains unavailable. The recovery and correction Builds have received maintainer audit; the recovery evidence is synchronized. The current seven-path recovery is evidence synchronization after Phase 0, not Phase 1 implementation; staging, cached-index validation, recovery commit, and clean-tree confirmation remain pending. The current phase is Phase 1.
 
 ### Status
 
@@ -102,9 +103,9 @@ Complete
 - [x] PASS — Historical v0.1.0 evidence remains unmodified. Directly verified by the pre-edit readback; accepted by Phase 0D and maintainer.
 - [x] PASS — No application, Android, CI, dependency, workflow, validator, or remote-setting change occurred in Phase 0. Directly verified by the pre-edit readback; accepted by Phase 0D and maintainer.
 - [x] PASS — Only the seven authorized Phase 0 paths were modified or created. Directly verified by the pre-edit readback; accepted by Phase 0D and maintainer.
-- [x] PASS — Structural and documentation validation is supported by accepted Phase 0D evidence, accepted pre-closure staged-index validation, the maintainer-accepted Phase 0G core closure overlay, and the corrected evidence now present in the documents.
-- [x] PASS — Repository state and repository actions through Phase 0G are accurately reported. Restaging, final index validation, and commit remain later separate actions.
-- [x] PASS — The seven Phase 0 documents contain no unresolved lifecycle or evidence-record contradiction.
+- [x] PASS — Structural and documentation consistency: the terminal maintainer audit and the synchronized evidence resolve the recovery candidate's active structural contradiction.
+- [x] PASS — Repository state through the observed two-commit history is accurately reported. The two-commit range `2a092ed0…aa5fc6e…` contains exactly seven distinct Phase 0 paths; HEAD is `aa5fc6e…` on `release/v0.1.1`; HEAD^ is `c2011b10…`; HEAD^^ is `2a092ed0…`; `git diff --check 2a092ed0…aa5fc6e…` returns no diagnostic. The current Build started from the exact seven-path unstaged recovery baseline with no staged or untracked path; the working tree is not clean.
+- [x] PASS — The seven Phase 0 documents contain no unresolved lifecycle or evidence-record contradiction: the historical two-commit evidence remains intact; the current seven-path recovery candidate is accurately represented as unstaged; both recovery Builds and their maintainer classifications are recorded; the active future sequence begins with staging.
 - [x] PASS — Phase 0 was not marked complete before accepted structural evidence and accepted pre-closure staged-index validation existed.
 
 ## Phase 1 — Post-Release State and Documentation Closure

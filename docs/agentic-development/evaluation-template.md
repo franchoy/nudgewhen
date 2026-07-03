@@ -1,6 +1,6 @@
 # Evaluation Template — Agent-Assisted Experiment Record
 
-**Document status:** Draft — v0.1.1 release in progress
+**Document status:** Accepted — Phase 0 governance baseline; v0.1.1 release in progress
 
 **Usage.** Copy this template, replace every field, and save as `docs/agentic-development/experiments/EXP-NNNN.md`. Every unknown value is written as `Not available`, `Not applicable`, or `Pending maintainer input` with an inline explanation. No value is guessed.
 

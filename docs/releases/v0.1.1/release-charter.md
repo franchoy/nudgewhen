@@ -1,6 +1,6 @@
 # Release Charter — NudgeWhen v0.1.1
 
-**Document status:** Draft — v0.1.1 release in progress
+**Document status:** Accepted — Phase 0 complete; v0.1.1 release in progress
 **Release name:** NudgeWhen v0.1.1 — Post-Release Closure and Reusable Validation Baseline
 **Version:** v0.1.1
 **Android artifact identity:** versionCode = 2, versionName = "0.1.1" (delivered in Phase 5)
@@ -17,7 +17,7 @@ The NudgeWhen project has two long-term intended outcomes:
 
 ## Phase 0 status
 
-Phase 0 is `Complete`. Phase 0 completed through the accepted Phase 0D evidence, the accepted pre-closure staged-index validation, and the authorized final closure synchronization. Final closure restaging, final mechanical index validation, and the Phase 0 commit remain separately authorized repository actions. The current phase is Phase 1. Phase 1 has not started implementation work beyond becoming the current phase.
+Phase 0 is `Complete`. The observed two-commit history on `release/v0.1.1` is the initial Phase 0 content commit `c2011b10c10fbd04b9911876bcf3d71f8c317d48` (subject `v0.1.1 continuation`, parent `2a092ed013d21f49044142395a8fedd24f9432b5`), which directly modified the seven authorized Phase 0 paths (4 modifications and 3 additions), followed by the Phase 0 closure-synchronization commit `aa5fc6e42a85ecd00aaec4e86ed5d75c06bb4b1a` (subject `v0.1.1`, parent `c2011b10…`), which directly modified the four closure-overlay paths. The complete range from `2a092ed0…` through `aa5fc6e…` contains exactly seven distinct Phase 0 paths. Four paths were modified in both commits. The semantic descriptions "initial Phase 0 content commit" and "closure-synchronization commit" are strongly supported inferences based on path sets and chronology, not direct observations. The retained `Phase 0 staged-index validation` evidence records the cached name-status set, the cached whitespace-check output, the absence of an unstaged tracked diff, and seven stage-zero index records for the seven-path pre-closure candidate; numeric exit statuses were not surfaced and remain `Not available`; chronology strongly supports that this retained validation preceded `c2011b10…` and that relationship is labelled as inference. No retained direct evidence establishes a cached/index validation of the four-path closure overlay immediately before `aa5fc6e…`; the later two-commit-range `git diff --check` result is post-commit whitespace evidence and is not a substitute for the unavailable pre-commit cached validation. The current phase is Phase 1. Phase 1 has not started implementation work beyond becoming the current phase.
 
 `v0.1.1` is a patch release with no new product functionality. It does not introduce reminder scheduling, notifications, voice or speech behavior, location handling, contextual triggers, persistence, networking, services, receivers, providers, background execution, or analytics. It exists only to convert the successful but release-specific `v0.1.0` repository into a durable baseline for future development.
 

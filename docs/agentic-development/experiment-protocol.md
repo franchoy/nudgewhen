@@ -1,6 +1,6 @@
 # Experiment Protocol — Agent-Assisted Tasks
 
-**Document status:** Draft — v0.1.1 release in progress
+**Document status:** Accepted — Phase 0 governance baseline; v0.1.1 release in progress
 
 ## Purpose
 
