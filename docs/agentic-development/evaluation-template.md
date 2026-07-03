@@ -30,6 +30,19 @@
 - **Session identifier:** <identifier, or `Not available` with explanation>
 - **Mode-mismatch observation:** <None, or description of any divergence between the task authorization and the displayed mode>
 
+### OpenCode harness (when applicable)
+
+Complete this subsection only when the task touches the project's machine-readable OpenCode harness (`opencode.jsonc`, `.opencode/agents/`, or any successor). Each field must support `Not available` or `Pending` with an inline explanation rather than encouraging inference. Writing a configuration file does not itself prove that a running OpenCode process loaded it.
+
+- **Custom agent display name:** <displayed selectable primary agent that handled the task, or `Not applicable`>
+- **Project OpenCode configuration paths:** <exact paths of the harness files the task was authorized to read, edit, or create, or `Not applicable`>
+- **Configured default agent:** <default selectable agent named by the harness, or `Not available` with explanation>
+- **Fresh-process configuration-load result:** <directly observed load result from a fresh OpenCode process, or `Pending` if a fresh process has not yet been started, or `Not available` with explanation>
+- **Selectable-agent inventory:** <list of selectable agents actually surfaced by the harness, or `Not available` with explanation>
+- **Permission-probe results:** <exact probe commands attempted and their directly observed allow-or-deny outcomes, or `Not available` with explanation>
+- **Built-in-agent disablement result:** <directly observed disablement of the five built-in selectable agents, or `Not available` with explanation>
+- **Hidden-system-agent preservation result:** <directly observed availability of hidden system agents required for compaction, titles, and summaries, or `Not available` with explanation>
+
 ## Consumption
 
 - **Experiment-start usage snapshot:** <value, or `Not available` with explanation>

@@ -12,7 +12,7 @@ The model is structured by category to make the safety-critical rules directly v
 
 The model is built on three principles:
 
-- **Documentation is the operative configuration.** No machine-readable OpenCode configuration file is included. The repository's OpenCode operating rules are the rules stated in `AGENTS.md`.
+- **`AGENTS.md` is the authoritative repository-local operational contract.** Increment A adds a project-local machine-readable harness consisting of `opencode.jsonc` and `.opencode/agents/` files; the JSON and agent files constrain capabilities but never independently grant permission. The repository's OpenCode operating rules are the rules stated in `AGENTS.md` and the active release charter.
 - **Exact-path scope.** File modifications are limited to the exact paths listed in a Build authorization. This prevents incidental changes and makes every modification traceable to a maintainer-authorized turn.
 - **Separate authorizations for consequential actions.** A Build authorization does not implicitly authorize staging, commit, push, branch operations, pull requests, tags, releases, network access, configuration changes, or dependency installation. Each of those is a separate decision and a separate authorization.
 
@@ -110,6 +110,22 @@ A maintainer audit may reclassify an earlier attempt's outcome or scope complian
 ## Hermes is not integrated
 
 Hermes is not integrated. Any reference to Hermes in evidence is a future-boundary statement and does not authorize current action. Future integration of Hermes will require a separate plan, a separate authorization, and an update to the precedence model and the authorization matrix.
+
+## Increment A machine-readable harness
+
+Increment A introduces a project-local machine-readable OpenCode harness consisting of `opencode.jsonc` at the repository root and the three custom primary agent definitions under `.opencode/agents/`. The harness constrains capabilities but never independently grants permission; every consequential action still requires the exact current maintainer authorization in the current task. `AGENTS.md` remains the authoritative repository-local operational contract.
+
+The three custom selectable primary agents are:
+
+- **`nudge-plan`** — the default selectable primary agent. Planning-only. Does not mutate repository content, the Git index, commits, branches, remotes, configuration, dependencies, or external systems.
+- **`nudge-audit`** — a read-only auditing primary agent. Its bounded command allowlist permits only the read-only `git` inspection commands and the two `opencode` introspection commands explicitly listed in its definition. Does not mutate files, the Git index, commits, branches, remotes, configuration, dependencies, or external systems.
+- **`nudge-build`** — an intentionally inert primary placeholder. Its deny-all permission boundary means it does not authorize implementation, investigation, repository inspection, mutation, command execution, or consequential work. A later separately authorized increment may replace this placeholder.
+
+The built-in selectable agents `build`, `plan`, `general`, `explore`, and `scout` are disabled in `opencode.jsonc`. Hidden system agents required for compaction, titles, and summaries are deliberately left available and are not disabled.
+
+The global deny baseline in `opencode.jsonc` (`"permission": {"*": "deny"}`) is overridden only by explicit custom-agent permission rules defined inside each agent's `permission` block. The JSON and agent files do not independently grant permission; the global deny baseline applies to every operation not explicitly allowed by a custom-agent rule.
+
+Runtime loading of `opencode.jsonc`, the selectable-agent inventory, and permission-probe results require a fresh OpenCode process and remain pending after this content Build. Writing the configuration files does not itself prove that a running OpenCode process loaded them. The fresh-session runtime validation is a later, separately authorized task.
 
 ## Selected examples and edge cases
 

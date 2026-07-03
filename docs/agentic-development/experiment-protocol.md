@@ -93,6 +93,26 @@ The counting method is described in the record alongside the event list.
 
 Every experiment record states the OpenCode mode actually displayed by the interface for the relevant stages of the experiment. A mode mismatch between the task authorization and the displayed mode is recorded as an observable execution condition, not as a condition that prompt text can override.
 
+## OpenCode harness experiment recording
+
+When a task touches the project's machine-readable OpenCode harness (`opencode.jsonc`, `.opencode/agents/`, or any successor), the experiment record must separately record:
+
+- **Displayed custom agent name** — the exact selectable primary agent that handled the task (for example, `nudge-plan`, `nudge-audit`, or `nudge-build`).
+- **Displayed mode** — the OpenCode mode actually displayed by the interface for the relevant stages.
+- **Directly surfaced model string** — the exact displayed model string (for example, `MiniMax M3 (3x usage)` or its successor), recorded verbatim.
+- **Project configuration paths** — the exact paths of the harness files the task was authorized to read, edit, or create.
+- **Default-agent observation** — the default selectable agent named by the harness (for example, `nudge-plan`), and whether the active session observed that default.
+- **Selectable-agent inventory** — the list of selectable agents actually surfaced by the harness, distinguishing enabled custom agents from disabled built-in selectable agents.
+- **Permission-denial and permission-allowance probes** — the exact probe commands attempted and their directly observed allow-or-deny outcomes.
+- **Evidence source** — whether the recorded evidence came from the content-writing session or from a fresh OpenCode process started specifically for harness validation.
+- **Configuration-loading observation** — whether configuration loading was directly observed during the session, or remains pending until a fresh OpenCode process is started.
+
+Writing a configuration file does not itself prove that a running OpenCode process loaded it. Runtime validation of the harness must occur in a fresh OpenCode process. The content-writing session may record what it wrote, but it may not claim that a running process loaded the written files.
+
+Future experiment identifiers are assigned only when their tasks begin; they are not pre-assigned. The harness experiment that validates runtime loading will receive its own identifier when that task starts, not before.
+
+Private session exports are not valid repository-read targets without explicit maintainer authorization. A harness experiment that needs to inspect a session export must obtain a separate explicit authorization before reading the file content.
+
 ## Direct evidence versus inference
 
 A value is direct evidence when the OpenCode tool surfaced it explicitly in its result text. A value is inference when it is derived from indirect signals such as expected content, the absence of an error message, or later behavior. The experiment record distinguishes the two and labels each value with its source.
