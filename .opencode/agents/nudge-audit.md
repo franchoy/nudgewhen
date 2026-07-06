@@ -18,15 +18,25 @@ permission:
     "git rev-parse HEAD^": allow
     "git rev-parse HEAD^^": allow
     "git status --short --untracked-files=all": allow
+
+    "git diff --name-status *": deny
     "git diff --name-status": allow
-    "git diff --name-status *": allow
+    "git diff --name-status -- *": allow
     "git diff --cached --name-status": allow
+
+    "git diff --check *": deny
     "git diff --check": allow
-    "git diff --check *": allow
+    "git diff --check -- *": allow
     "git diff --cached --check": allow
+
     "git log -1 --format=%s": allow
     "git show --format= --name-status HEAD": allow
-    "git ls-files *": allow
+
+    "git ls-files *": deny
+    "git ls-files -- *": allow
+    "git ls-tree -r HEAD": allow
+    "git ls-tree -r HEAD --name-only": allow
+
     "opencode --version": allow
     "opencode agent list": allow
 ---
