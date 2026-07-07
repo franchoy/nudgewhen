@@ -119,13 +119,13 @@ The three custom selectable primary agents are:
 
 - **`nudge-plan`** — the default selectable primary agent. Planning-only. Does not mutate repository content, the Git index, commits, branches, remotes, configuration, dependencies, or external systems.
 - **`nudge-audit`** — a read-only auditing primary agent. Its bounded command allowlist permits only the read-only `git` inspection commands and the two `opencode` introspection commands explicitly listed in its definition. Does not mutate files, the Git index, commits, branches, remotes, configuration, dependencies, or external systems.
-- **`nudge-build`** — an intentionally inert primary placeholder. Its deny-all permission boundary means it does not authorize implementation, investigation, repository inspection, mutation, command execution, or consequential work. A later separately authorized increment may replace this placeholder.
+- **`nudge-build`** — the bounded, approval-gated implementation primary agent introduced by Increment B2. Its definition automatically allows only the bounded baseline inspection commands, approval-gates ordinary edits and non-allowlisted local commands, and denies private material, harness edits, repository-action Git commands, network tools, dependency installers, shell wrappers, external-directory access, delegation, skills, search tools, and plan transitions. These machine-readable permissions are capability ceilings and never replace exact current-task authorization.
 
 The built-in selectable agents `build`, `plan`, `general`, `explore`, and `scout` are disabled in `opencode.jsonc`. Hidden system agents required for compaction, titles, and summaries are deliberately left available and are not disabled.
 
 The global deny baseline in `opencode.jsonc` (`"permission": {"*": "deny"}`) is overridden only by explicit custom-agent permission rules defined inside each agent's `permission` block. The JSON and agent files do not independently grant permission; the global deny baseline applies to every operation not explicitly allowed by a custom-agent rule.
 
-Runtime loading of `opencode.jsonc`, the selectable-agent inventory, and permission-probe results require a fresh OpenCode process and remain pending after this content Build. Writing the configuration files does not itself prove that a running OpenCode process loaded them. The fresh-session runtime validation is a later, separately authorized task.
+Fresh-process runtime validation is mandatory after every permanent harness modification. The accepted `nudge-build` boundary is recorded in `EXP-0017`, including separate automatic-allow, one-shot approval, and representative denial evidence. Ordinary implementation use remains subject to exact current maintainer authorization, and every future permanent harness modification requires fresh-process revalidation. Writing configuration content does not itself prove that a running OpenCode process loaded it.
 
 ## Selected examples and edge cases
 
