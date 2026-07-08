@@ -52,7 +52,7 @@ Exactly the seven paths listed in Principal deliverables.
 - No application functionality or Android behavior change.
 - No CI, validator, dependency, workflow, or remote-setting change.
 - No change to `README.md`, `CONTRIBUTING.md`, `SECURITY.md`, `docs/local-validation.md`, `.github/workflows/ci.yml`, `scripts/validate_local.py`, `scripts/validate-local.sh`, `.gitignore`, `app/build.gradle.kts`, or any v0.1.0 document.
-- No ordinary content Build authorizes staging. The historical pre-closure staging and the two observed Phase 0 commits (`c2011b10…` and `aa5fc6e…`) have already occurred. The current seven-path post-Phase-0 recovery candidate is evidence synchronization after Phase 0, not Phase 1 implementation; its future staging, cached-index validation, and commit remain separate Category C actions. Commit, push, branch, remote, pull-request, tag, and release actions remain separately authorized.
+- No ordinary content Build authorizes staging. The historical pre-closure staging and the two observed Phase 0 commits (`c2011b10…` and `aa5fc6e…`) have already occurred. The seven-path post-Phase-0 recovery candidate was committed in `8c89dc9cb6d7983d3927201bbd8ebe1acea273ec` (subject `docs: reconcile v0.1.1 phase 0 evidence`, parent `aa5fc6e…`), which directly modified the seven reconciliation paths: `AGENTS.md`, `docs/agentic-development/evaluation-template.md`, `docs/agentic-development/experiment-protocol.md`, `docs/agentic-development/experiments/EXP-0013.md`, `docs/agentic-development/opencode-governance.md`, `docs/releases/v0.1.1/phase-list.md`, and `docs/releases/v0.1.1/release-charter.md`. No retained direct evidence establishes an immediate pre-commit cached-index validation for `8c89dc9…`; the unavailable pre-commit cached validation is preserved as unavailable and is not fabricated. No active Phase 0 recovery candidate remains. Commit, push, branch, remote, pull-request, tag, and release actions remain separately authorized.
 - No network access, installation, or external lookup.
 - No claim that Phase 0 is `Complete` before evidence and maintainer acceptance exist.
 
@@ -81,7 +81,7 @@ Exactly the seven paths listed in Principal deliverables.
 - Stable governance is separated from current-release context.
 - The bootstrap exception was bounded through Phase 0D and was terminated by the accepted Phase 0D evidence and the maintainer acceptance; ordinary baseline rules now apply.
 - `EXP-0013.md` preserves the accepted chronology through the Phase 0G-R1 maintainer audit and the two-commit reconciliation. The seven authorized paths are committed in the observed two-commit history on `release/v0.1.1`. The current phase is Phase 1.
-- Phase 0 remains `Complete`; the observed two-commit history (`c2011b10…` then `aa5fc6e…`) is retained; the seven-path pre-closure staged validation is retained in the `Phase 0 staged-index validation` record; the four-path pre-commit cached/index validation remains unavailable. The recovery and correction Builds have received maintainer audit; the recovery evidence is synchronized. The current seven-path recovery is evidence synchronization after Phase 0, not Phase 1 implementation; staging, cached-index validation, recovery commit, and clean-tree confirmation remain pending. The current phase is Phase 1.
+- Phase 0 remains `Complete`; the observed two-commit history (`c2011b10…` then `aa5fc6e…`) is retained; the seven-path pre-closure staged validation is retained in the `Phase 0 staged-index validation` record; the four-path pre-commit cached/index validation remains unavailable. The seven-path post-Phase-0 reconciliation was committed in `8c89dc9cb6d7983d3927201bbd8ebe1acea273ec`, which directly modified the seven reconciliation paths. The missing immediate pre-commit cached-index evidence for `8c89dc9…` remains unavailable and is not fabricated. The later preparatory harness and evidence commits (`ccc56edb1fe4084a02caf56680ca67085039a9fa`, `7a3e57bbd1e0f231ce8e8e6af0a3831c38d35fec`, `9f2e283516db5822e63d86fbe83ac7f222283ba0`, and `1d1754da86182d21820b88a819cfd6879eba9ed8`) advanced HEAD through `1d1754da86182d21820b88a819cfd6879eba9ed8` on `release/v0.1.1` and immediately before Phase 1R0 began, the repository was directly observed clean. The current phase is Phase 1.
 
 ### Status
 
@@ -104,8 +104,8 @@ Complete
 - [x] PASS — No application, Android, CI, dependency, workflow, validator, or remote-setting change occurred in Phase 0. Directly verified by the pre-edit readback; accepted by Phase 0D and maintainer.
 - [x] PASS — Only the seven authorized Phase 0 paths were modified or created. Directly verified by the pre-edit readback; accepted by Phase 0D and maintainer.
 - [x] PASS — Structural and documentation consistency: the terminal maintainer audit and the synchronized evidence resolve the recovery candidate's active structural contradiction.
-- [x] PASS — Repository state through the observed two-commit history is accurately reported. The two-commit range `2a092ed0…aa5fc6e…` contains exactly seven distinct Phase 0 paths; HEAD is `aa5fc6e…` on `release/v0.1.1`; HEAD^ is `c2011b10…`; HEAD^^ is `2a092ed0…`; `git diff --check 2a092ed0…aa5fc6e…` returns no diagnostic. The current Build started from the exact seven-path unstaged recovery baseline with no staged or untracked path; the working tree is not clean.
-- [x] PASS — The seven Phase 0 documents contain no unresolved lifecycle or evidence-record contradiction: the historical two-commit evidence remains intact; the current seven-path recovery candidate is accurately represented as unstaged; both recovery Builds and their maintainer classifications are recorded; the active future sequence begins with staging.
+- [x] PASS — Repository state through the observed commit history is accurately reported. The original two-commit range `2a092ed0…aa5fc6e…` contains exactly seven distinct Phase 0 paths; `git diff --check 2a092ed0…aa5fc6e…` returns no diagnostic. The historical Phase 0 recovery Build started from the exact seven-path unstaged recovery baseline with no staged or untracked path; that working tree was not clean. The seven-path post-Phase-0 reconciliation was later committed in `8c89dc9cb6d7983d3927201bbd8ebe1acea273ec` on `release/v0.1.1`. Immediately before Phase 1R0 began, the repository was directly observed clean at `1d1754da86182d21820b88a819cfd6879eba9ed8`; no active Phase 0 recovery-staging sequence remains.
+- [x] PASS — The seven Phase 0 documents contain no unresolved lifecycle or evidence-record contradiction: the historical two-commit evidence remains intact; the historical dirty recovery baseline and the later `8c89dc9…` reconciliation commit are accurately distinguished; both recovery Builds and their maintainer classifications are recorded; no active Phase 0 recovery-staging sequence remains.
 - [x] PASS — Phase 0 was not marked complete before accepted structural evidence and accepted pre-closure staged-index validation existed.
 
 ## Phase 1 — Post-Release State and Documentation Closure
@@ -124,6 +124,10 @@ Correct current-facing documentation so that the repository accurately describes
 - `docs/releases/v0.1.0/agent-evaluation.md` (closure note, if needed)
 - Any directly affected cross-references
 - Phase experiment record; ID assigned when the task starts according to the experiment protocol.
+
+### Preparatory work note
+
+Increment A and Increment B2 are preparatory machine-readable harness increments completed while Phase 1 is current; they are recorded in `AGENTS.md` and `EXP-0014` through `EXP-0017` and are not formally defined Phase 1 deliverables. Formal Phase 1 documentation implementation has not started. Phase 1 therefore remains `Planned`.
 
 ### Exact or bounded path scope
 
