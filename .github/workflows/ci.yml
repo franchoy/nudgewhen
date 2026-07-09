@@ -3,10 +3,11 @@ name: CI
 on:
   push:
     branches:
-      - release/v0.1.0
+      - release/**
+      - main
   pull_request:
     branches:
-      - release/v0.1.0
+      - main
   workflow_dispatch:
 
 permissions:

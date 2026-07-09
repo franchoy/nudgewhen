@@ -235,21 +235,22 @@ Replace the one-release-only CI configuration with a persistent validation polic
 
 ### Status
 
-Planned
+In progress (local persistent CI candidate present; commit, push, CI run, and remote ruleset verification remain separate actions)
 
 ### Validation checklist
 
-- [ ] BLOCKED — `.github/workflows/ci.yml` triggers on pushes to `release/**`. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — `.github/workflows/ci.yml` triggers on pull requests targeting `main`. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — `.github/workflows/ci.yml` triggers on pushes to `main`. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — `.github/workflows/ci.yml` triggers on manual `workflow_dispatch`. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — The required job name is stable as `validate`. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — Read-only default permissions, full-SHA action pinning, bounded timeout, concurrency cancellation, and debug APK upload are preserved. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — A push to `release/v0.1.1` automatically starts the workflow. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — The resulting `validate` run passes. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — The `main` ruleset explicitly requires the stable `validate` check. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — Remote settings are independently read back and recorded. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — Phase experiment record; ID assigned when the task starts according to the experiment protocol. The phase has not started; direct completion evidence is not yet available.
+- [x] PASS — `.github/workflows/ci.yml` triggers on pushes to `release/**`. Directly observed by the post-mutation readback; the workflow `on.push.branches` list contains the `release/**` pattern. Phase 2A produced the local candidate; the actual push, the resulting workflow run, and the remote ruleset verification are separate actions.
+- [x] PASS — `.github/workflows/ci.yml` triggers on pull requests targeting `main`. Directly observed by the post-mutation readback; the workflow `on.pull_request.branches` list contains `main`. Phase 2A produced the local candidate; the actual pull request, the resulting workflow run, and the remote ruleset verification are separate actions.
+- [x] PASS — `.github/workflows/ci.yml` triggers on pushes to `main`. Directly observed by the post-mutation readback; the workflow `on.push.branches` list contains `main` in addition to `release/**`. Phase 2A produced the local candidate; the actual push to `main`, the resulting workflow run, and the remote ruleset verification are separate actions.
+- [x] PASS — `.github/workflows/ci.yml` triggers on manual `workflow_dispatch`. Directly observed by the post-mutation readback; the workflow `on` map contains the `workflow_dispatch` key.
+- [x] PASS — The required job name is stable as `validate`. Directly observed by the post-mutation readback; the `jobs` map has a single `validate` key with `name: validate`. Branch protection or ruleset configuration can require the stable `validate` job by name.
+- [x] PASS — Read-only default permissions, full-SHA action pinning, bounded timeout, concurrency cancellation, and debug APK upload are preserved. Directly observed by the post-mutation readback; `permissions: contents: read` is at the top level, all three `uses:` references are pinned to full commit SHAs with version comments, `timeout-minutes: 30` is set on the job, `concurrency.cancel-in-progress: true` is set, and the `upload-debug-apk` step with `if: success()` is preserved.
+- [x] PASS — CI policy documentation exists. Directly observed by the existence of `docs/releases/v0.1.1/ci-policy.md` recording the purpose and scope, trigger matrix, stable job name, security posture, validation behavior, branch protection boundary, and release-train status.
+- [x] PASS — Phase experiment record exists. Directly observed by the creation of `docs/agentic-development/experiments/EXP-0020.md` recording the Phase 2A Build.
+- [ ] BLOCKED — A push to `release/v0.1.1` automatically starts the workflow. The Phase 2A Build produced the local candidate; the commit, the push to `release/v0.1.1`, the resulting `validate` workflow run, and the observation that the workflow actually started are separate actions and remain pending. No push was performed by this Build.
+- [ ] BLOCKED — The resulting `validate` run passes. The Phase 2A Build produced the local candidate; the commit, the push, the resulting `validate` workflow run, and the observation that the `validate` job passed are separate actions and remain pending. No push was performed by this Build.
+- [ ] BLOCKED — The `main` ruleset explicitly requires the stable `validate` check. Remote main protection and ruleset readback are explicitly out of scope for Phase 2A; Phase 2B is the separately authorized remote readback task. No claim is made in Phase 2A that `main` already requires `validate`; the claim depends on the Phase 2B remote readback.
+- [ ] BLOCKED — Remote settings are independently read back and recorded. Remote main protection, ruleset, status-check enforcement, and any other remote configuration are explicitly out of scope for Phase 2A; Phase 2B is the separately authorized remote readback task.
 
 ## Phase 3 — Reusable Local-Validator Architecture
 
