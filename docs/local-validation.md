@@ -1,12 +1,12 @@
 # Local Validation — NudgeWhen v0.1.0
 
-**Document status:** Draft — pending maintainer review
+**Document status:** Historical evidence — the Phase 4 local validation baseline was established on `v0.1.0` and is carried forward into `v0.1.1` until Phase 3 refactors it
 
 ## Purpose and scope
 
 This document describes the Phase 4 local validation suite for the NudgeWhen `v0.1.0` release. The suite is a small, deterministic, dependency-free set of checks that the maintainer can run from a fresh checkout to confirm that the repository is in a valid pre-release state. The suite is intentionally local: it does not clone, fetch, push, commit, create worktrees, or modify repository content. It writes only into the ignored Gradle and Android build output paths when the Android group is run.
 
-The Phase 4 local-validation implementation baseline is complete in the current release-train candidate. The Phase 4 implementation scope — the validators, the local-validation documentation, the Phase 4 experiment record, the governance-status synchronization, and the candidate-mode and clean-checkout contract — is present in the working tree of `release/v0.1.0`. The authoritative clean-checkout proof has not yet been performed. No claim is made that Phase 4 has been committed, pushed, or released; staging, the repository commit, the release pull request, the annotated tag, and the GitHub release are separate post-Build administrative and repository actions that remain separately gated.
+The Phase 4 local-validation implementation baseline is the `v0.1.0` local-validation baseline. It was established on `release/v0.1.0`, was carried through the released `v0.1.0` GitHub release, and is now carried forward unchanged into the active `v0.1.1` release train on `release/v0.1.1` until the Phase 3 "Reusable Local-Validator Architecture" refactor supersedes it. The validator behavior, command semantics, and release-gate semantics described below are not changed by this Build; Phase 1 documentation closure does not refactor validator behavior.
 
 ## Dynamic private-working-material invariant
 
@@ -199,11 +199,11 @@ The suite does not perform clean-checkout creation, deletion, or any related orc
 
 ## CI
 
-Phase 5 established the GitHub Actions CI baseline on the `release/v0.1.0` branch. The committed workflow is `.github/workflows/ci.yml`; its only `validate` job step runs `./scripts/validate-local.sh --require-clean`. The shell script (`scripts/validate-local.sh`) sets `PYTHONDONTWRITEBYTECODE=1` and `exec`s `scripts/validate_local.py` with the passed arguments. The Python validator's `release_gate=SATISFIED` literal (printed by `print_summary_and_gate` at `scripts/validate_local.py` lines 1001-1014) is emitted only when all three validator groups (`required`, `docs`, `android`) are selected, no failures are recorded, the `android` group is in the selection, and `--skip-android` is not set; it is not emitted on the basis of the required and documentation groups alone. The release branch requires the `validate` check (a single required check with classic branch protection). The Phase 4 local validator remains the command executed by CI.
+Phase 5 of `v0.1.0` established the GitHub Actions CI baseline on the `release/v0.1.0` branch. The committed workflow is `.github/workflows/ci.yml`; its only `validate` job step runs `./scripts/validate-local.sh --require-clean`. The shell script (`scripts/validate-local.sh`) sets `PYTHONDONTWRITEBYTECODE=1` and `exec`s `scripts/validate_local.py` with the passed arguments. The Python validator's `release_gate=SATISFIED` literal (printed by `print_summary_and_gate` at `scripts/validate_local.py` lines 1001-1014) is emitted only when all three validator groups (`required`, `docs`, `android`) are selected, no failures are recorded, the `android` group is in the selection, and `--skip-android` is not set; it is not emitted on the basis of the required and documentation groups alone. The `v0.1.0` release branch required the `validate` check (a single required check with classic branch protection). The Phase 4 local validator remains the command executed by CI on `v0.1.0`; the persistent CI configuration for `v0.1.1` is a Phase 2 deliverable and is not described here.
 
 ## Phase 5
 
-Phase 5 (GitHub Actions CI Baseline) is complete. The release branch requires the `validate` check, the Phase 4 local validator remains the command executed by CI, and Phase 6 (Agent Evaluation Evidence) remains `Planned`. The present document does not claim that any release has been published or that any release pull request has been merged.
+Phase 5 (GitHub Actions CI Baseline) is complete on `v0.1.0`. The release branch required the `validate` check, the Phase 4 local validator was the command executed by CI, and the published `v0.1.0` GitHub release reflects this state. Phase 6 (Agent Evaluation Evidence) of `v0.1.0` is also complete; the historical "Phase 6 remains `Planned`" wording in earlier drafts of this document reflected the document's draft state at that time and no longer represents the final `v0.1.0` release state. The present document does not claim that any new release has been published or that any release pull request has been merged on the active `v0.1.1` train.
 
 ## Product functionality
 

@@ -165,20 +165,26 @@ The current-facing documentation paths listed above. Historical v0.1.0 evidence 
 
 ### Status
 
-Planned
+In progress (documentation candidate present; commit and push remain separate repository actions)
 
 ### Validation checklist
 
-- [ ] BLOCKED — `README.md` describes the released v0.1.0 baseline and the repository's real capabilities. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — `CONTRIBUTING.md` does not claim that the repository lacks Android, Gradle, CI, an APK, a published release, or a completed v0.1.0 release train. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — `SECURITY.md` does not claim the same absence. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — `docs/local-validation.md` does not direct contributors or agents to the deleted `release/v0.1.0` branch. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — The v0.1.0 phase list status summary agrees with the per-phase statuses. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — The v0.1.0 evaluation document carries a closure note where the former "Phase 6 remains Planned" statement no longer represents the final release state. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — General contributor and project documentation uses branch conventions such as `release/vX.Y.Z` rather than embedding the currently active patch branch. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — Links resolve. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — Documentation status declarations agree with document content. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — Phase experiment record; ID assigned when the task starts according to the experiment protocol. The phase has not started; direct completion evidence is not yet available.
+- [x] PASS — `README.md` describes the released v0.1.0 baseline and the repository's real capabilities. Directly observed by the pre-mutation readback; the document lists the Android application project, the `:app` module, Kotlin and Jetpack Compose, the launcher activity, the static text, the Gradle wrapper, AGP, compile and target SDK, the local validation suite, the local-validation documentation, the GitHub Actions CI workflow, the published v0.1.0 release, and the locally generated debug APK. No stale absence claim remains.
+- [x] PASS — `CONTRIBUTING.md` does not claim that the repository lacks Android, Gradle, CI, an APK, a published release, or a completed v0.1.0 release train. Directly observed by the pre-mutation readback; the document names the v0.1.0 release as complete and historical, names the v0.1.1 release train as active, and lists Android source, Gradle build files, manifest, resources, validation, and CI artefacts.
+- [x] PASS — `SECURITY.md` does not claim the same absence. Directly verified by the pre-mutation readback; the Build replaced the stale "Current state" paragraph that listed "no released or runnable application…no Android application code, no Gradle build, no APK…no CI workflow, and no published release" with a paragraph naming the v0.1.0 historical released baseline, the v0.1.1 active release train, and the real repository capabilities. The experimental/no-support nature of the project is preserved; security reporting guidance is preserved; no production support promise is created.
+- [x] PASS — `docs/local-validation.md` does not direct contributors or agents to a deleted `release/v0.1.0` branch. Directly verified by the post-mutation readback; the Build reframed the "Purpose and scope" prose to describe the validator as the v0.1.0 local-validation baseline carried forward into v0.1.1 until Phase 3 refactors it, and reframed the "Phase 5" section to record that v0.1.0 Phase 6 is also complete. The exact validator behavior, command semantics, release-gate semantics, Android SDK / JDK / build-tools requirements, and Phase 4 proof contract are preserved unmodified.
+- [x] PASS — The v0.1.0 phase list status summary agrees with the per-phase statuses. Directly verified by the post-mutation readback; the document-status line and the historical-closure annotation now state that all eight phases of v0.1.0 (Phases 0 through 7) are `Complete`. No raw historical evidence, measurement, classification, or experiment outcome was rewritten.
+- [x] PASS — The v0.1.0 evaluation document carries a closure note where the former "Phase 6 remains Planned" statement no longer represents the final release state. Directly verified by the post-mutation readback; the Build added a clearly labelled `Post-release closure note (added in the v0.1.1 Phase 1 documentation closure)` blockquote immediately below the document header. No raw historical evidence, measurement, classification, or experiment outcome was rewritten.
+- [x] PASS — General contributor and project documentation uses branch conventions such as `release/vX.Y.Z` rather than embedding the currently active patch branch. Directly observed by the pre-mutation readbacks of `README.md`, `CONTRIBUTING.md`, and `SECURITY.md`; the `release/v0.1.0` references that remain in current-facing documents are framed as historical evidence of the completed v0.1.0 release, not as the active branch.
+- [x] PASS — Links resolve. Directly observed by the docs-group validation result `docs/md-links — all relative Markdown links resolve`; the validator was run in this Build and produced no failure.
+- [x] PASS — Documentation status declarations agree with document content. Directly observed by the post-mutation readbacks of `SECURITY.md`, `docs/local-validation.md`, `docs/releases/v0.1.0/phase-list.md`, `docs/releases/v0.1.0/agent-evaluation.md`, and the synchronized Phase 1 status in this file.
+- [x] PASS — Phase experiment record; ID assigned when the task starts according to the experiment protocol. Directly observed by the existence of `docs/agentic-development/experiments/EXP-0019.md` recording the Phase 1B Build.
+- [x] PASS — The required-group validation completed without any `FAIL` line. Directly observed by the post-mutation validation run `SUMMARY pass=7 fail=0 skip=0` on `./scripts/validate-local.sh --group required`.
+- [x] PASS — The docs-group validation completed without any `FAIL` line. Directly observed by the post-mutation validation run `SUMMARY pass=10 fail=0 skip=0` on `./scripts/validate-local.sh --group docs`.
+- [x] PASS — The `--skip-android` validation completed without any `FAIL` line. Directly observed by the post-mutation validation run `SUMMARY pass=17 fail=0 skip=0` on `./scripts/validate-local.sh --skip-android`.
+- [x] PASS — A repository-wide stale-claim search was performed against the eight target patterns using the harness's `Grep` tool. Directly recorded in `EXP-0019.md`; no denied command or unapproved substitution occurred.
+- [ ] BLOCKED — Commit, push, and post-Build acceptance of the documentation candidate are not yet performed in this experiment; they remain separate repository actions.
+- [ ] BLOCKED — The maintainer has not yet accepted the Phase 1 documentation candidate; the Build produced a candidate and the evidence file, but the candidate is not committed, pushed, or accepted.
 
 ## Phase 2 — Persistent CI and Protected-Branch Enforcement
 

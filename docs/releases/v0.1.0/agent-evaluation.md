@@ -1,11 +1,24 @@
 # NudgeWhen v0.1.0 — Agent Evaluation Summary
 
-**Document status:** Draft — Phase 6 evidence draft — pending maintainer review
-**Document version:** Draft v4 (terminal correction)
+**Document status:** Historical — Phase 6 evidence draft was the draft state at the time; `v0.1.0` is complete and the release is published
+**Document version:** Draft v4 (terminal correction) at draft time; post-release closure note added
 **Release:** v0.1.0
 **Phase:** Phase 6 — Agent Evaluation Evidence
 **Reviewed experiment records:** [EXP-0001](../../agentic-development/experiments/EXP-0001.md) through [EXP-0010](../../agentic-development/experiments/EXP-0010.md)
 **Authoritative repository sources reviewed:** `AGENTS.md`, `docs/agentic-development/experiment-protocol.md`, `docs/agentic-development/evaluation-template.md`, `docs/agentic-development/opencode-governance.md`, `docs/releases/v0.1.0/release-charter.md`, `docs/releases/v0.1.0/phase-list.md`, `README.md`, `scripts/validate_local.py`, `scripts/validate-local.sh`, `.github/workflows/ci.yml`, `docs/local-validation.md`.
+
+> **Post-release closure note (added in the `v0.1.1` Phase 1 documentation closure).**
+>
+> Earlier statements in this document such as "Phase 6 remains `Planned`" and "Statement that Phase 6 is still in draft and not Complete" reflected the document's draft state at that time. They no longer represent the final `v0.1.0` release state. The final `v0.1.0` release state is:
+>
+> - The `v0.1.0` release was published.
+> - The `v0.1.0` release pull request was merged into `main`.
+> - The annotated `v0.1.0` tag was created.
+> - Phase 6 of `v0.1.0` is `Complete`, together with Phases 0 through 5 and Phase 7.
+> - The release-defining documents `docs/releases/v0.1.0/phase-list.md` and `docs/releases/v0.1.0/release-charter.md` show the final completed state.
+> - This document is retained as historical evidence. The raw historical evidence — the evidence matrix, the repeated-lessons matrix, the existing-control gap analysis, the consolidated promotion shortlist, the deferred experiment candidates, and the Phase 6 decision state — is preserved unmodified. No command evidence, measurement, classification, or experiment outcome is rewritten by this closure note.
+> - The current release train is `v0.1.1` on the single branch `release/v0.1.1`. The closed `release/v0.1.0` branch remains in the repository as historical evidence of the completed release and is not the active branch.
+> - No promotion from the consolidated shortlist (C-01 through C-07) was implemented on the `v0.1.0` branch. Promotions remain `defer to a separately planned and authorized experiment` in their original draft language.
 
 ## Identification and scope
 

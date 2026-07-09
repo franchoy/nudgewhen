@@ -1,6 +1,8 @@
 # Phase List — NudgeWhen v0.1.0
 
-**Document status:** Accepted — Phases 0, 1, 2, 3, 4 and 5 complete
+**Document status:** Historical — v0.1.0 release is complete; all eight phases (Phases 0 through 7) are `Complete`
+
+> **Historical closure annotation.** The phrase "Phases 0, 1, 2, 3, 4 and 5 complete" in earlier drafts of this status line reflected the document's draft state at that time. The final `v0.1.0` release state is that every phase in this list — Phases 0, 1, 2, 3, 4, 5, 6, and 7 — has status `Complete`, the `v0.1.0` release was published, the release pull request was merged into `main`, the annotated `v0.1.0` tag was created, and the `v0.1.0` GitHub release exists. Raw command evidence, measurements, classifications, and experiment outcomes for each phase are preserved unmodified below.
 
 ## Release-wide sequencing rules
 
