@@ -127,7 +127,7 @@ Correct current-facing documentation so that the repository accurately describes
 
 ### Preparatory work note
 
-Increment A and Increment B2 are preparatory machine-readable harness increments completed while Phase 1 is current; they are recorded in `AGENTS.md` and `EXP-0014` through `EXP-0017` and are not formally defined Phase 1 deliverables. Formal Phase 1 documentation implementation has not started. Phase 1 therefore remains `Planned`.
+Increment A and Increment B2 are preparatory machine-readable harness increments completed while Phase 1 is current; they are recorded in `AGENTS.md` and `EXP-0014` through `EXP-0017` and are not formally defined Phase 1 deliverables. Formal Phase 1 documentation implementation was completed by the Phase 1B Build and manually committed and pushed by the maintainer; see the Status section and the updated validation checklist below. Phase 1 is now `Complete`.
 
 ### Exact or bounded path scope
 
@@ -165,7 +165,7 @@ The current-facing documentation paths listed above. Historical v0.1.0 evidence 
 
 ### Status
 
-In progress (documentation candidate present; commit and push remain separate repository actions)
+Complete
 
 ### Validation checklist
 
@@ -183,8 +183,8 @@ In progress (documentation candidate present; commit and push remain separate re
 - [x] PASS — The docs-group validation completed without any `FAIL` line. Directly observed by the post-mutation validation run `SUMMARY pass=10 fail=0 skip=0` on `./scripts/validate-local.sh --group docs`.
 - [x] PASS — The `--skip-android` validation completed without any `FAIL` line. Directly observed by the post-mutation validation run `SUMMARY pass=17 fail=0 skip=0` on `./scripts/validate-local.sh --skip-android`.
 - [x] PASS — A repository-wide stale-claim search was performed against the eight target patterns using the harness's `Grep` tool. Directly recorded in `EXP-0019.md`; no denied command or unapproved substitution occurred.
-- [ ] BLOCKED — Commit, push, and post-Build acceptance of the documentation candidate are not yet performed in this experiment; they remain separate repository actions.
-- [ ] BLOCKED — The maintainer has not yet accepted the Phase 1 documentation candidate; the Build produced a candidate and the evidence file, but the candidate is not committed, pushed, or accepted.
+- [x] PASS — Commit, push, and post-Build acceptance of the documentation candidate are now performed via the maintainer's manual repository action. Commit hash: `fc288a2bb5103832a4c4969bbc67cd3bfe7aab6a`; commit message: `docs: close v0.1.1 phase 1 documentation state`; commit summary: 6 files changed, 402 insertions(+), 19 deletions(-); create mode `100644 docs/agentic-development/experiments/EXP-0019.md`. Push evidence: `8f28638..fc288a2 release/v0.1.1 -> release/v0.1.1`. The Build produced the candidate; the maintainer manually performed the staging, commit, and push. A prior `nudge-build` R1 attempt to perform the same `git add` was blocked by the OpenCode harness permission boundary; the maintainer's manual action followed that block.
+- [x] PASS — The maintainer accepted the Phase 1 documentation candidate by manually staging, committing, and pushing exactly the six Phase 1B paths in commit `fc288a2bb5103832a4c4969bbc67cd3bfe7aab6a` on `release/v0.1.1`. The Build produced the candidate; the maintainer's manual commit and push constitutes post-Build documentation acceptance.
 
 ## Phase 2 — Persistent CI and Protected-Branch Enforcement
 
