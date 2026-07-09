@@ -4,7 +4,7 @@ NudgeWhen is an early-stage experimental open-source project exploring a voice-f
 
 ## Project status
 
-This project is in the v0.1.0 release train on the single branch `release/v0.1.0`.
+NudgeWhen is currently in the `v0.1.1` release train, a documentation, governance, validation, CI, supply-chain, workspace-hygiene, and release metadata hardening patch release on the single branch `release/v0.1.1`. The previous `v0.1.0` release is complete and historical; its branch `release/v0.1.0` is no longer the active branch.
 
 ## What exists now
 
@@ -16,13 +16,11 @@ This project is in the v0.1.0 release train on the single branch `release/v0.1.0
 - Gradle wrapper `9.4.1`.
 - Android Gradle Plugin `9.2.1`.
 - Compile and target SDK `36`; minimum SDK `26`.
-- A locally generated debug APK at `app/build/outputs/apk/debug/app-debug.apk` (ignored and not committed).
-- Successful local project discovery, debug assembly, and Android lint.
-- Successful physical-device installation and launch on one UMIDIGI A15T running Android 13, with the exact baseline text visibly confirmed.
-- Phase 3 experiment evidence in [EXP-0006](docs/agentic-development/experiments/EXP-0006.md).
 - A repeatable local validation suite at [`scripts/validate-local.sh`](scripts/validate-local.sh) and [`scripts/validate_local.py`](scripts/validate_local.py) covering `required`, `docs`, and `android` groups, with a deterministic `release_gate=SATISFIED` literal printed only on the all-groups run.
 - Local validation documentation in [docs/local-validation.md](docs/local-validation.md).
-- Phase 4 experiment evidence in [EXP-0007](docs/agentic-development/experiments/EXP-0007.md).
+- A GitHub Actions CI workflow.
+- Historical `v0.1.0` release evidence, including the published GitHub `v0.1.0` release and the v0.1.0 release documentation under `docs/releases/v0.1.0/`.
+- A locally generated debug APK at `app/build/outputs/apk/debug/app-debug.apk` (ignored and not committed).
 
 ## What still does not exist
 
@@ -37,12 +35,9 @@ The following are explicitly out of scope at this stage:
 - Background service.
 - Application networking.
 - Analytics or telemetry.
-- Test suite.
-- CI workflow.
-- A published APK or release.
 - A production-readiness, stability, security, or compatibility guarantee.
 
-A locally generated debug APK exists; no APK is published as a release artifact. Phase 4 implementation scope is complete in the current release-train candidate; clean-checkout proof execution, the repository commit, the release pull request, the annotated tag, and the GitHub release remain separately gated and have not yet occurred.
+`v0.1.1` is a documentation, governance, validation, CI, supply-chain, workspace-hygiene, and release metadata hardening patch release. It does not add reminder functionality, voice, speech, location, geofencing, persistence, contextual triggers, background behavior, application networking, analytics, telemetry, or any production-readiness guarantee.
 
 ## Long-term design intentions
 
@@ -60,42 +55,46 @@ This repository is also used to evaluate OpenCode and MiniMax M3 (3x usage) as p
 
 ## Current release train
 
-The project follows a phased release train on the single branch `release/v0.1.0`:
+The project follows a phased release train on the single branch `release/vX.Y.Z`. The current active branch is `release/v0.1.1`. The previous `v0.1.0` release train on `release/v0.1.0` is complete and historical.
 
-- **Phase 0** — Release charter and experiment protocol: complete.
-- **Phase 1** — Open-source community baseline: complete.
-- **Phase 2** — OpenCode governance baseline: complete.
-- **Phase 3** — Minimal static Android technical baseline: complete.
+`v0.1.0` phases (historical, complete):
+
+- Phase 0 — Release charter and experiment protocol: complete.
+- Phase 1 — Open-source community baseline: complete.
+- Phase 2 — OpenCode governance baseline: complete.
+- Phase 3 — Minimal static Android technical baseline: complete.
 - Phase 4 — Local validation baseline: complete.
-- **Phase 5** — GitHub Actions CI baseline: complete.
-- **Phase 6** — Agent evaluation evidence: complete.
-- **Phase 7** — the final pre-release gate: complete.
+- Phase 5 — GitHub Actions CI baseline: complete.
+- Phase 6 — Agent evaluation evidence: complete.
+- Phase 7 — Final pre-release gate: complete.
+
+`v0.1.1` is a documentation, governance, validation, CI, supply-chain, workspace-hygiene, and release metadata hardening patch release following the v0.1.0 baseline.
 
 No delivery dates or completion promises are made.
 
-## Phase 2 — OpenCode governance baseline
+## Phase 2 — OpenCode governance baseline (v0.1.0 historical)
 
-Phase 2 established the project-local OpenCode governance baseline. The Phase 2 governance baseline consists of:
+Phase 2 of `v0.1.0` established the project-local OpenCode governance baseline. The Phase 2 governance baseline consists of:
 
-- Repository-root [`AGENTS.md`](AGENTS.md) — the repository-local OpenCode operational contract and the project-local OpenCode configuration for Phase 2.
+- Repository-root [`AGENTS.md`](AGENTS.md) — the repository-local OpenCode operational contract.
 - [`docs/agentic-development/opencode-governance.md`](docs/agentic-development/opencode-governance.md) — the companion governance document that explains the rationale and selected examples.
-- `docs/agentic-development/experiments/EXP-0005.md` — the Phase 2 experiment evidence.
+- [`docs/agentic-development/experiments/EXP-0005.md`](docs/agentic-development/experiments/EXP-0005.md) — the Phase 2 experiment evidence.
 
-`AGENTS.md` is the repository-local OpenCode operational contract. No machine-readable OpenCode configuration file (`opencode.json`, `opencode.jsonc`, `.opencode/`, or any successor) was added in Phase 2. OpenCode skills, custom commands, agents, plugins, MCP configuration, and Hermes integration remain deferred.
+`AGENTS.md` is the repository-local OpenCode operational contract. A machine-readable OpenCode configuration file (`opencode.jsonc`) and project-local agent definitions under `.opencode/agents/` were introduced after Phase 2. OpenCode skills, custom commands, plugins, MCP configuration, and Hermes integration remain deferred.
 
-## Phase 3 — Android technical baseline
+## Phase 3 — Android technical baseline (v0.1.0 historical)
 
-Phase 3 established a minimal static Android technical baseline. It does not introduce any reminder, voice, location, or background functionality. The application displays a single static text string and exists only to prove the project builds, lints, installs, launches, and displays the declared content on a real device.
+Phase 3 of `v0.1.0` established a minimal static Android technical baseline. It does not introduce any reminder, voice, location, or background functionality. The application displays a single static text string and exists only to prove the project builds, lints, installs, launches, and displays the declared content on a real device.
 
 See [EXP-0006](docs/agentic-development/experiments/EXP-0006.md) for the complete experiment evidence, including the recorded build-attempt chronology, the five Stage 2 deviations, the maintainer-approved AndroidX merged-manifest allowlist, and the physical-device launch evidence.
 
-## Phase 4 — Local validation baseline
+## Phase 4 — Local validation baseline (v0.1.0 historical)
 
-Phase 4 established a repeatable local validation baseline. The validation suite covers required-files presence, documentation hygiene, and Android build / lint / APK / merged-manifest checks. The Phase 4 implementation scope is complete in the current release-train candidate.
+Phase 4 of `v0.1.0` established a repeatable local validation baseline. The validation suite covers required-files presence, documentation hygiene, and Android build / lint / APK / merged-manifest checks.
 
-The local validation suite runs locally and does not require network access during ordinary execution. The literal `release_gate=SATISFIED` is printed only on the all-groups run. Partial runs and runs that include `--skip-android` do not satisfy the release gate. Clean-checkout proof execution and the repository commit remain separately gated and have not yet been performed.
+The local validation suite runs locally and does not require network access during ordinary execution. The literal `release_gate=SATISFIED` is printed only on the all-groups run. Partial runs and runs that include `--skip-android` do not satisfy the release gate.
 
-See [docs/local-validation.md](docs/local-validation.md) for the local validation guide and [EXP-0007](docs/agentic-development/experiments/EXP-0007.md) for the Phase 4 experiment evidence, including the recorded attempt chronology, the accepted Stage 2 result, the accepted post-Build usage evidence and Build-stage delta, and the current closure-stage state.
+See [docs/local-validation.md](docs/local-validation.md) for the local validation guide and [EXP-0007](docs/agentic-development/experiments/EXP-0007.md) for the Phase 4 experiment evidence.
 
 ## Reproducible local build
 
@@ -118,11 +117,11 @@ The Phase 3 build was verified using OpenJDK 25.0.2 on Linux x86_64. This does n
 
 ### Output
 
-The debug APK is generated at `app/build/outputs/apk/debug/app-debug.apk`. Build output and caches are ignored and not committed. No APK is published as a release artifact.
+The debug APK is generated at `app/build/outputs/apk/debug/app-debug.apk`. Build output and caches are ignored and not committed.
 
-## Physical-device verification
+## Physical-device verification (v0.1.0 Phase 3 historical evidence)
 
-The Phase 3 application was installed and launched on one physical device, not as a compatibility matrix:
+The `v0.1.0` Phase 3 application was installed and launched on one physical device, not as a compatibility matrix:
 
 - Device: UMIDIGI A15T.
 - Android version: 13.
@@ -162,8 +161,10 @@ This project is licensed under the Apache License 2.0. See [LICENSE](LICENSE) fo
 
 ## Related documents
 
-- [Release charter](docs/releases/v0.1.0/release-charter.md)
-- [Phase list](docs/releases/v0.1.0/phase-list.md)
+- [Release charter — v0.1.1 (active)](docs/releases/v0.1.1/release-charter.md)
+- [Phase list — v0.1.1 (active)](docs/releases/v0.1.1/phase-list.md)
+- [Release charter — v0.1.0 (historical)](docs/releases/v0.1.0/release-charter.md)
+- [Phase list — v0.1.0 (historical)](docs/releases/v0.1.0/phase-list.md)
 - [Experiment protocol](docs/agentic-development/experiment-protocol.md)
 - [Evaluation template](docs/agentic-development/evaluation-template.md)
 - [Local validation guide](docs/local-validation.md)
