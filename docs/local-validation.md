@@ -1,6 +1,6 @@
-# Local Validation — NudgeWhen v0.1.0
+# Local Validation — NudgeWhen v0.1.1
 
-**Document status:** Historical evidence — the Phase 4 local validation baseline was established on `v0.1.0` and is carried forward into `v0.1.1` until Phase 3 refactors it
+**Document status:** Release-aware carried-forward baseline — the v0.1.0 Phase 4 local-validation baseline is carried forward into the active `v0.1.1` release train on `release/v0.1.1` until the Phase 3 "Reusable Local-Validator Architecture" refactor supersedes it; a single release-contract source has been introduced in Phase 3A1 and the validator wiring of that contract remains in a later subphase
 
 ## Purpose and scope
 
@@ -20,6 +20,14 @@ The validator applies a privacy-safe aggregate check to the generic `session-ses
 - matching filenames and file contents are never published as evidence.
 
 The validator prints counts only and never prints a matching filename, file metadata, or content. The invariant is satisfied in the current candidate. Either clean-checkout proof, when performed, will record the post-proof aggregate state; the proof itself does not change the invariant.
+
+## Release contract
+
+Phase 3A1 introduces a single release-contract source at `scripts/release_contract.json`. The contract is a standard-library-readable, deterministic JSON document with two-space indentation, sorted logically by section, and a top-level `schema_version` field. It is the authoritative location for the active release identity, the active release documents, the phase model, the Android artifact identity (including the current committed version metadata and the Phase 5 target version metadata), the validation-group contract, and the historical release pointer. The current `v0.1.1` values are present in the file at the time of the Phase 3A1 Build.
+
+Phase 3A1 introduces the contract but does not yet wire every validator check to it. The contract is committed as documentation and a data source; `scripts/validate_local.py` is not refactored in this Build. A later Phase 3 subphase (Phase 3A2 or later) will wire `scripts/validate_local.py` to load and validate this contract. Until that wiring is completed, the validator continues to read its existing embedded values from the `v0.1.0` Phase 4 baseline, and the existing command semantics, group semantics, exit-code semantics, candidate and clean-checkout behavior, release-gate behavior, Android manifest and APK validation behavior, no-network behavior, and no dependency-installation behavior are preserved without change.
+
+The contract is a data source for the validator; it is not itself a validator, and it does not run, install dependencies, or perform network access. The Phase 3 deliverable that refactors the validator to read this contract remains `Planned` in the active phase list, and this document does not claim that the refactor has been completed.
 
 ## Primary command
 
