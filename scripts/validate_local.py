@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import json
 import os
 import re
 import shutil
@@ -30,6 +31,8 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
 NS_ANDROID = "http://schemas.android.com/apk/res/android"
+
+RELEASE_CONTRACT_PATH = REPO / "scripts/release_contract.json"
 
 GROUP_ORDER = ("required", "docs", "android")
 
@@ -160,6 +163,7 @@ REQUIRED_FILES = (
     "docs/agentic-development/experiments/EXP-0006.md",
     "docs/agentic-development/experiments/EXP-0007.md",
     "scripts/validate-local.sh", "scripts/validate_local.py",
+    "scripts/release_contract.json",
     "docs/local-validation.md",
     ".github/PULL_REQUEST_TEMPLATE.md",
     ".github/ISSUE_TEMPLATE/bug_report.yml",
@@ -190,10 +194,283 @@ GITATTRIBUTES_CONTRACT = (
 PROHIBITED_TRACKED_PREFIXES = ("app/build/", ".gradle/", ".kotlin/")
 
 
+def _is_safe_repo_relative(path_str: object) -> bool:
+    if not isinstance(path_str, str) or not path_str:
+        return False
+    if path_str.startswith("/"):
+        return False
+    if len(path_str) >= 2 and path_str[1] == ":":
+        return False
+    parts = path_str.replace("\\", "/").split("/")
+    if any(p == ".." for p in parts):
+        return False
+    return True
+
+
+def _check_release_contract_int(value: object, key: str, positive: bool = True) -> str | None:
+    if not (isinstance(value, int) and not isinstance(value, bool)):
+        return f"{key} must be an integer"
+    if positive and value <= 0:
+        return f"{key} must be a positive integer"
+    return None
+
+
+def _check_release_contract_doc_path(container: dict, key: str, must_be: str) -> str | None:
+    val = container.get(key)
+    if not isinstance(val, str) or not val:
+        return f"{key} must be a non-empty string"
+    if not _is_safe_repo_relative(val):
+        return f"{key} is not a safe repository-relative path"
+    try:
+        resolved = (REPO / val).resolve()
+        try:
+            resolved.relative_to(REPO.resolve())
+        except ValueError:
+            return f"{key} resolves outside the repository"
+        if must_be == "file" and not resolved.is_file():
+            return f"{key} file does not exist: {val}"
+        if must_be == "dir" and not resolved.is_dir():
+            return f"{key} directory does not exist: {val}"
+        return None
+    except (OSError, RuntimeError):
+        return f"{key} could not be resolved"
+
+
+def check_release_contract(args: argparse.Namespace, fail_fast: bool) -> bool:
+    del args, fail_fast  # contract check is unconditional
+    if not RELEASE_CONTRACT_PATH.is_file():
+        emit_prereq(
+            "release-contract",
+            f"contract file missing: {RELEASE_CONTRACT_PATH.relative_to(REPO).as_posix()}",
+        )
+        return False
+    try:
+        raw = RELEASE_CONTRACT_PATH.read_bytes()
+    except OSError as e:
+        emit_prereq("release-contract", f"contract file unreadable: {e}")
+        return False
+    try:
+        text = raw.decode("utf-8")
+    except UnicodeDecodeError as e:
+        emit_prereq("release-contract", f"contract file is not valid UTF-8: {e}")
+        return False
+    try:
+        contract = json.loads(text)
+    except json.JSONDecodeError as e:
+        emit_prereq("release-contract", f"contract JSON is malformed: {e}")
+        return False
+    if not isinstance(contract, dict):
+        emit_prereq("release-contract", "contract must be a JSON object")
+        return False
+
+    # Top level
+    if contract.get("schema_version") != 1:
+        emit_prereq("release-contract", "schema_version must equal 1")
+        return False
+    for k in ("release", "release_documents", "phase_model", "android", "validation", "historical"):
+        if not isinstance(contract.get(k), dict):
+            emit_prereq("release-contract", f"{k} must be a JSON object")
+            return False
+
+    # Release
+    rel = contract["release"]
+    for k in ("version", "version_name", "active_branch", "title"):
+        v = rel.get(k)
+        if not isinstance(v, str) or not v:
+            emit_prereq("release-contract", f"release.{k} must be a non-empty string")
+            return False
+    err = _check_release_contract_int(rel.get("version_code"), "release.version_code")
+    if err is not None:
+        emit_prereq("release-contract", err)
+        return False
+    if rel["version"] != "v" + rel["version_name"]:
+        emit_prereq("release-contract", "release.version must equal 'v' + release.version_name")
+        return False
+    if rel["active_branch"] != "release/" + rel["version"]:
+        emit_prereq("release-contract", "release.active_branch must equal 'release/' + release.version")
+        return False
+
+    # Release documents
+    docs = contract["release_documents"]
+    for k in ("charter", "phase_list", "local_validation"):
+        err = _check_release_contract_doc_path(docs, k, "file")
+        if err is not None:
+            emit_prereq("release-contract", err)
+            return False
+
+    # Phase model
+    pm = contract["phase_model"]
+    err = _check_release_contract_int(pm.get("first_phase"), "phase_model.first_phase", positive=False)
+    if err is not None:
+        emit_prereq("release-contract", err)
+        return False
+    err = _check_release_contract_int(pm.get("last_phase"), "phase_model.last_phase", positive=False)
+    if err is not None:
+        emit_prereq("release-contract", err)
+        return False
+    if pm["first_phase"] > pm["last_phase"]:
+        emit_prereq("release-contract", "phase_model.first_phase must be <= last_phase")
+        return False
+    expected = pm.get("expected_statuses")
+    if not isinstance(expected, dict):
+        emit_prereq("release-contract", "phase_model.expected_statuses must be an object")
+        return False
+    expected_keys = [f"Phase {i}" for i in range(pm["first_phase"], pm["last_phase"] + 1)]
+    actual_keys = list(expected.keys())
+    if actual_keys != expected_keys:
+        emit_prereq(
+            "release-contract",
+            f"phase_model.expected_statuses keys must be {expected_keys}",
+        )
+        return False
+    for k in expected_keys:
+        if expected[k] not in ("Complete", "Planned"):
+            emit_prereq(
+                "release-contract",
+                f"phase_model.expected_statuses.{k} must be Complete or Planned",
+            )
+            return False
+    statuses = [expected[k] for k in expected_keys]
+    complete_count = statuses.count("Complete")
+    contiguous_complete = all(s == "Complete" for s in statuses[:complete_count])
+    contiguous_planned = all(s == "Planned" for s in statuses[complete_count:])
+    if not (contiguous_complete and contiguous_planned):
+        emit_prereq(
+            "release-contract",
+            "phase_model.expected_statuses must be a contiguous Complete prefix followed by a Planned suffix",
+        )
+        return False
+
+    # Android
+    andr = contract["android"]
+    for k in (
+        "namespace", "application_id", "package_name",
+        "current_version_name", "target_version_name",
+        "launcher_activity_source", "launcher_activity_merged",
+    ):
+        v = andr.get(k)
+        if not isinstance(v, str) or not v:
+            emit_prereq("release-contract", f"android.{k} must be a non-empty string")
+            return False
+    for k in (
+        "compile_sdk", "min_sdk", "target_sdk",
+        "current_version_code", "target_version_code",
+    ):
+        err = _check_release_contract_int(andr.get(k), f"android.{k}")
+        if err is not None:
+            emit_prereq("release-contract", err)
+            return False
+    if andr["application_id"] != andr["package_name"]:
+        emit_prereq("release-contract", "android.application_id must equal android.package_name")
+        return False
+    if andr["target_version_code"] < andr["current_version_code"]:
+        emit_prereq(
+            "release-contract",
+            "android.target_version_code must be >= android.current_version_code",
+        )
+        return False
+
+    # Cross-check app/build.gradle.kts
+    app_gradle = REPO / "app/build.gradle.kts"
+    if not app_gradle.is_file():
+        emit_prereq("release-contract", "app/build.gradle.kts is missing")
+        return False
+    try:
+        gradle_text = app_gradle.read_text(encoding="utf-8")
+    except (OSError, UnicodeDecodeError):
+        emit_prereq("release-contract", "app/build.gradle.kts unreadable")
+        return False
+    gradle_expectations = [
+        ("namespace", f'namespace = "{andr["namespace"]}"'),
+        ("applicationId", f'applicationId = "{andr["application_id"]}"'),
+        ("compileSdk", f"compileSdk = {andr['compile_sdk']}"),
+        ("minSdk", f"minSdk = {andr['min_sdk']}"),
+        ("targetSdk", f"targetSdk = {andr['target_sdk']}"),
+        ("versionCode", f"versionCode = {andr['current_version_code']}"),
+        ("versionName", f'versionName = "{andr["current_version_name"]}"'),
+    ]
+    bad = [name for name, expected_str in gradle_expectations if expected_str not in gradle_text]
+    if bad:
+        emit_prereq(
+            "release-contract",
+            f"app/build.gradle.kts does not match contract: {bad}",
+        )
+        return False
+
+    # Cross-check AndroidManifest.xml
+    manifest_path = REPO / "app/src/main/AndroidManifest.xml"
+    if not manifest_path.is_file():
+        emit_prereq("release-contract", "app/src/main/AndroidManifest.xml is missing")
+        return False
+    try:
+        tree = ET.parse(manifest_path)
+    except (OSError, ET.ParseError):
+        emit_prereq("release-contract", "app/src/main/AndroidManifest.xml unreadable")
+        return False
+    expected_activity_name = andr["launcher_activity_source"]
+    found_activity = False
+    for activity in tree.getroot().iter("activity"):
+        if activity.get(f"{{{NS_ANDROID}}}name") == expected_activity_name:
+            found_activity = True
+            break
+    if not found_activity:
+        emit_prereq(
+            "release-contract",
+            f"AndroidManifest.xml has no activity with android:name {expected_activity_name!r}",
+        )
+        return False
+
+    # Validation
+    val = contract["validation"]
+    expected_groups = ["required", "docs", "android"]
+    if val.get("groups") != expected_groups:
+        emit_prereq("release-contract", f"validation.groups must equal {expected_groups}")
+        return False
+    if val.get("all_alias") != "all":
+        emit_prereq("release-contract", "validation.all_alias must equal 'all'")
+        return False
+    if val.get("release_gate_requires_groups") != expected_groups:
+        emit_prereq(
+            "release-contract",
+            f"validation.release_gate_requires_groups must equal {expected_groups}",
+        )
+        return False
+    for k in (
+        "release_gate_requires_android_not_skipped",
+        "require_clean_supported",
+        "no_network",
+        "no_dependency_installation",
+    ):
+        if val.get(k) is not True:
+            emit_prereq("release-contract", f"validation.{k} must be true")
+            return False
+
+    # Historical
+    hist = contract["historical"]
+    for k in ("previous_release_version", "previous_release_docs_root"):
+        v = hist.get(k)
+        if not isinstance(v, str) or not v:
+            emit_prereq("release-contract", f"historical.{k} must be a non-empty string")
+            return False
+    if hist.get("previous_release_is_historical") is not True:
+        emit_prereq("release-contract", "historical.previous_release_is_historical must be true")
+        return False
+    err = _check_release_contract_doc_path(hist, "previous_release_docs_root", "dir")
+    if err is not None:
+        emit_prereq("release-contract", err)
+        return False
+
+    emit("PASS", "required", "release-contract", "release contract loaded and validated")
+    return True
+
+
 def check_required(args: argparse.Namespace, fail_fast: bool) -> bool:
     ok = True
     tracked = set(git_ls_files())
     clean_mode = args.require_clean
+
+    if not check_release_contract(args, fail_fast):
+        return False
 
     for rel in REQUIRED_FILES:
         if clean_mode:
