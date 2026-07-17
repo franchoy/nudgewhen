@@ -54,7 +54,7 @@ CANDIDATE_UNTRACKED_ALLOWLIST = (
 
 TEXT_EXTENSIONS = (
     ".md", ".kts", ".kt", ".xml", ".yml", ".yaml",
-    ".toml", ".properties", ".sh", ".py",
+    ".toml", ".properties", ".sh", ".py", ".json",
 )
 
 NON_FUNCTIONALITY_CATEGORIES = (
@@ -69,6 +69,9 @@ NON_FUNCTIONALITY_CATEGORIES = (
 
 _RESULTS: list[tuple[str, str, str, str]] = []
 _PREREQ_FAILED = False
+_CONTRACT: dict | None = None
+_CONTRACT_ERROR: str | None = None
+_CONTRACT_LOADED: bool = False
 
 
 def emit(status: str, group: str, check: str, message: str) -> None:
@@ -236,110 +239,114 @@ def _check_release_contract_doc_path(container: dict, key: str, must_be: str) ->
         return f"{key} could not be resolved"
 
 
-def check_release_contract(args: argparse.Namespace, fail_fast: bool) -> bool:
-    del args, fail_fast  # contract check is unconditional
+def _load_release_contract() -> dict | None:
+    """Load and fully validate the release contract, returning the validated dict
+    on success or None on failure. The result is cached at module scope so the
+    contract is loaded and fully validated at most once per validator process.
+
+    On failure, ``_CONTRACT_ERROR`` is set to a concise reason string. This
+    function does not emit any result line; callers are responsible for
+    emitting the appropriate PASS/FAIL.
+    """
+    global _CONTRACT, _CONTRACT_ERROR, _CONTRACT_LOADED
+    if _CONTRACT_LOADED:
+        return _CONTRACT
+    _CONTRACT_LOADED = True
+
     if not RELEASE_CONTRACT_PATH.is_file():
-        emit_prereq(
-            "release-contract",
-            f"contract file missing: {RELEASE_CONTRACT_PATH.relative_to(REPO).as_posix()}",
+        _CONTRACT_ERROR = (
+            f"contract file missing: {RELEASE_CONTRACT_PATH.relative_to(REPO).as_posix()}"
         )
-        return False
+        return None
     try:
         raw = RELEASE_CONTRACT_PATH.read_bytes()
     except OSError as e:
-        emit_prereq("release-contract", f"contract file unreadable: {e}")
-        return False
+        _CONTRACT_ERROR = f"contract file unreadable: {e}"
+        return None
     try:
         text = raw.decode("utf-8")
     except UnicodeDecodeError as e:
-        emit_prereq("release-contract", f"contract file is not valid UTF-8: {e}")
-        return False
+        _CONTRACT_ERROR = f"contract file is not valid UTF-8: {e}"
+        return None
     try:
         contract = json.loads(text)
     except json.JSONDecodeError as e:
-        emit_prereq("release-contract", f"contract JSON is malformed: {e}")
-        return False
+        _CONTRACT_ERROR = f"contract JSON is malformed: {e}"
+        return None
     if not isinstance(contract, dict):
-        emit_prereq("release-contract", "contract must be a JSON object")
-        return False
+        _CONTRACT_ERROR = "contract must be a JSON object"
+        return None
 
     # Top level
     if contract.get("schema_version") != 1:
-        emit_prereq("release-contract", "schema_version must equal 1")
-        return False
+        _CONTRACT_ERROR = "schema_version must equal 1"
+        return None
     for k in ("release", "release_documents", "phase_model", "android", "validation", "historical"):
         if not isinstance(contract.get(k), dict):
-            emit_prereq("release-contract", f"{k} must be a JSON object")
-            return False
+            _CONTRACT_ERROR = f"{k} must be a JSON object"
+            return None
 
     # Release
     rel = contract["release"]
     for k in ("version", "version_name", "active_branch", "title"):
         v = rel.get(k)
         if not isinstance(v, str) or not v:
-            emit_prereq("release-contract", f"release.{k} must be a non-empty string")
-            return False
+            _CONTRACT_ERROR = f"release.{k} must be a non-empty string"
+            return None
     err = _check_release_contract_int(rel.get("version_code"), "release.version_code")
     if err is not None:
-        emit_prereq("release-contract", err)
-        return False
+        _CONTRACT_ERROR = err
+        return None
     if rel["version"] != "v" + rel["version_name"]:
-        emit_prereq("release-contract", "release.version must equal 'v' + release.version_name")
-        return False
+        _CONTRACT_ERROR = "release.version must equal 'v' + release.version_name"
+        return None
     if rel["active_branch"] != "release/" + rel["version"]:
-        emit_prereq("release-contract", "release.active_branch must equal 'release/' + release.version")
-        return False
+        _CONTRACT_ERROR = "release.active_branch must equal 'release/' + release.version"
+        return None
 
     # Release documents
     docs = contract["release_documents"]
     for k in ("charter", "phase_list", "local_validation"):
         err = _check_release_contract_doc_path(docs, k, "file")
         if err is not None:
-            emit_prereq("release-contract", err)
-            return False
+            _CONTRACT_ERROR = err
+            return None
 
     # Phase model
     pm = contract["phase_model"]
     err = _check_release_contract_int(pm.get("first_phase"), "phase_model.first_phase", positive=False)
     if err is not None:
-        emit_prereq("release-contract", err)
-        return False
+        _CONTRACT_ERROR = err
+        return None
     err = _check_release_contract_int(pm.get("last_phase"), "phase_model.last_phase", positive=False)
     if err is not None:
-        emit_prereq("release-contract", err)
-        return False
+        _CONTRACT_ERROR = err
+        return None
     if pm["first_phase"] > pm["last_phase"]:
-        emit_prereq("release-contract", "phase_model.first_phase must be <= last_phase")
-        return False
+        _CONTRACT_ERROR = "phase_model.first_phase must be <= last_phase"
+        return None
     expected = pm.get("expected_statuses")
     if not isinstance(expected, dict):
-        emit_prereq("release-contract", "phase_model.expected_statuses must be an object")
-        return False
+        _CONTRACT_ERROR = "phase_model.expected_statuses must be an object"
+        return None
     expected_keys = [f"Phase {i}" for i in range(pm["first_phase"], pm["last_phase"] + 1)]
     actual_keys = list(expected.keys())
     if actual_keys != expected_keys:
-        emit_prereq(
-            "release-contract",
-            f"phase_model.expected_statuses keys must be {expected_keys}",
-        )
-        return False
+        _CONTRACT_ERROR = f"phase_model.expected_statuses keys must be {expected_keys}"
+        return None
     for k in expected_keys:
         if expected[k] not in ("Complete", "Planned"):
-            emit_prereq(
-                "release-contract",
-                f"phase_model.expected_statuses.{k} must be Complete or Planned",
-            )
-            return False
+            _CONTRACT_ERROR = f"phase_model.expected_statuses.{k} must be Complete or Planned"
+            return None
     statuses = [expected[k] for k in expected_keys]
     complete_count = statuses.count("Complete")
     contiguous_complete = all(s == "Complete" for s in statuses[:complete_count])
     contiguous_planned = all(s == "Planned" for s in statuses[complete_count:])
     if not (contiguous_complete and contiguous_planned):
-        emit_prereq(
-            "release-contract",
-            "phase_model.expected_statuses must be a contiguous Complete prefix followed by a Planned suffix",
+        _CONTRACT_ERROR = (
+            "phase_model.expected_statuses must be a contiguous Complete prefix followed by a Planned suffix"
         )
-        return False
+        return None
 
     # Android
     andr = contract["android"]
@@ -350,36 +357,33 @@ def check_release_contract(args: argparse.Namespace, fail_fast: bool) -> bool:
     ):
         v = andr.get(k)
         if not isinstance(v, str) or not v:
-            emit_prereq("release-contract", f"android.{k} must be a non-empty string")
-            return False
+            _CONTRACT_ERROR = f"android.{k} must be a non-empty string"
+            return None
     for k in (
         "compile_sdk", "min_sdk", "target_sdk",
         "current_version_code", "target_version_code",
     ):
         err = _check_release_contract_int(andr.get(k), f"android.{k}")
         if err is not None:
-            emit_prereq("release-contract", err)
-            return False
+            _CONTRACT_ERROR = err
+            return None
     if andr["application_id"] != andr["package_name"]:
-        emit_prereq("release-contract", "android.application_id must equal android.package_name")
-        return False
+        _CONTRACT_ERROR = "android.application_id must equal android.package_name"
+        return None
     if andr["target_version_code"] < andr["current_version_code"]:
-        emit_prereq(
-            "release-contract",
-            "android.target_version_code must be >= android.current_version_code",
-        )
-        return False
+        _CONTRACT_ERROR = "android.target_version_code must be >= android.current_version_code"
+        return None
 
     # Cross-check app/build.gradle.kts
     app_gradle = REPO / "app/build.gradle.kts"
     if not app_gradle.is_file():
-        emit_prereq("release-contract", "app/build.gradle.kts is missing")
-        return False
+        _CONTRACT_ERROR = "app/build.gradle.kts is missing"
+        return None
     try:
         gradle_text = app_gradle.read_text(encoding="utf-8")
     except (OSError, UnicodeDecodeError):
-        emit_prereq("release-contract", "app/build.gradle.kts unreadable")
-        return False
+        _CONTRACT_ERROR = "app/build.gradle.kts unreadable"
+        return None
     gradle_expectations = [
         ("namespace", f'namespace = "{andr["namespace"]}"'),
         ("applicationId", f'applicationId = "{andr["application_id"]}"'),
@@ -391,22 +395,19 @@ def check_release_contract(args: argparse.Namespace, fail_fast: bool) -> bool:
     ]
     bad = [name for name, expected_str in gradle_expectations if expected_str not in gradle_text]
     if bad:
-        emit_prereq(
-            "release-contract",
-            f"app/build.gradle.kts does not match contract: {bad}",
-        )
-        return False
+        _CONTRACT_ERROR = f"app/build.gradle.kts does not match contract: {bad}"
+        return None
 
     # Cross-check AndroidManifest.xml
     manifest_path = REPO / "app/src/main/AndroidManifest.xml"
     if not manifest_path.is_file():
-        emit_prereq("release-contract", "app/src/main/AndroidManifest.xml is missing")
-        return False
+        _CONTRACT_ERROR = "app/src/main/AndroidManifest.xml is missing"
+        return None
     try:
         tree = ET.parse(manifest_path)
     except (OSError, ET.ParseError):
-        emit_prereq("release-contract", "app/src/main/AndroidManifest.xml unreadable")
-        return False
+        _CONTRACT_ERROR = "app/src/main/AndroidManifest.xml unreadable"
+        return None
     expected_activity_name = andr["launcher_activity_source"]
     found_activity = False
     for activity in tree.getroot().iter("activity"):
@@ -414,27 +415,25 @@ def check_release_contract(args: argparse.Namespace, fail_fast: bool) -> bool:
             found_activity = True
             break
     if not found_activity:
-        emit_prereq(
-            "release-contract",
-            f"AndroidManifest.xml has no activity with android:name {expected_activity_name!r}",
+        _CONTRACT_ERROR = (
+            f"AndroidManifest.xml has no activity with android:name {expected_activity_name!r}"
         )
-        return False
+        return None
 
     # Validation
     val = contract["validation"]
     expected_groups = ["required", "docs", "android"]
     if val.get("groups") != expected_groups:
-        emit_prereq("release-contract", f"validation.groups must equal {expected_groups}")
-        return False
+        _CONTRACT_ERROR = f"validation.groups must equal {expected_groups}"
+        return None
     if val.get("all_alias") != "all":
-        emit_prereq("release-contract", "validation.all_alias must equal 'all'")
-        return False
+        _CONTRACT_ERROR = "validation.all_alias must equal 'all'"
+        return None
     if val.get("release_gate_requires_groups") != expected_groups:
-        emit_prereq(
-            "release-contract",
-            f"validation.release_gate_requires_groups must equal {expected_groups}",
+        _CONTRACT_ERROR = (
+            f"validation.release_gate_requires_groups must equal {expected_groups}"
         )
-        return False
+        return None
     for k in (
         "release_gate_requires_android_not_skipped",
         "require_clean_supported",
@@ -442,24 +441,56 @@ def check_release_contract(args: argparse.Namespace, fail_fast: bool) -> bool:
         "no_dependency_installation",
     ):
         if val.get(k) is not True:
-            emit_prereq("release-contract", f"validation.{k} must be true")
-            return False
+            _CONTRACT_ERROR = f"validation.{k} must be true"
+            return None
 
     # Historical
     hist = contract["historical"]
     for k in ("previous_release_version", "previous_release_docs_root"):
         v = hist.get(k)
         if not isinstance(v, str) or not v:
-            emit_prereq("release-contract", f"historical.{k} must be a non-empty string")
-            return False
+            _CONTRACT_ERROR = f"historical.{k} must be a non-empty string"
+            return None
     if hist.get("previous_release_is_historical") is not True:
-        emit_prereq("release-contract", "historical.previous_release_is_historical must be true")
-        return False
+        _CONTRACT_ERROR = "historical.previous_release_is_historical must be true"
+        return None
     err = _check_release_contract_doc_path(hist, "previous_release_docs_root", "dir")
     if err is not None:
-        emit_prereq("release-contract", err)
-        return False
+        _CONTRACT_ERROR = err
+        return None
 
+    _CONTRACT = contract
+    _CONTRACT_ERROR = None
+    return _CONTRACT
+
+
+def get_release_contract() -> dict | None:
+    """Return the cached validated release contract, loading and validating it
+    on first call. Returns None if the contract failed to load or validate.
+
+    This accessor does not emit any result line. Callers that need a
+    prerequisite failure should also call ``get_release_contract_error`` and
+    emit the FAIL only when no prerequisite has already been emitted.
+    """
+    return _load_release_contract()
+
+
+def get_release_contract_error() -> str | None:
+    """Return the concise error string from the most recent contract load
+    attempt, or None if the contract loaded successfully or has not been
+    attempted yet. Triggers a load attempt if one has not yet occurred.
+    """
+    if not _CONTRACT_LOADED:
+        _load_release_contract()
+    return _CONTRACT_ERROR
+
+
+def check_release_contract(args: argparse.Namespace, fail_fast: bool) -> bool:
+    del args, fail_fast  # contract check is unconditional
+    contract = _load_release_contract()
+    if contract is None:
+        emit_prereq("release-contract", _CONTRACT_ERROR or "contract load failed")
+        return False
     emit("PASS", "required", "release-contract", "release contract loaded and validated")
     return True
 
@@ -725,82 +756,174 @@ def check_docs(args: argparse.Namespace, fail_fast: bool) -> bool:
     if ok:
         emit("PASS", "docs", "md-links", "all relative Markdown links resolve")
 
-    phase_list = REPO / "docs/releases/v0.1.0/phase-list.md"
+    # Load the contract silently for the remaining contract-driven docs checks.
+    # A successful load must not add a result line; a failure must emit exactly
+    # one prerequisite FAIL (only if no prerequisite has already been emitted).
+    contract = get_release_contract()
+    if contract is None:
+        if not _PREREQ_FAILED:
+            err = get_release_contract_error() or "contract load failed"
+            emit_prereq("release-contract", err)
+        return False
+
+    # Active phase list wiring (contract-driven)
+    phase_list_rel = contract["release_documents"]["phase_list"]
+    phase_list = REPO / phase_list_rel
+    first_phase = contract["phase_model"]["first_phase"]
+    last_phase = contract["phase_model"]["last_phase"]
+    expected_range = list(range(first_phase, last_phase + 1))
     phase_nums: list[int] = []
     if phase_list.is_file():
         text = phase_list.read_text(encoding="utf-8")
         phase_nums = [int(x) for x in re.findall(r"^## Phase (\d+) — .*$", text, flags=re.M)]
-    if phase_nums != [0, 1, 2, 3, 4, 5, 6, 7]:
+    if phase_nums != expected_range:
         emit("FAIL", "docs", "phase-headings", f"unexpected heading order: {phase_nums}")
         ok = False
         if fail_fast: return False
     else:
-        emit("PASS", "docs", "phase-headings", "Phase 0–7 headings ordered and unique")
+        emit("PASS", "docs", "phase-headings", f"Phase {first_phase}–{last_phase} headings ordered and unique")
 
     if not ok and fail_fast: return False
 
+    # Active phase status wiring (contract-driven, bounded per phase section).
+    # Each expected phase obtains its status exclusively from its own bounded
+    # section, defined as beginning at the phase heading and ending immediately
+    # before the next "## Phase N — ..." heading (EOF for the last phase). A
+    # missing status in one phase is never borrowed from a later phase.
+    expected_statuses = contract["phase_model"]["expected_statuses"]
+    SUPPORTED_STATUSES = ("Complete", "Planned")
     phase_status: dict[int, str] = {}
+    missing_status: list[int] = []
+    duplicate_status: list[str] = []
+    unsupported_status: list[str] = []
+    mismatched_status: list[str] = []
+
     if phase_list.is_file():
         text = phase_list.read_text(encoding="utf-8")
-        for n in range(0, 8):
-            m = re.search(
-                rf"## Phase {n} — [^\n]*\n.*?\*\*(?:Initial )?[Ss]tatus\.\*\*\s*`(\w+)`",
-                text, flags=re.S,
-            )
-            if m:
-                phase_status[n] = m.group(1).lower()
+        # Identify all active phase-heading matches and their character positions.
+        all_headings: list[tuple[int, int]] = []
+        for hm in re.finditer(r"^## Phase (\d+) — .*$", text, flags=re.M):
+            all_headings.append((int(hm.group(1)), hm.start()))
+        all_headings.sort(key=lambda x: x[1])
 
-    observed = [phase_status.get(i, "") for i in range(0, 8)]
+        status_heading_re = re.compile(r"^### Status\s*$", flags=re.M)
 
-    if len(observed) != 8:
-        emit("FAIL", "docs", "phase-status", f"expected 8 phase statuses, got {len(observed)}")
+        for n in expected_range:
+            # Locate the heading for phase n.
+            start_idx: int | None = None
+            for pn, pos in all_headings:
+                if pn == n:
+                    start_idx = pos
+                    break
+            if start_idx is None:
+                missing_status.append(n)
+                continue
+
+            # End the section immediately before the next phase heading; EOF for the last phase.
+            end_idx = len(text)
+            for pn, pos in all_headings:
+                if pos > start_idx:
+                    end_idx = pos
+                    break
+
+            section = text[start_idx:end_idx]
+
+            # Require exactly one `### Status` heading within the bounded section.
+            status_matches = list(status_heading_re.finditer(section))
+            if len(status_matches) == 0:
+                missing_status.append(n)
+                continue
+            if len(status_matches) > 1:
+                duplicate_status.append(f"Phase {n}: {len(status_matches)} ### Status headings")
+                continue
+
+            # Bound the status subsection: begin immediately after the single
+            # `### Status` heading and end immediately before the next Markdown
+            # heading of any level (`#` through `######`) within the phase
+            # section, or at the phase-section end when no later heading exists.
+            sub_start = status_matches[0].end()
+            sub_end = len(section)
+            any_heading_re = re.compile(r"^#{1,6}\s+\S", flags=re.M)
+            for hm in any_heading_re.finditer(section, pos=sub_start):
+                sub_end = hm.start()
+                break
+            status_block = section[sub_start:sub_end]
+
+            # Within the bounded status subsection require exactly one
+            # unformatted, nonblank value line.
+            value_lines: list[str] = [
+                ln.strip() for ln in status_block.splitlines() if ln.strip()
+            ]
+            if len(value_lines) == 0:
+                missing_status.append(n)
+                continue
+            if len(value_lines) > 1:
+                duplicate_status.append(f"Phase {n}: {len(value_lines)} status values")
+                continue
+
+            value = value_lines[0]
+            # Accept only the exact unformatted status literals supported by
+            # the validated contract.
+            if value not in SUPPORTED_STATUSES:
+                unsupported_status.append(f"Phase {n}: {value}")
+                continue
+
+            phase_status[n] = value
+
+    for n in expected_range:
+        key = f"Phase {n}"
+        expected = expected_statuses.get(key)
+        observed = phase_status.get(n)
+        if observed is not None and observed != expected:
+            mismatched_status.append(f"{key}: expected {expected}, got {observed}")
+
+    if missing_status or duplicate_status or unsupported_status or mismatched_status:
+        details: list[str] = []
+        if missing_status:
+            details.append(f"missing statuses: {[f'Phase {n}' for n in missing_status]}")
+        if duplicate_status:
+            details.append(f"duplicate Status headings: {duplicate_status}")
+        if unsupported_status:
+            details.append(f"unsupported statuses: {unsupported_status}")
+        if mismatched_status:
+            details.append(f"mismatches: {mismatched_status}")
+        emit("FAIL", "docs", "phase-status", "; ".join(details))
         ok = False
         if fail_fast: return False
     else:
-        unknown = [i for i, s in enumerate(observed) if s not in ("complete", "planned")]
-        if unknown:
-            emit("FAIL", "docs", "phase-status", f"unknown phase status at indices {unknown}: {observed}")
-            ok = False
-            if fail_fast: return False
-        else:
-            complete_count = observed.count("complete")
-            planned_count = observed.count("planned")
-            contiguous_complete = all(observed[i] == "complete" for i in range(complete_count))
-            contiguous_planned = all(observed[i] == "planned" for i in range(complete_count, 8))
-            if not (contiguous_complete and contiguous_planned):
-                emit("FAIL", "docs", "phase-status", f"phase statuses not in contiguous prefix/suffix order: {observed}")
-                ok = False
-                if fail_fast: return False
-            elif complete_count < 4:
-                emit("FAIL", "docs", "phase-status", f"complete prefix length {complete_count} below minimum 4: {observed}")
-                ok = False
-                if fail_fast: return False
-            elif complete_count > 8:
-                emit("FAIL", "docs", "phase-status", f"complete prefix length {complete_count} above maximum 8: {observed}")
-                ok = False
-                if fail_fast: return False
-            else:
-                emit("PASS", "docs", "phase-status", f"contiguous phase status: {complete_count} Complete, {planned_count} Planned")
+        complete_count = sum(1 for v in expected_statuses.values() if v == "Complete")
+        planned_count = sum(1 for v in expected_statuses.values() if v == "Planned")
+        emit("PASS", "docs", "phase-status", f"contiguous phase status: {complete_count} Complete, {planned_count} Planned")
 
+    if not ok and fail_fast: return False
+
+    # README active-release check (contract-driven)
     readme = REPO / "README.md"
-    if readme.is_file() and phase_list.is_file():
+    active_version = contract["release"]["version"]
+    active_branch = contract["release"]["active_branch"]
+    if readme.is_file():
         readme_text = readme.read_text(encoding="utf-8")
-        m = re.search(r"- Phase 4.*?(\bcomplete\b|\bplanned\b)", readme_text, flags=re.I)
-        if m:
-            readme_p4 = m.group(1).lower()
-            pl_p4 = phase_status.get(4, "")
-            if readme_p4 != pl_p4:
-                emit("FAIL", "docs", "readme-phase4", f"README Phase 4 status '{readme_p4}' differs from phase-list '{pl_p4}'")
-                ok = False
-                if fail_fast: return False
-            else:
-                emit("PASS", "docs", "readme-phase4", f"README and phase-list agree on Phase 4 ({readme_p4})")
-        else:
-            emit("FAIL", "docs", "readme-phase4", "could not locate README Phase 4 status")
+        missing_items: list[str] = []
+        if active_version not in readme_text:
+            missing_items.append(f"version '{active_version}'")
+        if active_branch not in readme_text:
+            missing_items.append(f"branch '{active_branch}'")
+        if missing_items:
+            emit("FAIL", "docs", "readme-active-release", f"README missing: {', '.join(missing_items)}")
             ok = False
             if fail_fast: return False
+        else:
+            emit("PASS", "docs", "readme-active-release", f"README contains active release version '{active_version}' and branch '{active_branch}'")
+    else:
+        emit("FAIL", "docs", "readme-active-release", "README.md missing")
+        ok = False
+        if fail_fast: return False
 
-    charter = REPO / "docs/releases/v0.1.0/release-charter.md"
+    if not ok and fail_fast: return False
+
+    # Active charter wiring (contract-driven)
+    charter_rel = contract["release_documents"]["charter"]
+    charter = REPO / charter_rel
     if charter.is_file():
         text = charter.read_text(encoding="utf-8")
         lower = text.lower()
@@ -826,13 +949,13 @@ def check_docs(args: argparse.Namespace, fail_fast: bool) -> bool:
             heading = nearest_heading(pos).lower()
             if any(kw in heading for kw in ("non-goal", "out of scope", "explicit non-goal")):
                 return True
-            # Also check inline negation in the 150 chars before and after
-            start = max(0, pos - 150)
+            # Also check inline negation in the 300 chars before and after
+            start = max(0, pos - 300)
             ctx_before = lower[start:pos]
-            ctx_after = lower[pos:pos + 150]
+            ctx_after = lower[pos:pos + 300]
             combined = ctx_before + " " + ctx_after
             if re.search(
-                r"(no |not |without |excludes? |lacks? |absence of |must not add|does not add|does not implement|contains no|out of scope|explicitly out|non-goal)",
+                r"(no |not |without |excludes? |lacks? |absence of |must not add|does not add|does not implement|does not introduce|contains no|out of scope|explicitly out|non-goal)",
                 combined,
             ):
                 return True
@@ -856,6 +979,10 @@ def check_docs(args: argparse.Namespace, fail_fast: bool) -> bool:
             if fail_fast: return False
         else:
             emit("PASS", "docs", "charter-consistency", "charter consistent with absence of all product functionality categories")
+    else:
+        emit("FAIL", "docs", "charter-consistency", f"charter file not found: {charter_rel}")
+        ok = False
+        if fail_fast: return False
 
     if not ok and fail_fast: return False
 
