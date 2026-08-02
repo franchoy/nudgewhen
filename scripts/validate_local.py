@@ -98,6 +98,21 @@ def git_status_short() -> str:
     return r.stdout
 
 
+def check_git_prerequisite() -> bool:
+    """Verify that the git executable is resolvable from PATH.
+
+    On success, returns True without emitting any result line. On
+    failure, emits a single ``FAIL prerequisite/git`` line, sets the
+    module-level prerequisite-failure flag, and returns False. The
+    absolute path of the git executable is never included in the
+    result message.
+    """
+    if shutil.which("git") is None:
+        emit_prereq("git", "git executable not found")
+        return False
+    return True
+
+
 def parse_args(argv: list[str]) -> argparse.Namespace:
     p = argparse.ArgumentParser(
         prog="validate-local.py",
@@ -1423,6 +1438,10 @@ def main(argv: list[str]) -> int:
     sel = resolve_groups(args)
     if isinstance(sel, int):
         return sel
+
+    if not check_git_prerequisite():
+        print_summary_and_gate(args)
+        return 2
 
     if args.require_clean:
         before = git_status_short()
