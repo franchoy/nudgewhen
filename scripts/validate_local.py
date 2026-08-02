@@ -4,7 +4,7 @@
 Phase 4 — Local Validation Baseline. Python standard library only.
 
 CLI:
-  --group {required,docs,android,all}   (repeatable; default: all)
+  --group NAME   (repeatable; default: all contract-declared groups)
   --skip-android                        (remove android from default/all)
   --offline                             (append --offline to Gradle)
   --fail-fast                           (stop after first failed check)
@@ -27,14 +27,13 @@ import shutil
 import subprocess
 import sys
 import xml.etree.ElementTree as ET
+from collections.abc import Callable
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
 NS_ANDROID = "http://schemas.android.com/apk/res/android"
 
 RELEASE_CONTRACT_PATH = REPO / "scripts/release_contract.json"
-
-GROUP_ORDER = ("required", "docs", "android")
 
 GRADLEW_BAT_EXPECTED_SHA = (
     "fedad02c18e266ec094995a5751b7fe1eb6e74f66bf75db64fae2e50eb22c234"
@@ -113,12 +112,16 @@ def check_git_prerequisite() -> bool:
     return True
 
 
-def parse_args(argv: list[str]) -> argparse.Namespace:
+def parse_args(
+    argv: list[str],
+    groups: tuple[str, ...],
+    all_alias: str,
+) -> argparse.Namespace:
     p = argparse.ArgumentParser(
         prog="validate-local.py",
         description="Local validation suite for the NudgeWhen v0.1.0 release.",
     )
-    p.add_argument("--group", action="append", choices=list(GROUP_ORDER) + ["all"])
+    p.add_argument("--group", action="append", choices=list(groups) + [all_alias])
     p.add_argument("--skip-android", action="store_true")
     p.add_argument("--offline", action="store_true")
     p.add_argument("--fail-fast", action="store_true")
@@ -126,23 +129,23 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     return p.parse_args(argv)
 
 
-def resolve_groups(args: argparse.Namespace) -> tuple[str, ...] | int:
+def resolve_groups(
+    args: argparse.Namespace,
+    groups: tuple[str, ...],
+    all_alias: str,
+) -> tuple[str, ...] | int:
     selected: list[str] = []
     if args.group:
         for g in args.group:
-            if g == "all":
-                selected.extend(GROUP_ORDER)
+            if g == all_alias:
+                selected.extend(groups)
             else:
                 selected.append(g)
     else:
-        selected.extend(GROUP_ORDER)
+        selected.extend(groups)
 
     if args.skip_android:
-        if "android" in selected and any(g in ("required", "docs") for g in selected):
-            for g in ("required", "docs"):
-                if g not in selected:
-                    selected.append(g)
-        if args.group and "android" in args.group and "android" in selected:
+        if args.group and "android" in args.group:
             print("FAIL invocation — --skip-android combined with explicit --group android", file=sys.stderr)
             return 2
         selected = [g for g in selected if g != "android"]
@@ -437,20 +440,78 @@ def _load_release_contract() -> dict | None:
 
     # Validation
     val = contract["validation"]
-    expected_groups = ["required", "docs", "android"]
-    if val.get("groups") != expected_groups:
-        _CONTRACT_ERROR = f"validation.groups must equal {expected_groups}"
+    if not isinstance(val, dict):
+        _CONTRACT_ERROR = "validation must be a JSON object"
         return None
-    if val.get("all_alias") != "all":
-        _CONTRACT_ERROR = "validation.all_alias must equal 'all'"
+
+    # validation.groups
+    groups_val = val.get("groups")
+    if not isinstance(groups_val, list) or not groups_val:
+        _CONTRACT_ERROR = "validation.groups must be a non-empty list"
         return None
-    if val.get("release_gate_requires_groups") != expected_groups:
+    if not all(isinstance(g, str) and g for g in groups_val):
+        _CONTRACT_ERROR = "validation.groups must contain only non-empty strings"
+        return None
+    if len(set(groups_val)) != len(groups_val):
+        _CONTRACT_ERROR = "validation.groups identifiers must be unique"
+        return None
+    unknown_groups = [g for g in groups_val if g not in VALIDATION_HANDLERS]
+    if unknown_groups:
         _CONTRACT_ERROR = (
-            f"validation.release_gate_requires_groups must equal {expected_groups}"
+            f"validation.groups identifiers not in registry: {unknown_groups}"
         )
         return None
+
+    # validation.all_alias
+    all_alias = val.get("all_alias")
+    if not isinstance(all_alias, str) or not all_alias:
+        _CONTRACT_ERROR = "validation.all_alias must be a non-empty string"
+        return None
+    if all_alias in groups_val:
+        _CONTRACT_ERROR = "validation.all_alias must not equal any real group identifier"
+        return None
+
+    # validation.release_gate_requires_groups
+    rg_groups = val.get("release_gate_requires_groups")
+    if not isinstance(rg_groups, list) or not rg_groups:
+        _CONTRACT_ERROR = "validation.release_gate_requires_groups must be a non-empty list"
+        return None
+    if not all(isinstance(g, str) and g for g in rg_groups):
+        _CONTRACT_ERROR = (
+            "validation.release_gate_requires_groups must contain only non-empty strings"
+        )
+        return None
+    if len(set(rg_groups)) != len(rg_groups):
+        _CONTRACT_ERROR = "validation.release_gate_requires_groups identifiers must be unique"
+        return None
+    missing_in_groups = [g for g in rg_groups if g not in groups_val]
+    if missing_in_groups:
+        _CONTRACT_ERROR = (
+            "validation.release_gate_requires_groups contains identifiers not in validation.groups: "
+            f"{missing_in_groups}"
+        )
+        return None
+
+    # Android gate flag
+    android_flag = val.get("release_gate_requires_android_not_skipped")
+    if not isinstance(android_flag, bool):
+        _CONTRACT_ERROR = "validation.release_gate_requires_android_not_skipped must be a Boolean"
+        return None
+    if android_flag:
+        if "android" not in groups_val:
+            _CONTRACT_ERROR = (
+                "validation.release_gate_requires_android_not_skipped is true but 'android' "
+                "is not in validation.groups"
+            )
+            return None
+        if "android" not in rg_groups:
+            _CONTRACT_ERROR = (
+                "validation.release_gate_requires_android_not_skipped is true but 'android' "
+                "is not in validation.release_gate_requires_groups"
+            )
+            return None
+
     for k in (
-        "release_gate_requires_android_not_skipped",
         "require_clean_supported",
         "no_network",
         "no_dependency_installation",
@@ -1415,52 +1476,99 @@ def check_android(args: argparse.Namespace) -> bool:
     return check_android_content(args, sdk)
 
 
+# ---------- normalized group wrappers and registry ----------
+
+def run_required_group(args: argparse.Namespace) -> bool:
+    return check_required(args, args.fail_fast)
+
+
+def run_docs_group(args: argparse.Namespace) -> bool:
+    return check_docs(args, args.fail_fast)
+
+
+def run_android_group(args: argparse.Namespace) -> bool:
+    return check_android(args)
+
+
+VALIDATION_HANDLERS: dict[str, Callable[[argparse.Namespace], bool]] = {
+    "required": run_required_group,
+    "docs": run_docs_group,
+    "android": run_android_group,
+}
+
+
 # ---------- main ----------
 
-def print_summary_and_gate(args: argparse.Namespace) -> None:
+def print_summary_and_gate(
+    args: argparse.Namespace,
+    selected_groups: tuple[str, ...],
+    release_gate_requires_groups: tuple[str, ...],
+    release_gate_requires_android_not_skipped: bool,
+) -> None:
     passed = sum(1 for r in _RESULTS if r[0] == "PASS")
     failed = sum(1 for r in _RESULTS if r[0] == "FAIL")
     skipped = sum(1 for r in _RESULTS if r[0] == "SKIP")
     print(f"SUMMARY pass={passed} fail={failed} skip={skipped}")
-    sel = resolve_groups(args)
-    if isinstance(sel, tuple):
-        all_three = set(sel) == set(GROUP_ORDER)
-        no_fail = failed == 0
-        not_skipped = "android" in sel
-        if all_three and no_fail and not_skipped and not args.skip_android:
-            print("release_gate=SATISFIED")
-        else:
-            print("release_gate=NOT_SATISFIED")
+    all_required_selected = set(release_gate_requires_groups).issubset(selected_groups)
+    no_fail = failed == 0
+    android_required_and_present = (
+        not release_gate_requires_android_not_skipped
+        or ("android" in selected_groups and not args.skip_android)
+    )
+    if all_required_selected and no_fail and android_required_and_present:
+        print("release_gate=SATISFIED")
+    else:
+        print("release_gate=NOT_SATISFIED")
 
 
 def main(argv: list[str]) -> int:
-    args = parse_args(argv)
-    sel = resolve_groups(args)
+    # 1. Load and fully validate the cached release contract.
+    contract = get_release_contract()
+    if contract is None:
+        err = get_release_contract_error() or "contract load failed"
+        emit_prereq("release-contract", err)
+        print("SUMMARY pass=0 fail=1 skip=0")
+        print("release_gate=NOT_SATISFIED")
+        return 2
+
+    # 3. From the valid contract obtain the four keys.
+    val = contract["validation"]
+    groups = tuple(val["groups"])
+    all_alias = val["all_alias"]
+    release_gate_requires_groups = tuple(val["release_gate_requires_groups"])
+    release_gate_requires_android_not_skipped = val["release_gate_requires_android_not_skipped"]
+
+    # 4. Construct argparse from the contract group identifiers and alias.
+    # 5. Parse the invocation.
+    args = parse_args(argv, groups, all_alias)
+
+    # 6. Resolve the selected groups exactly once.
+    sel = resolve_groups(args, groups, all_alias)
     if isinstance(sel, int):
+        # 7. Invocation conflict (e.g. --group android --skip-android).
         return sel
 
+    # 8. Check the Git prerequisite.
     if not check_git_prerequisite():
-        print_summary_and_gate(args)
+        print_summary_and_gate(
+            args, sel, release_gate_requires_groups, release_gate_requires_android_not_skipped
+        )
         return 2
 
     if args.require_clean:
         before = git_status_short()
         if before.strip():
             emit("FAIL", "required", "clean-state", "non-ignored uncommitted changes present")
-            print_summary_and_gate(args)
+            print_summary_and_gate(
+                args, sel, release_gate_requires_groups, release_gate_requires_android_not_skipped
+            )
             return 1
         emit("PASS", "required", "clean-state", "non-ignored state clean before validation")
 
+    # 9. Execute resolved groups in their resolved order.
     overall_ok = True
     for grp in sel:
-        if grp == "required":
-            grp_ok = check_required(args, args.fail_fast)
-        elif grp == "docs":
-            grp_ok = check_docs(args, args.fail_fast)
-        elif grp == "android":
-            grp_ok = check_android(args)
-        else:
-            continue
+        grp_ok = VALIDATION_HANDLERS[grp](args)
         if not grp_ok:
             overall_ok = False
             if args.fail_fast:
@@ -1474,10 +1582,16 @@ def main(argv: list[str]) -> int:
         else:
             emit("PASS", "required", "clean-state", "non-ignored state clean after validation")
 
+    # 10. Calculate the summary and release gate from the already-resolved
+    # selection and the validated contract.
     if _PREREQ_FAILED:
-        print_summary_and_gate(args)
+        print_summary_and_gate(
+            args, sel, release_gate_requires_groups, release_gate_requires_android_not_skipped
+        )
         return 2
-    print_summary_and_gate(args)
+    print_summary_and_gate(
+        args, sel, release_gate_requires_groups, release_gate_requires_android_not_skipped
+    )
     return 0 if overall_ok else 1
 
 
