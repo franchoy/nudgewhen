@@ -1,12 +1,12 @@
 # Local Validation — NudgeWhen v0.1.1
 
-**Document status:** Release-aware carried-forward baseline — the v0.1.0 Phase 4 local-validation baseline is carried forward into the active `v0.1.1` release train on `release/v0.1.1`; a single release-contract source was introduced in Phase 3A1, Phase 3A2 wires the `required` group to load, structurally validate, and cross-check that contract, and Phase 3A3a extends the `docs` group with contract-driven active release-document checks (active phase list, per-phase status, README active release, charter consistency) plus `.json` text hygiene — Android-group, CLI argument-parsing, and release-gate architectural refactoring remains for later Phase 3 subphases, Phase 3 is not yet complete, and no controlled negative-path regression coverage exists yet
+**Document status:** Release-aware carried-forward baseline — the v0.1.0 Phase 4 local-validation baseline is carried forward into the active `v0.1.1` release train on `release/v0.1.1`; a single release-contract source was introduced in Phase 3A1, Phase 3A2 wires the `required` group to load, structurally validate, and cross-check that contract, Phase 3A3a extends the `docs` group with contract-driven active release-document checks (active phase list, per-phase status, README active release, charter consistency) plus `.json` text hygiene, Phase 3A4a added the clean missing-Git prerequisite failure that does not produce a traceback, and Phase 3A4c made the active validation groups, default order, all-groups alias, and release-gate requirements contract-driven while preserving the existing CLI, candidate-mode, clean-checkout, exit-code, no-network, and no-dependency-installation semantics — Android-group expectation refactoring and controlled Phase 4 negative-path regression coverage remain future work, and Phase 3 is not yet complete
 
 ## Purpose and scope
 
 This document describes the Phase 4 local validation suite for the NudgeWhen `v0.1.0` release. The suite is a small, deterministic, dependency-free set of checks that the maintainer can run from a fresh checkout to confirm that the repository is in a valid pre-release state. The suite is intentionally local: it does not clone, fetch, push, commit, create worktrees, or modify repository content. It writes only into the ignored Gradle and Android build output paths when the Android group is run.
 
-The Phase 4 local-validation implementation baseline is the `v0.1.0` local-validation baseline. It was established on `release/v0.1.0`, was carried through the released `v0.1.0` GitHub release, and remains the foundation of the active `v0.1.1` release train on `release/v0.1.1`. The v0.1.0 validator baseline remains the foundation; Phase 3A2 added the required-group release-contract validation that loads, structurally validates, and source cross-checks `scripts/release_contract.json` as a single `release-contract` check within the `required` group, and Phase 3A3a added contract-driven active release-document checks and `.json` text hygiene to the `docs` group. Android-group, CLI argument-parsing, and release-gate architectural refactoring remains for later Phase 3 work. Phase 3 is not complete, and controlled negative-path regression coverage remains deferred.
+The Phase 4 local-validation implementation baseline is the `v0.1.0` local-validation baseline. It was established on `release/v0.1.0`, was carried through the released `v0.1.0` GitHub release, and remains the foundation of the active `v0.1.1` release train on `release/v0.1.1`. The v0.1.0 validator baseline remains the foundation; Phase 3A2 added the required-group release-contract validation that loads, structurally validates, and source cross-checks `scripts/release_contract.json` as a single `release-contract` check within the `required` group, Phase 3A3a added contract-driven active release-document checks and `.json` text hygiene to the `docs` group, Phase 3A4a added the clean missing-Git prerequisite failure that does not produce a traceback, and Phase 3A4c made the active validation groups, default order, all-groups alias, and release-gate requirements contract-driven while preserving the existing CLI, candidate-mode, clean-checkout, exit-code, no-network, and no-dependency-installation semantics. Android-group expectation refactoring and controlled Phase 4 negative-path regression coverage remain future work; Phase 3 is not yet complete.
 
 ## Dynamic private-working-material invariant
 
@@ -41,6 +41,43 @@ The `.json` extension now participates in the docs-group UTF-8 and trailing-whit
 
 The contract is a data source for the validator; it is not itself a validator, and it does not run, install dependencies, or perform network access. The contract is loaded through the standard library only (`open()` / `read_bytes()` / `json.loads()`); no third-party library is introduced. Phase 3 is not yet complete; Android-group, CLI, and release-gate architectural refactoring remains for later Phase 3 subphases, and no controlled negative-path regression coverage exists yet.
 
+### Phase 3A4 — contract-first CLI, Git prerequisite, group registry, and release gate
+
+Phase 3A4a and Phase 3A4c together move the validator's command-line construction, active-group determination, all-groups alias, and release-gate calculation onto the validated release contract. Phase 3A4a is the missing-Git prerequisite; Phase 3A4c is the contract-driven CLI, group registry, and release gate.
+
+#### Contract-first CLI construction
+
+`main` loads and fully validates the cached release contract before constructing `argparse`. The parser's allowed real group identifiers and its all-groups alias come from that validated contract. As a direct consequence, an invalid contract takes precedence over `--help` handling, malformed CLI handling, and the Git prerequisite check: when the contract fails to load or validate, the validator emits a single `FAIL prerequisite/release-contract` result, prints `SUMMARY pass=0 fail=1 skip=0` and `release_gate=NOT_SATISFIED`, and exits `2` without constructing `argparse`. When the contract is valid, normal `argparse` usage, the standard `--help` output, and the standard `argparse` exit-`2` behavior for unknown options, missing `--group` values, unsupported groups, and unexpected positional arguments are preserved.
+
+#### Git prerequisite (Phase 3A4a)
+
+When the contract is valid and the resolved groups have been determined, the validator checks that the `git` executable is resolvable on `PATH` before executing any group. A missing `git` causes the validator to emit exactly three output lines:
+
+```text
+FAIL prerequisite/git — git executable not found
+SUMMARY pass=0 fail=1 skip=0
+release_gate=NOT_SATISFIED
+```
+
+The process then exits with status `2`; `exit=2` is not a fourth validator-output line. The historical controlled shell command that captured the missing-Git behavior printed `exit=2` separately to expose the captured process status. The three result lines contain no Python traceback, and the absolute path of the `git` executable is never included in the result message. The Git prerequisite is checked after contract validation and after `argparse` argument parsing; it is therefore not reached when the contract is invalid or when the CLI is malformed.
+
+#### Static implementation-capability registry
+
+`VALIDATION_HANDLERS` is a static implementation registry that maps the currently implemented real group identifiers (`required`, `docs`, `android`) to normalized wrapper functions. The registry represents code capability only. The contract determines which supported groups are active and their default order, but a contract group that is not present in `VALIDATION_HANDLERS` is rejected as an invalid contract before CLI construction. Arbitrary new group identifiers therefore cannot be activated merely by listing them in the contract; an implementation handler must exist for every active group. The registry contents and the contract group list are intentionally aligned: the contract validator requires that every identifier in `validation.groups` is a key in `VALIDATION_HANDLERS`.
+
+#### Contract-driven validation block
+
+The contract validator already required that the `validation` block satisfy several invariants before the Phase 3A4 refactor; the Phase 3A4 refactor preserves those invariants and documents them as the source of the active group set, the alias, and the release-gate set. The required invariants are:
+
+- `validation.groups` is a non-empty list of non-empty unique identifiers, every one of which is a key in `VALIDATION_HANDLERS`;
+- `validation.all_alias` is a non-empty string that is not equal to any real group identifier;
+- `validation.release_gate_requires_groups` is a non-empty list of non-empty unique identifiers and is a subset of `validation.groups`;
+- `validation.release_gate_requires_android_not_skipped` is a Boolean;
+- when that Android flag is `true`, the identifier `android` appears in both `validation.groups` and `validation.release_gate_requires_groups`;
+- `validation.require_clean_supported`, `validation.no_network`, and `validation.no_dependency_installation` are each `true`.
+
+The current contract declares `groups: ["required", "docs", "android"]` in that order, `all_alias: "all"`, and `release_gate_requires_groups: ["required", "docs", "android"]`; these are current contract values rather than permanently hard-coded CLI constants. A future release that changes any of these values does not require a code change in the validator; a future release that adds a new group requires both a new `VALIDATION_HANDLERS` entry and a contract change.
+
 ## Primary command
 
 ```bash
@@ -51,7 +88,7 @@ This runs every check in the `required`, `docs`, and `android` groups, aggregate
 
 ## Groups
 
-The suite exposes three groups. `--group` is repeatable.
+The suite exposes the groups declared by the validated release contract. For the current contract, three groups are active: `required`, `docs`, and `android`. The current contract's `validation.groups` list is `["required", "docs", "android"]` in that order; the current `validation.all_alias` is `"all"`. These are current contract values rather than permanently hard-coded CLI constants. A future release that lists a different set of supported groups in its contract does not require a validator code change; a future release that adds a new real group requires both a new `VALIDATION_HANDLERS` entry and a contract change. `--group` is repeatable. The current real group identifiers and the current alias are accepted as `--group` values; the alias is a real `argparse` choice that is not equal to any real group identifier.
 
 | Group | Purpose |
 |---|---|
@@ -59,18 +96,20 @@ The suite exposes three groups. `--group` is repeatable.
 | `docs` | UTF-8 and trailing-whitespace hygiene (including `.json` files), `gradlew.bat` CRLF and SHA-256 verification, Markdown link integrity (relative, root-relative, anchors, optional fragments, optional quoted titles, external URLs), contract-driven active release-document checks (ordered phase headings from the active phase list, per-phase status bounded to the phase section, README active release version and branch, charter non-functionality consistency for all seven categories), experiment-record minimum structure, EXP-0007 full Phase 4 structure, publishable-content placeholder and privacy scan. |
 | `android` | Prerequisite checks (Python 3.10+, Java 17+, SDK via `ANDROID_HOME`/`ANDROID_SDK_ROOT`, Platform 36, Build Tools 36.0.0, `aapt2`, `gradlew`); root and app `build.gradle.kts` prohibited-Kotlin configuration; version-catalog and `app/build.gradle.kts` configuration; exact source-manifest boundary; AGP-merged-manifest exact contract; Gradle project discovery; debug assembly; lint; APK existence and metadata. |
 
-`--group all` is equivalent to selecting all three groups. The default selection when no `--group` is given is also all three groups.
+When no `--group` is given, the selection is the contract-declared groups in their contract order. The alias expands to every contract-declared group at the alias's position in the invocation. Repeated groups and overlaps caused by alias expansion are deduplicated. Deduplication preserves the first-seen order of the alias-expanded invocation: if the invocation is `--group required all docs`, the resolved selection is `(required, docs)`; if the invocation is `--group all docs required`, the resolved selection is `(required, docs)` in that order, because `all` expanded first and `required` was the first of its expanded groups to be deduplicated against. The current default and `--group all` therefore produce the same resolved order, namely the contract order, while a hand-written invocation may interleave and still produce a first-seen deduplicated selection.
 
 ## Options
 
 | Option | Effect |
 |---|---|
-| `--group NAME` | Add a group to the selection. Repeatable. NAME is one of `required`, `docs`, `android`, `all`. |
-| `--skip-android` | Remove the `android` group from the default or `--group all` selection. |
+| `--group NAME` | Add a group to the selection. Repeatable. NAME is one of the current real group identifiers declared in the contract or the current all-groups alias. |
+| `--skip-android` | Remove the `android` group from the default or `--group all` selection. The default `--skip-android` invocation and `--group all --skip-android` are both valid and remove Android from the expanded or default selection. |
 | `--offline` | Pass `--offline` to Gradle. Required on subsequent runs once the machine-level caches are provisioned. |
 | `--fail-fast` | Stop after the first failed check. The default is to aggregate. |
 | `--require-clean` | Require a clean non-ignored Git state before and after validation. In clean mode, every required release file must be tracked; filesystem presence alone is insufficient. |
 | `--help` | Show usage. |
+
+Explicit `--group android --skip-android` is an invocation conflict: the user has both named Android as a selected group and asked that Android be skipped. That invocation exits `2` with a `FAIL invocation — --skip-android combined with explicit --group android` message, prints the summary and `release_gate=NOT_SATISFIED`, and does not execute any group.
 
 ## Exit codes
 
@@ -78,7 +117,19 @@ The suite exposes three groups. `--group` is repeatable.
 |---|---|
 | `0` | Every selected check passed. |
 | `1` | One or more selected checks failed (a normal repository-content defect). |
-| `2` | Invocation or prerequisite error. Includes missing or outdated `python3` (Python below 3.10); missing Java; Java below 17; neither `ANDROID_HOME` nor `ANDROID_SDK_ROOT` resolving to a usable SDK; missing Platform 36; missing Build Tools 36.0.0; missing or non-executable `aapt2`; missing or non-executable Gradle wrapper; conflicting command-line options such as `--skip-android` combined with explicit `--group android`; release-contract prerequisite failures (a missing, unreadable, malformed, structurally invalid, or internally inconsistent `scripts/release_contract.json` state). Argparse usage errors also exit `2`. A missing Java executable produces a single `FAIL prerequisite/java` line and exit `2`; it does not produce a Python traceback or expose the absolute executable path. A release-contract prerequisite failure produces a single `FAIL prerequisite/release-contract` line and exit `2`; expected handled prerequisite failures do not produce a Python traceback. Controlled negative-path regression coverage and comprehensive path-redaction guarantees are not yet claimed. |
+| `2` | Invocation or prerequisite error. Includes missing or outdated `python3` (Python below 3.10); missing Java; Java below 17; neither `ANDROID_HOME` nor `ANDROID_SDK_ROOT` resolving to a usable SDK; missing Platform 36; missing Build Tools 36.0.0; missing or non-executable `aapt2`; missing or non-executable Gradle wrapper; conflicting command-line options such as `--skip-android` combined with explicit `--group android`; release-contract prerequisite failures (a missing, unreadable, malformed, structurally invalid, or internally inconsistent `scripts/release_contract.json` state). Argparse usage errors also exit `2`. |
+
+The valid-contract missing-Git behavior added by Phase 3A4a is exactly three output lines from the validator:
+
+```text
+FAIL prerequisite/git — git executable not found
+SUMMARY pass=0 fail=1 skip=0
+release_gate=NOT_SATISFIED
+```
+
+The process then exits with status `2`; `exit=2` is not a fourth validator-output line. The historical controlled shell command that captured the missing-Git behavior printed `exit=2` separately to expose the captured process status. The three result lines contain no Python traceback, and the absolute path of the `git` executable is never included in the result message. The Git prerequisite is checked only after contract validation and after `argparse` argument parsing; it is therefore not reached when the contract is invalid (in which case the contract prerequisite failure exits `2` first) or when the CLI is malformed (in which case `argparse` exits `2` first).
+
+A missing Java executable produces a single `FAIL prerequisite/java` line and exit `2`; it does not produce a Python traceback or expose the absolute executable path. A release-contract prerequisite failure produces a single `FAIL prerequisite/release-contract` line and exit `2`; expected handled prerequisite failures do not produce a Python traceback. An invalid contract takes precedence over `--help`, malformed CLI handling, and the Git prerequisite: the contract is loaded and validated before `argparse` is constructed, so an invalid contract replaces the standard `argparse` help or error output for that invocation. Controlled negative-path regression coverage and comprehensive path-redaction guarantees are not yet claimed.
 
 ## Prerequisites
 
@@ -87,6 +138,10 @@ The shell entry point requires:
 - `python3` on `PATH`;
 - Python 3.10 or newer;
 - the `validate_local.py` script present at `scripts/validate_local.py` next to the shell entry point.
+
+The Python validator additionally requires:
+
+- `git` on `PATH` (added by Phase 3A4a). When the contract is valid, a missing `git` executable is detected before any group is executed and produces the exact valid-contract missing-Git output described in the `## Exit codes` section, with exit `2` and no Python traceback.
 
 The Android group additionally requires:
 
@@ -100,7 +155,13 @@ A failure in any prerequisite produces a `FAIL prerequisite/NAME` line and proce
 
 ## Release-gate semantics
 
-The literal `release_gate=SATISFIED` is printed only when the effective selection is all three groups, every required prerequisite passed, the `required`, `docs`, and `android` groups all passed, Android was not skipped, and no selected check failed. In every other case the literal `release_gate=NOT_SATISFIED` is printed.
+The literal `release_gate=SATISFIED` is printed only when all of the following are true, evaluated against the validated release contract:
+
+- every identifier in `validation.release_gate_requires_groups` is present in the resolved selection (containment, not exact set equality);
+- no selected check produced a `FAIL` result;
+- if `validation.release_gate_requires_android_not_skipped` is `true`, the identifier `android` is in the resolved selection and `--skip-android` is not set.
+
+Containment is used rather than exact set equality: an extra group in the selection does not prevent the release gate from being satisfied, as long as the contract's required groups are all present and no check has failed. For the current contract, `validation.release_gate_requires_groups` is `["required", "docs", "android"]` and `validation.release_gate_requires_android_not_skipped` is `true`, so a successful complete `required` + `docs` + `android` run without `--skip-android` still satisfies the release gate, and a `--group required docs android --offline` run produces `SUMMARY pass=34 fail=0 skip=0` and `release_gate=SATISFIED` with exit `0`.
 
 The `SUMMARY` line is the authoritative count of every emitted `PASS`, `FAIL`, and `SKIP` result. Prerequisite passes and prerequisite failures are recorded through the same result collector as content checks, and every emitted result contributes to the summary exactly once. No `PASS` or `FAIL` is printed without being counted, and no result is counted without being printed.
 
@@ -109,9 +170,9 @@ Consequences:
 - `--group required` may exit `0` and still print `release_gate=NOT_SATISFIED`. A partial run never satisfies the release gate.
 - `--group docs` may exit `0` and still print `release_gate=NOT_SATISFIED`.
 - `--group android` may exit `0` and still print `release_gate=NOT_SATISFIED`.
-- `--skip-android` removes Android from the selection; the run cannot satisfy the release gate.
+- `--skip-android` removes Android from the selection; the run cannot satisfy the release gate for the current contract.
 - A prerequisite failure (exit `2`) always prevents release-gate satisfaction.
-- Only the complete all-groups run without `--skip-android` and without prerequisite failures can satisfy the release gate.
+- Only a successful run that contains every contract-required group, that records no failures, and that does not skip Android when the contract forbids skipping it can satisfy the release gate.
 
 ## Expected summary counts (Phase 4 candidate)
 
@@ -220,7 +281,14 @@ The suite does not perform clean-checkout creation, deletion, or any related orc
 
 ## CI
 
-Phase 5 of `v0.1.0` established the GitHub Actions CI baseline on the `release/v0.1.0` branch. The committed workflow is `.github/workflows/ci.yml`; its only `validate` job step runs `./scripts/validate-local.sh --require-clean`. The shell script (`scripts/validate-local.sh`) sets `PYTHONDONTWRITEBYTECODE=1` and `exec`s `scripts/validate_local.py` with the passed arguments. The Python validator's `release_gate=SATISFIED` literal (printed by `print_summary_and_gate` at `scripts/validate_local.py` lines 1001-1014) is emitted only when all three validator groups (`required`, `docs`, `android`) are selected, no failures are recorded, the `android` group is in the selection, and `--skip-android` is not set; it is not emitted on the basis of the required and documentation groups alone. The `v0.1.0` release branch required the `validate` check (a single required check with classic branch protection). The Phase 4 local validator remains the command executed by CI on `v0.1.0`; the persistent CI configuration for `v0.1.1` is a Phase 2 deliverable and is not described here.
+The committed workflow is `.github/workflows/ci.yml`; its only `validate` job step runs `./scripts/validate-local.sh --require-clean`. The shell script (`scripts/validate-local.sh`) sets `PYTHONDONTWRITEBYTECODE=1` and `exec`s `scripts/validate_local.py` with the passed arguments. The Python validator's `release_gate=SATISFIED` literal is emitted only when the validated contract's `release_gate_requires_groups` identifiers are all present in the resolved selection, no failures are recorded, and either `release_gate_requires_android_not_skipped` is `false` or Android is selected and not skipped; it is not emitted on the basis of a partial run.
+
+The persistent CI configuration for `v0.1.1` was generalized in Phase 2 to run on pushes to `release/**`, on pull requests targeting `main`, on pushes to `main`, and on manual `workflow_dispatch`, preserving the stable `validate` job name. Phase 3 work subsequently landed on the active `release/v0.1.1` branch and the following two exact-head CI runs on the active branch are maintainer-supplied remote evidence of the Phase 3A4 subphases:
+
+- commit `7612620dc252a9987a6b0e7519fbabb7501884aa` (Phase 3A4a, missing-Git prerequisite), automatic CI run `30740368544`, workflow `CI`, branch `release/v0.1.1`, head SHA `7612620dc252a9987a6b0e7519fbabb7501884aa`, conclusion `success`, job `validate` `success`;
+- commit `f0ae1e1faed6c364008c7a8fccac37f631b53562` (Phase 3A4c, contract-driven groups, CLI and release gate), automatic CI run `30743100368`, workflow `CI`, branch `release/v0.1.1`, head SHA `f0ae1e1faed6c364008c7a8fccac37f631b53562`, conclusion `success`, job `validate` `success`, `validate-local` step `success`, `upload-debug-apk` step `success`.
+
+This document records those runs as maintainer-supplied evidence; the Build that produced this documentation did not independently query the remote and did not run GitHub Actions itself.
 
 ## Phase 5
 
