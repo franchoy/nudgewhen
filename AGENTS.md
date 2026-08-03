@@ -119,6 +119,7 @@ The agent must not claim that a command, check, or remote state has executed unl
 - `git rev-parse origin/<branch>` reads a local remote-tracking reference; it is not an independent remote query.
 - Successful output from the explicitly authorized `git push` is evidence that the referenced remote update succeeded; it does not establish unrelated remote state.
 - Tracked-only commands (`git diff --name-status`, `git diff --stat`, `git diff --check`) cannot prove the absence or contents of untracked files.
+- Direct reads of `.git/HEAD`, loose reference files, packed references, the Git index, or other `.git` internals are not substitutes for an explicitly required Git command. When a mandatory Git command is unavailable or denied, the agent stops and reports the unavailable evidence.
 - Pattern-based privacy scans cannot prove the absence of every unknown private-identifier format; manual review remains the qualitative backstop.
 - Exact validation totals are not claimed unless mechanically and reproducibly calculated.
 - Inferred state is not direct observation. Successful later behavior may corroborate an earlier fact but does not turn the earlier unavailable observation into direct evidence.
@@ -136,6 +137,7 @@ On a hard stop the agent must:
 - not retry, weaken, wrap, replace, or supplement the failed command unless separately authorized;
 - report the failure, the unavailable evidence, or the deviation neutrally;
 - preserve the failure or deviation in the experiment record.
+- A missing tool capability for a mandatory baseline command is an unavailable mandatory command and therefore a hard stop. The agent must not continue the requested analysis after substituting partial evidence.
 
 A desired final deliverable never overrides a hard-stop rule. A standalone Python invocation, an ad hoc shell check, or a wrapper that hides the primary command's exit status does not satisfy a hard-stop requirement.
 
@@ -183,7 +185,7 @@ Increment A introduces a project-local machine-readable OpenCode harness consist
 
 The project harness defines three custom selectable primary agents:
 
-- **`nudge-plan`** is the default selectable primary agent. It is planning-only and does not mutate repository content, the Git index, commits, branches, remotes, configuration, dependencies, or external systems.
+- **`nudge-plan`** is the default selectable primary agent. It is planning-only. Its bounded command allowlist permits only the read-only local Git inspection commands and the `opencode --version` query explicitly listed in its definition; all other shell commands are denied. It does not mutate repository content, the Git index, commits, branches, remotes, configuration, dependencies, or external systems. Machine-readable permissions remain capability ceilings: every command and read still requires the exact current maintainer authorization.
 - **`nudge-audit`** is a read-only auditing primary agent. Its bounded command allowlist permits only the read-only `git` inspection commands and the two `opencode` introspection commands explicitly listed in its definition. It does not mutate files, the Git index, commits, branches, remotes, configuration, dependencies, or external systems.
 - **`nudge-build`** is the bounded, approval-gated implementation primary agent introduced by Increment B2. It automatically allows only the baseline read-only Git and OpenCode introspection commands listed in its definition. Ordinary edits and non-allowlisted local commands are approval-gated, while private material, OpenCode-harness edits, repository-action Git commands, network tools, dependency installers, shell wrappers, external-directory access, delegation, skills, search tools, and plan transitions are denied. Machine-readable permissions remain capability ceilings; every read, exact mutation path, and command still requires the exact current maintainer authorization.
 
@@ -205,7 +207,9 @@ The complete matrix is recorded only in this file. The companion document must n
 - `git rev-parse origin/<branch>` — reads a local remote-tracking reference; not an independent remote query.
 - `git ls-tree -r HEAD`, `git ls-tree -r HEAD --name-only`.
 - `git log`, `git log --oneline`, `git log --oneline --decorate -1`.
-- `git diff`, `git diff --name-status`, `git diff --stat`, `git diff --check`, `git diff -- <path>` — do not inspect untracked-file contents.
+- `git diff`, `git diff --name-status`, `git diff --stat`, `git diff --check`, `git diff -- <path>`.
+- `git diff --cached --name-status`, `git diff --cached --stat`, `git diff --cached --check`, `git diff --cached -- <path>`.
+- Tracked and cached diff commands do not prove the absence or contents of untracked files.
 - Reading relevant tracked repository files needed for the current task.
 - Reading a non-private untracked file when the current task explicitly authorizes or requires it.
 - `opencode --version`.
