@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-"""Local validation suite for the NudgeWhen v0.1.0 release.
+"""Local validation suite for the NudgeWhen release train.
 
-Phase 4 — Local Validation Baseline. Python standard library only.
+Phase 3A5 — Reusable Validator Completion. Phase 4 — Local Validation
+Baseline. Python standard library only.
 
 CLI:
   --group NAME   (repeatable; default: all contract-declared groups)
@@ -112,6 +113,36 @@ def check_git_prerequisite() -> bool:
     return True
 
 
+def check_git_worktree_prerequisite() -> bool:
+    """Verify that the repository root is inside a Git worktree.
+
+    On success, returns True without emitting any result line. On
+    failure, emits a single ``FAIL prerequisite/git-worktree`` line,
+    sets the module-level prerequisite-failure flag, and returns False.
+    The result message never includes an absolute path. The check
+    handles a nonzero ``git`` exit status, an unexpected stdout value
+    other than the exact worktree-positive literal, and a raised
+    ``OSError`` from the subprocess call, in every case without
+    propagating an exception or a Python traceback. The exact failure
+    message is the constant string ``repository is not a Git worktree``.
+    """
+    try:
+        r = subprocess.run(
+            ["git", "rev-parse", "--is-inside-work-tree"],
+            capture_output=True, text=True, cwd=REPO,
+        )
+    except OSError:
+        emit_prereq("git-worktree", "repository is not a Git worktree")
+        return False
+    if r.returncode != 0:
+        emit_prereq("git-worktree", "repository is not a Git worktree")
+        return False
+    if r.stdout.strip() != "true":
+        emit_prereq("git-worktree", "repository is not a Git worktree")
+        return False
+    return True
+
+
 def parse_args(
     argv: list[str],
     groups: tuple[str, ...],
@@ -119,7 +150,7 @@ def parse_args(
 ) -> argparse.Namespace:
     p = argparse.ArgumentParser(
         prog="validate-local.py",
-        description="Local validation suite for the NudgeWhen v0.1.0 release.",
+        description="Local validation suite for the NudgeWhen release train.",
     )
     p.add_argument("--group", action="append", choices=list(groups) + [all_alias])
     p.add_argument("--skip-android", action="store_true")
@@ -1196,23 +1227,40 @@ def check_android_prerequisites() -> Path | None:
         return None
     emit("PASS", "android", "java", f"Java major version {major}")
 
+    # The compile SDK value is contract-driven; the Build Tools version
+    # is a stable implementation constant because no corresponding
+    # release-contract field currently exists. The release contract is
+    # loaded and validated defensively here, so that an invalid
+    # contract can be surfaced as a prerequisite failure with a
+    # concise reason rather than producing a hard-coded fallback.
+    contract = get_release_contract()
+    if contract is None:
+        emit_prereq(
+            "release-contract",
+            get_release_contract_error() or "contract load failed",
+        )
+        return None
+
+    compile_sdk = contract["android"]["compile_sdk"]
+    build_tools_version = "36.0.0"
+
     sdk = find_sdk()
     if sdk is None:
         emit_prereq("sdk", "ANDROID_HOME and ANDROID_SDK_ROOT not set or invalid")
         return None
-    if not (sdk / "platforms/android-36").is_dir():
-        emit_prereq("sdk-platform", "SDK Platform 36 missing")
+    if not (sdk / f"platforms/android-{compile_sdk}").is_dir():
+        emit_prereq("sdk-platform", f"SDK Platform {compile_sdk} missing")
         return None
-    emit("PASS", "android", "sdk-platform", "Platform 36 present")
-    build_tools = sdk / "build-tools/36.0.0"
+    emit("PASS", "android", "sdk-platform", f"Platform {compile_sdk} present")
+    build_tools = sdk / f"build-tools/{build_tools_version}"
     if not build_tools.is_dir():
-        emit_prereq("sdk-build-tools", "SDK Build Tools 36.0.0 missing")
+        emit_prereq("sdk-build-tools", f"SDK Build Tools {build_tools_version} missing")
         return None
     aapt2 = build_tools / "aapt2"
     if not aapt2.is_file() or not os.access(aapt2, os.X_OK):
-        emit_prereq("aapt2", "Build Tools 36.0.0 aapt2 missing or not executable")
+        emit_prereq("aapt2", f"Build Tools {build_tools_version} aapt2 missing or not executable")
         return None
-    emit("PASS", "android", "sdk-build-tools", "Build Tools 36.0.0 present")
+    emit("PASS", "android", "sdk-build-tools", f"Build Tools {build_tools_version} present")
     emit("PASS", "android", "aapt2", "aapt2 present and executable")
 
     gradlew = REPO / "gradlew"
@@ -1265,12 +1313,21 @@ def check_android_content(args: argparse.Namespace, sdk: Path) -> bool:
     app_gradle = REPO / "app/build.gradle.kts"
     if app_gradle.is_file():
         text = app_gradle.read_text(encoding="utf-8")
+        # Release-specific Android expectations are derived from the
+        # validated release contract. Java 17 compatibility and Compose
+        # enablement remain stable implementation constants because no
+        # corresponding release-contract field currently exists.
+        contract = get_release_contract()
+        if contract is None:
+            emit("FAIL", "android", "app-build-config", "release contract unavailable")
+            return False
+        android_block = contract["android"]
         expectations = {
-            "namespace": 'namespace = "io.github.franchoy.nudgewhen"',
-            "applicationId": 'applicationId = "io.github.franchoy.nudgewhen"',
-            "compileSdk": "compileSdk = 36",
-            "minSdk": "minSdk = 26",
-            "targetSdk": "targetSdk = 36",
+            "namespace": f'namespace = "{android_block["namespace"]}"',
+            "applicationId": f'applicationId = "{android_block["application_id"]}"',
+            "compileSdk": f"compileSdk = {android_block['compile_sdk']}",
+            "minSdk": f"minSdk = {android_block['min_sdk']}",
+            "targetSdk": f"targetSdk = {android_block['target_sdk']}",
             "source": "JavaVersion.VERSION_17",
             "target": "JavaVersion.VERSION_17",
             "compose": "compose = true",
@@ -1289,6 +1346,14 @@ def check_android_content(args: argparse.Namespace, sdk: Path) -> bool:
     if not manifest.is_file():
         emit("FAIL", "android", "source-manifest", "source manifest missing")
         return False
+    # The source-manifest launcher activity expectation is
+    # contract-driven via android.launcher_activity_source. The
+    # exhaustive boundary and intent-filter checks remain unchanged.
+    contract = get_release_contract()
+    if contract is None:
+        emit("FAIL", "android", "source-manifest", "release contract unavailable")
+        return False
+    expected_source_activity = contract["android"]["launcher_activity_source"]
     tree = ET.parse(manifest)
     root = tree.getroot()
     if len(root.findall("application")) != 1:
@@ -1312,7 +1377,7 @@ def check_android_content(args: argparse.Namespace, sdk: Path) -> bool:
         emit("FAIL", "android", "source-manifest", f"application direct children: {direct_kids}")
         return False
     act = app.findall("activity")[0]
-    if (act.get(f"{{{NS_ANDROID}}}name") != ".MainActivity"
+    if (act.get(f"{{{NS_ANDROID}}}name") != expected_source_activity
             or act.get(f"{{{NS_ANDROID}}}exported") != "true"):
         emit("FAIL", "android", "source-manifest", "activity name/exported mismatch")
         return False
@@ -1361,14 +1426,32 @@ def check_android_content(args: argparse.Namespace, sdk: Path) -> bool:
     if r.returncode != 0:
         emit("FAIL", "android", "aapt2", f"aapt2 dump badging exit {r.returncode}")
         return False
+    # APK metadata expectations are generated from the validated
+    # contract. The current values are version code 1 and version name
+    # 0.1.0 because those are the contract's current committed values
+    # before Phase 5. A future Phase 5 update of the contract and
+    # Gradle metadata will not require another Python source edit for
+    # these APK fields.
+    contract = get_release_contract()
+    if contract is None:
+        emit("FAIL", "android", "apk-metadata", "release contract unavailable")
+        return False
+    android_block = contract["android"]
+    package_name = android_block["package_name"]
+    current_version_code = android_block["current_version_code"]
+    current_version_name = android_block["current_version_name"]
+    compile_sdk = android_block["compile_sdk"]
+    min_sdk = android_block["min_sdk"]
+    target_sdk = android_block["target_sdk"]
+    launcher_merged = android_block["launcher_activity_merged"]
     expectations = {
-        "package": "package: name='io.github.franchoy.nudgewhen'",
-        "versionCode": "versionCode='1'",
-        "versionName": "versionName='0.1.0'",
-        "compileSdkVersion": "compileSdkVersion='36'",
-        "minSdkVersion": "minSdkVersion:'26'",
-        "targetSdkVersion": "targetSdkVersion:'36'",
-        "launchable": "launchable-activity: name='io.github.franchoy.nudgewhen.MainActivity'",
+        "package": f"package: name='{package_name}'",
+        "versionCode": f"versionCode='{current_version_code}'",
+        "versionName": f"versionName='{current_version_name}'",
+        "compileSdkVersion": f"compileSdkVersion='{compile_sdk}'",
+        "minSdkVersion": f"minSdkVersion:'{min_sdk}'",
+        "targetSdkVersion": f"targetSdkVersion:'{target_sdk}'",
+        "launchable": f"launchable-activity: name='{launcher_merged}'",
     }
     bad = [k for k, v in expectations.items() if v not in r.stdout]
     if bad:
@@ -1380,6 +1463,18 @@ def check_android_content(args: argparse.Namespace, sdk: Path) -> bool:
     if not merged.is_file():
         emit("FAIL", "android", "merged-manifest", "merged manifest not found")
         return False
+    # The merged launcher activity and the application-derived dynamic
+    # receiver permission name are contract-driven. The merged
+    # permission name is built from android.package_name plus the
+    # stable DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION suffix.
+    contract = get_release_contract()
+    if contract is None:
+        emit("FAIL", "android", "merged-manifest", "release contract unavailable")
+        return False
+    android_block = contract["android"]
+    package_name = android_block["package_name"]
+    launcher_merged = android_block["launcher_activity_merged"]
+    expected_sig_perm = f"{package_name}.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
     try:
         tree = ET.parse(merged)
     except ET.ParseError:
@@ -1394,7 +1489,7 @@ def check_android_content(args: argparse.Namespace, sdk: Path) -> bool:
     sig = perms_decl[0]
     sig_name = sig.get(f"{{{NS_ANDROID}}}name")
     sig_level = sig.get(f"{{{NS_ANDROID}}}protectionLevel")
-    if sig_name != "io.github.franchoy.nudgewhen.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION":
+    if sig_name != expected_sig_perm:
         emit("FAIL", "android", "merged-manifest", f"permission name: {sig_name}")
         return False
     if sig_level != "signature":
@@ -1418,7 +1513,7 @@ def check_android_content(args: argparse.Namespace, sdk: Path) -> bool:
         return False
     activities = app.findall("activity")
     act = activities[0]
-    if (act.get(f"{{{NS_ANDROID}}}name") != "io.github.franchoy.nudgewhen.MainActivity"
+    if (act.get(f"{{{NS_ANDROID}}}name") != launcher_merged
             or act.get(f"{{{NS_ANDROID}}}exported") != "true"):
         emit("FAIL", "android", "merged-manifest", "merged activity mismatch")
         return False
@@ -1550,6 +1645,17 @@ def main(argv: list[str]) -> int:
 
     # 8. Check the Git prerequisite.
     if not check_git_prerequisite():
+        print_summary_and_gate(
+            args, sel, release_gate_requires_groups, release_gate_requires_android_not_skipped
+        )
+        return 2
+
+    # 8b. Check the Git worktree prerequisite. When the resolved Git
+    # executable exists but the repository root is not inside a Git
+    # worktree, the validator must not raise a Python exception or emit
+    # an absolute path; it must emit the concise prerequisite failure
+    # and return 2 without executing any validation group.
+    if not check_git_worktree_prerequisite():
         print_summary_and_gate(
             args, sel, release_gate_requires_groups, release_gate_requires_android_not_skipped
         )

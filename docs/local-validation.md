@@ -1,12 +1,12 @@
 # Local Validation — NudgeWhen v0.1.1
 
-**Document status:** Release-aware carried-forward baseline — the v0.1.0 Phase 4 local-validation baseline is carried forward into the active `v0.1.1` release train on `release/v0.1.1`; a single release-contract source was introduced in Phase 3A1, Phase 3A2 wires the `required` group to load, structurally validate, and cross-check that contract, Phase 3A3a extends the `docs` group with contract-driven active release-document checks (active phase list, per-phase status, README active release, charter consistency) plus `.json` text hygiene, Phase 3A4a added the clean missing-Git prerequisite failure that does not produce a traceback, and Phase 3A4c made the active validation groups, default order, all-groups alias, and release-gate requirements contract-driven while preserving the existing CLI, candidate-mode, clean-checkout, exit-code, no-network, and no-dependency-installation semantics — Android-group expectation refactoring and controlled Phase 4 negative-path regression coverage remain future work, and Phase 3 is not yet complete
+**Document status:** Release-aware carried-forward baseline — the v0.1.0 Phase 4 local-validation baseline is carried forward into the active `v0.1.1` release train on `release/v0.1.1`; a single release-contract source was introduced in Phase 3A1, Phase 3A2 wires the `required` group to load, structurally validate, and cross-check that contract, Phase 3A3a extends the `docs` group with contract-driven active release-document checks (active phase list, per-phase status, README active release, charter consistency) plus `.json` text hygiene, Phase 3A4a added the clean missing-Git prerequisite failure that does not produce a traceback, Phase 3A4c made the active validation groups, default order, all-groups alias, and release-gate requirements contract-driven while preserving the existing CLI, candidate-mode, clean-checkout, exit-code, no-network, and no-dependency-installation semantics, and Phase 3A5 adds the invalid-Git-worktree prerequisite and moves the Android-group release-specific expectations (namespace, application ID, compile SDK, minimum SDK, target SDK, package name, current version code, current version name, source launcher activity, merged launcher activity, and the application-derived dynamic receiver permission name) onto the validated release contract — controlled Phase 4 negative-path regression coverage remains future work, and Phase 3 is not yet formally complete because experiment evidence, repository action, exact-head CI and closure synchronization remain outstanding
 
 ## Purpose and scope
 
-This document describes the Phase 4 local validation suite for the NudgeWhen `v0.1.0` release. The suite is a small, deterministic, dependency-free set of checks that the maintainer can run from a fresh checkout to confirm that the repository is in a valid pre-release state. The suite is intentionally local: it does not clone, fetch, push, commit, create worktrees, or modify repository content. It writes only into the ignored Gradle and Android build output paths when the Android group is run.
+This document describes the Phase 4 local validation suite for the NudgeWhen release train. The suite is a small, deterministic, dependency-free set of checks that the maintainer can run from a fresh checkout to confirm that the repository is in a valid pre-release state. The suite is intentionally local: it does not clone, fetch, push, commit, create worktrees, or modify repository content. It writes only into the ignored Gradle and Android build output paths when the Android group is run.
 
-The Phase 4 local-validation implementation baseline is the `v0.1.0` local-validation baseline. It was established on `release/v0.1.0`, was carried through the released `v0.1.0` GitHub release, and remains the foundation of the active `v0.1.1` release train on `release/v0.1.1`. The v0.1.0 validator baseline remains the foundation; Phase 3A2 added the required-group release-contract validation that loads, structurally validates, and source cross-checks `scripts/release_contract.json` as a single `release-contract` check within the `required` group, Phase 3A3a added contract-driven active release-document checks and `.json` text hygiene to the `docs` group, Phase 3A4a added the clean missing-Git prerequisite failure that does not produce a traceback, and Phase 3A4c made the active validation groups, default order, all-groups alias, and release-gate requirements contract-driven while preserving the existing CLI, candidate-mode, clean-checkout, exit-code, no-network, and no-dependency-installation semantics. Android-group expectation refactoring and controlled Phase 4 negative-path regression coverage remain future work; Phase 3 is not yet complete.
+The Phase 4 local-validation implementation baseline is the `v0.1.0` local-validation baseline. It was established on `release/v0.1.0`, was carried through the released `v0.1.0` GitHub release, and remains the foundation of the active `v0.1.1` release train on `release/v0.1.1`. The v0.1.0 validator baseline remains the foundation; Phase 3A2 added the required-group release-contract validation that loads, structurally validates, and source cross-checks `scripts/release_contract.json` as a single `release-contract` check within the `required` group, Phase 3A3a added contract-driven active release-document checks and `.json` text hygiene to the `docs` group, Phase 3A4a added the clean missing-Git prerequisite failure that does not produce a traceback, and Phase 3A4c made the active validation groups, default order, all-groups alias, and release-gate requirements contract-driven while preserving the existing CLI, candidate-mode, clean-checkout, exit-code, no-network, and no-dependency-installation semantics. Phase 3A5 completes the remaining Phase 3 implementation work by adding the invalid-Git-worktree prerequisite and by moving the Android-group release-specific expectations (namespace, application ID, compile SDK, minimum SDK, target SDK, package name, current version code, current version name, source launcher activity, merged launcher activity, and the application-derived dynamic receiver permission name) onto the validated release contract. Controlled Phase 4 negative-path regression coverage remains future work; Phase 3 is not yet formally complete because experiment evidence, repository action, exact-head CI and closure synchronization remain outstanding.
 
 ## Dynamic private-working-material invariant
 
@@ -27,7 +27,7 @@ Phase 3A1 introduced a single release-contract source at `scripts/release_contra
 
 Phase 3A2 wires only the `required` group to load, structurally validate, and cross-check this contract. Within the `required` group, the `check_release_contract` step (1) loads `scripts/release_contract.json` from the repository root, (2) decodes the bytes as UTF-8, (3) parses the JSON and verifies the top-level `schema_version`, the presence of every top-level object (`release`, `release_documents`, `phase_model`, `android`, `validation`, `historical`), and the type and value constraints of every required field, (4) cross-checks the `release.active_branch` and `release.version` consistency, (5) verifies that each `release_documents` path resolves inside the repository and points to an existing file, (6) verifies the `phase_model.expected_statuses` prefix-of-Complete-then-Planned ordering across the declared `first_phase`/`last_phase` range, (7) cross-checks the `android` block against the source `app/build.gradle.kts` (`namespace`, `applicationId`, `compileSdk`, `minSdk`, `targetSdk`, `versionCode`, `versionName`) and against the source `app/src/main/AndroidManifest.xml` (presence of the declared launcher activity), (8) verifies the `validation` group contract (the literal `required`/`docs`/`android` group list, the `all` alias, the `release_gate_requires_groups` list, the `release_gate_requires_android_not_skipped`, `require_clean_supported`, `no_network`, and `no_dependency_installation` boolean invariants), and (9) verifies the `historical` block (`previous_release_version`, `previous_release_docs_root` resolving to an existing directory, `previous_release_is_historical` boolean). A failure in any of these conditions emits a `FAIL prerequisite/release-contract` line, blocks the remainder of the `required` group, and prevents release-gate satisfaction. A successful check emits a single `PASS required/release-contract` line and the `required` group proceeds to its remaining file-presence, executable-bit, wrapper, `.gitignore`, and `.gitattributes` checks.
 
-Phase 3A2 is intentionally narrow with respect to the `android` group, the CLI argument parser, and the release-gate calculation. The `android` group continues to use its embedded v0.1.0 Phase 4 expected values for the Gradle configuration, source-manifest boundary, merged-manifest allowlist, and APK metadata; the CLI argument parser and group-resolution logic, the prerequisite framework, the candidate and clean-checkout mode handling, the exit-code semantics (0, 1, 2), the release-gate calculation, the no-network behavior, and the no dependency-installation behavior are preserved without change. Broader Android-group, CLI, and release-gate architectural refactoring remains for later Phase 3 subphases; this document does not claim that Phase 3 is complete and does not claim that controlled negative-path regression coverage exists yet.
+Phase 3A2 is intentionally narrow with respect to the `android` group, the CLI argument parser, and the release-gate calculation. At the time of Phase 3A2 the `android` group continued to use its embedded v0.1.0 Phase 4 expected values for the Gradle configuration, source-manifest boundary, merged-manifest allowlist, and APK metadata; the CLI argument parser and group-resolution logic, the prerequisite framework, the candidate and clean-checkout mode handling, the exit-code semantics (0, 1, 2), the release-gate calculation, the no-network behavior, and the no dependency-installation behavior were preserved without change. After Phase 3A2, broader Android-group, CLI, and release-gate architectural refactoring remained for later Phase 3 subphases; Phase 3A5 has since completed the Android-group expectation refactoring and the contract-driven CLI and release-gate work. This document does not claim that Phase 3 is formally complete because experiment evidence, repository action, exact-head CI and closure synchronization remain outstanding.
 
 ### Phase 3A3a — contract-driven docs-group wiring
 
@@ -39,7 +39,7 @@ The `docs/readme-active-release` check requires the README to contain the contra
 
 The `.json` extension now participates in the docs-group UTF-8 and trailing-whitespace validation. `.json` files are added to the text inventory alongside the existing text extensions, and `scripts/release_contract.json` is included in the UTF-8 and trailing-whitespace checks through the same `docs/utf8` and `docs/trailing-ws` PASS lines.
 
-The contract is a data source for the validator; it is not itself a validator, and it does not run, install dependencies, or perform network access. The contract is loaded through the standard library only (`open()` / `read_bytes()` / `json.loads()`); no third-party library is introduced. Phase 3 is not yet complete; Android-group, CLI, and release-gate architectural refactoring remains for later Phase 3 subphases, and no controlled negative-path regression coverage exists yet.
+The contract is a data source for the validator; it is not itself a validator, and it does not run, install dependencies, or perform network access. The contract is loaded through the standard library only (`open()` / `read_bytes()` / `json.loads()`); no third-party library is introduced. At the time of Phase 3A3a, Phase 3 was not yet complete and the Android-group, CLI, and release-gate architectural refactoring remained for later Phase 3 subphases; Phase 3A5 has since completed that Android-group refactoring. Phase 3 is not yet formally complete because experiment evidence, repository action, exact-head CI and closure synchronization remain outstanding, and controlled Phase 4 negative-path regression coverage remains future work.
 
 ### Phase 3A4 — contract-first CLI, Git prerequisite, group registry, and release gate
 
@@ -77,6 +77,70 @@ The contract validator already required that the `validation` block satisfy seve
 - `validation.require_clean_supported`, `validation.no_network`, and `validation.no_dependency_installation` are each `true`.
 
 The current contract declares `groups: ["required", "docs", "android"]` in that order, `all_alias: "all"`, and `release_gate_requires_groups: ["required", "docs", "android"]`; these are current contract values rather than permanently hard-coded CLI constants. A future release that changes any of these values does not require a code change in the validator; a future release that adds a new group requires both a new `VALIDATION_HANDLERS` entry and a contract change.
+
+### Phase 3A5 — invalid-Git-worktree prerequisite and contract-driven Android expectations
+
+Phase 3A5 completes the two remaining Phase 3 implementation gaps and makes the Android-group release-specific expectations fully contract-driven.
+
+#### Invalid-Git-worktree prerequisite
+
+After the existing missing-Git prerequisite passes and after the resolved groups have been determined, the validator runs an ordinary local Git worktree query against the repository root:
+
+```text
+git rev-parse --is-inside-work-tree
+```
+
+The check is performed only after contract validation, after `argparse` argument parsing, and after the missing-Git prerequisite; it therefore never executes when the contract is invalid, when the CLI is malformed, or when `git` is not on `PATH`. The check handles a nonzero Git exit status, an unexpected stdout value other than the exact worktree-positive literal, and a raised `OSError` from the subprocess call without propagating an exception, a Python traceback, or an absolute path.
+
+On success the check emits no result line, so a successful run's summary totals are not increased. On failure the check emits exactly three output lines and returns process status `2`:
+
+```text
+FAIL prerequisite/git-worktree — repository is not a Git worktree
+SUMMARY pass=0 fail=1 skip=0
+release_gate=NOT_SATISFIED
+```
+
+The ordering of the four prerequisite and CLI steps is therefore:
+
+1. invalid release contract (release-contract prerequisite);
+2. argparse help or malformed invocation;
+3. missing Git executable (git prerequisite);
+4. invalid Git worktree (git-worktree prerequisite);
+5. selected validation groups.
+
+Missing Git and invalid worktree are distinct prerequisite conditions with distinct result identifiers (`prerequisite/git` versus `prerequisite/git-worktree`); the two are not conflated.
+
+#### Contract-driven Android expectations
+
+The Android group no longer embeds the v0.1.0 Phase 4 expected values for the release or application identity. The validated `android` block of `scripts/release_contract.json` is now the single source of truth for every existing Android expectation that represents release or application identity. The contract schema is unchanged; the contract's existing fields are sufficient.
+
+The Android group uses the contract for at least the following:
+
+- `android.compile_sdk` is the required SDK Platform directory and the user-facing result text for the `sdk-platform` prerequisite.
+- `android.namespace`, `android.application_id`, `android.compile_sdk`, `android.min_sdk`, and `android.target_sdk` generate the release-specific `app-build-config` expectations.
+- `android.launcher_activity_source` replaces the previous hard-coded `.MainActivity` expectation in the source-manifest check. The exhaustive source-manifest boundary and intent-filter checks are preserved unchanged.
+- `android.package_name`, `android.current_version_code`, `android.current_version_name`, `android.compile_sdk`, `android.min_sdk`, `android.target_sdk`, and `android.launcher_activity_merged` generate the expected `aapt2 dump badging` values for the `apk-metadata` check.
+- `android.launcher_activity_merged` replaces the previous hard-coded `io.github.franchoy.nudgewhen.MainActivity` expectation in the merged-manifest check.
+- The application-derived dynamic receiver permission name is now built as `f"{android.package_name}.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"` rather than embedding the package name twice.
+
+The current successful repository continues expecting version code `1` and version name `0.1.0` for the `apk-metadata` check, because those are the contract's current committed `current_version_code` and `current_version_name` values before Phase 5. A future Phase 5 update of the contract and Gradle metadata will change those values through a contract and source edit only, without requiring another Python source edit for those APK fields. The current-versus-target version semantics are unchanged before Phase 5: the validator validates the APK against `current_version_code` and `current_version_name`, and `target_version_code` and `target_version_name` remain Phase 5 metadata.
+
+#### Stable Android implementation invariants
+
+The following Android expectations remain stable implementation constants because no corresponding release-contract field currently exists:
+
+- the Build Tools `36.0.0` directory and the corresponding `sdk-build-tools` and `aapt2` prerequisite text;
+- Java 17 source and target compatibility in `app-build-config`;
+- Compose enablement (`compose = true`) in `app-build-config`;
+- the exhaustive source-manifest boundary and intent-filter structure;
+- the merged-manifest provider, receiver, metadata, and optional-library allowlists;
+- the AGP-merged-manifest strictness and the source-manifest strictness themselves.
+
+A future release that wishes to change any of those invariants must add a corresponding release-contract field and a contract-validation rule; the validator will not derive them from the contract until that future field exists.
+
+#### Generic validator identity
+
+The module docstring, the `argparse` description, and any other user-facing or module-level wording that described the validator itself as exclusively for the `v0.1.0` release has been replaced with release-neutral wording. Historical checks whose purpose is explicitly to preserve v0.1.0 evidence (such as the `EXP-0007` structure validation, the `v0.1.0` historical release pointer in the contract, and the historical v0.1.0 charter and phase list allowlists) are preserved unchanged.
 
 ## Primary command
 
@@ -129,7 +193,17 @@ release_gate=NOT_SATISFIED
 
 The process then exits with status `2`; `exit=2` is not a fourth validator-output line. The historical controlled shell command that captured the missing-Git behavior printed `exit=2` separately to expose the captured process status. The three result lines contain no Python traceback, and the absolute path of the `git` executable is never included in the result message. The Git prerequisite is checked only after contract validation and after `argparse` argument parsing; it is therefore not reached when the contract is invalid (in which case the contract prerequisite failure exits `2` first) or when the CLI is malformed (in which case `argparse` exits `2` first).
 
-A missing Java executable produces a single `FAIL prerequisite/java` line and exit `2`; it does not produce a Python traceback or expose the absolute executable path. A release-contract prerequisite failure produces a single `FAIL prerequisite/release-contract` line and exit `2`; expected handled prerequisite failures do not produce a Python traceback. An invalid contract takes precedence over `--help`, malformed CLI handling, and the Git prerequisite: the contract is loaded and validated before `argparse` is constructed, so an invalid contract replaces the standard `argparse` help or error output for that invocation. Controlled negative-path regression coverage and comprehensive path-redaction guarantees are not yet claimed.
+A missing Java executable produces a single `FAIL prerequisite/java` line and exit `2`; it does not produce a Python traceback or expose the absolute executable path. A release-contract prerequisite failure produces a single `FAIL prerequisite/release-contract` line and exit `2`; expected handled prerequisite failures do not produce a Python traceback. An invalid contract takes precedence over `--help`, malformed CLI handling, and the Git prerequisite: the contract is loaded and validated before `argparse` is constructed, so an invalid contract replaces the standard `argparse` help or error output for that invocation. Controlled negative-path regression coverage remains future work, and comprehensive path-redaction guarantees are not yet claimed.
+
+The valid-contract invalid-Git-worktree behavior added by Phase 3A5 is exactly three output lines from the validator:
+
+```text
+FAIL prerequisite/git-worktree — repository is not a Git worktree
+SUMMARY pass=0 fail=1 skip=0
+release_gate=NOT_SATISFIED
+```
+
+The process then exits with status `2`. The three result lines contain no Python traceback, and the validator never includes the absolute path of any non-worktree directory in its result message. The Git-worktree prerequisite is checked only after contract validation, after `argparse` argument parsing, and after the missing-Git prerequisite; it is therefore not reached when the contract is invalid, when the CLI is malformed, or when `git` is not on `PATH`. The two Git prerequisites are not conflated: a missing executable is reported as `prerequisite/git`, and a non-worktree repository is reported as `prerequisite/git-worktree`.
 
 ## Prerequisites
 
@@ -142,6 +216,7 @@ The shell entry point requires:
 The Python validator additionally requires:
 
 - `git` on `PATH` (added by Phase 3A4a). When the contract is valid, a missing `git` executable is detected before any group is executed and produces the exact valid-contract missing-Git output described in the `## Exit codes` section, with exit `2` and no Python traceback.
+- that the repository root is inside a Git worktree (added by Phase 3A5). When the contract is valid, `git` is on `PATH`, and the repository root is not inside a Git worktree, the validator emits the exact valid-contract invalid-Git-worktree output described in the `## Exit codes` section, with exit `2` and no Python traceback. The check does not raise the historical unhandled Git error. The check is performed only after the missing-Git prerequisite passes; missing Git and invalid worktree are distinct prerequisite conditions.
 
 The Android group additionally requires:
 
@@ -255,11 +330,11 @@ Generated Gradle and Android build output is written to `app/build/`, `.gradle/`
 
 ## Manifest and APK validation (high level)
 
-The `android` group validates the source `AndroidManifest.xml` for the exact boundary declared in the Phase 3 evidence and the Phase 4 contract: exactly one root `application`; no root-level `uses-permission`, permission, service, receiver, provider, `activity-alias`, `meta-data`, `uses-library`, or other unexpected child; the application direct children must be exactly one `activity`; the activity is `.MainActivity` exported true, with one intent filter, one `MAIN` action, one `LAUNCHER` category, no data element, and no unexpected descendants.
+The `android` group validates the source `AndroidManifest.xml` for the exact boundary declared in the Phase 3 evidence and the Phase 4 contract: exactly one root `application`; no root-level `uses-permission`, permission, service, receiver, provider, `activity-alias`, `meta-data`, `uses-library`, or other unexpected child; the application direct children must be exactly one `activity`; the activity name is taken from `android.launcher_activity_source` in the validated release contract (the current contract value is `.MainActivity`), the activity is exported true, with one intent filter, one `MAIN` action, one `LAUNCHER` category, no data element, and no unexpected descendants.
 
-The `android` group then parses the AGP-merged debug manifest and requires the exact maintainer-approved allowlist: one signature permission `io.github.franchoy.nudgewhen.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION` with a matching `uses-permission`; the application direct children must be exactly one activity, one provider, one receiver, and two `uses-library` elements; the provider is `androidx.startup.InitializationProvider` (exported false) with exactly three initializer metadata entries (`EmojiCompatInitializer`, `ProcessLifecycleInitializer`, `ProfileInstallerInitializer`) each with value `androidx.startup`; the receiver is `androidx.profileinstaller.ProfileInstallReceiver` (exported true, permission `android.permission.DUMP`); the optional libraries are `androidx.window.extensions` and `androidx.window.sidecar`, each with `required="false"`.
+The `android` group then parses the AGP-merged debug manifest and requires the exact maintainer-approved allowlist: one signature permission whose name is built as `f"{android.package_name}.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"` (for the current contract this resolves to `io.github.franchoy.nudgewhen.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION`) with a matching `uses-permission`; the application direct children must be exactly one activity, one provider, one receiver, and two `uses-library` elements; the activity name is taken from `android.launcher_activity_merged` in the validated contract; the provider is `androidx.startup.InitializationProvider` (exported false) with exactly three initializer metadata entries (`EmojiCompatInitializer`, `ProcessLifecycleInitializer`, `ProfileInstallerInitializer`) each with value `androidx.startup`; the receiver is `androidx.profileinstaller.ProfileInstallReceiver` (exported true, permission `android.permission.DUMP`); the optional libraries are `androidx.window.extensions` and `androidx.window.sidecar`, each with `required="false"`.
 
-The `android` group then runs `aapt2 dump badging` on the produced debug APK and requires the exact package, version code, version name, compile SDK, minimum SDK, target SDK, and launcher activity values from the Phase 3 evidence.
+The `android` group then runs `aapt2 dump badging` on the produced debug APK and requires the exact package, version code, version name, compile SDK, minimum SDK, target SDK, and launcher activity values generated from the validated contract's `android` block (`package_name`, `current_version_code`, `current_version_name`, `compile_sdk`, `min_sdk`, `target_sdk`, and `launcher_activity_merged`). The current successful repository continues expecting version code `1` and version name `0.1.0` because those are the contract's current committed values before Phase 5.
 
 ## Release-charter non-functionality predicate
 
