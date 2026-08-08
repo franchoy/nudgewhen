@@ -50,6 +50,10 @@ CANDIDATE_UNTRACKED_ALLOWLIST = (
     "scripts/validate_local.py",
     "docs/local-validation.md",
     "docs/agentic-development/experiments/EXP-0007.md",
+    "tests/__init__.py",
+    "tests/_helpers.py",
+    "tests/test_validator_core.py",
+    "tests/test_validator_repository.py",
 )
 
 TEXT_EXTENSIONS = (
@@ -221,6 +225,10 @@ REQUIRED_FILES = (
     ".github/ISSUE_TEMPLATE/bug_report.yml",
     ".github/ISSUE_TEMPLATE/feature_request.yml",
     ".github/ISSUE_TEMPLATE/config.yml",
+    "tests/__init__.py",
+    "tests/_helpers.py",
+    "tests/test_validator_core.py",
+    "tests/test_validator_repository.py",
 )
 
 GITIGNORE_REQUIRED = (
@@ -788,6 +796,451 @@ def resolve_md_link(target_raw: str) -> tuple[bool, bool, str]:
     return True, is_root, first
 
 
+def check_repository_consistency(args: argparse.Namespace, fail_fast: bool) -> bool:
+    """Cohesive repository-consistency check for active release identity.
+
+    Uses the already-loaded release contract to derive the active release
+    version, the active release branch, and the previous release version.
+    Operates on repository files through REPO-relative paths, emits
+    deterministic PASS/FAIL output, respects fail_fast, and returns a
+    boolean compatible with the existing validator architecture.
+
+    The check distinguishes active declarations (the specific declarative
+    sentences that assert the project's current release identity) from
+    historical narrative references (mentions of previous releases in
+    context such as "v0.1.0 phases (historical, complete):" or
+    "v0.1.0 release is complete and historical"). A legitimate
+    historical mention in a current document does not fail; only a
+    stale active declaration fails.
+    """
+    del args  # no group-specific arguments required
+    contract = get_release_contract()
+    if contract is None:
+        if not _PREREQ_FAILED:
+            err = get_release_contract_error() or "contract load failed"
+            emit_prereq("release-contract", err)
+        return False
+
+    active_version = contract["release"]["version"]
+    active_branch = contract["release"]["active_branch"]
+    historical_version = contract["historical"]["previous_release_version"]
+
+    failures: list[str] = []
+
+    # 1. README active release version declaration.
+    readme = REPO / "README.md"
+    if readme.is_file():
+        try:
+            readme_text = readme.read_text(encoding="utf-8")
+        except (OSError, UnicodeDecodeError):
+            failures.append("README.md is not readable as UTF-8")
+            readme_text = ""
+        if readme_text:
+            m = re.search(
+                r"is currently in the `([^`]+)` release train",
+                readme_text,
+            )
+            if m is None:
+                failures.append(
+                    "README lacks 'is currently in the X release train' declaration"
+                )
+            elif m.group(1) != active_version:
+                failures.append(
+                    f"README active version declaration is '{m.group(1)}' "
+                    f"but contract requires '{active_version}'"
+                )
+
+            m = re.search(
+                r"The current active branch is `([^`]+)`",
+                readme_text,
+            )
+            if m is None:
+                failures.append(
+                    "README lacks 'the current active branch is X' declaration"
+                )
+            elif m.group(1) != active_branch:
+                failures.append(
+                    f"README active branch declaration is '{m.group(1)}' "
+                    f"but contract requires '{active_branch}'"
+                )
+    else:
+        failures.append("README.md is missing")
+
+    # 2. Phase-list document title.
+    phase_list_rel = contract["release_documents"]["phase_list"]
+    phase_list = REPO / phase_list_rel
+    if phase_list.is_file():
+        try:
+            phase_list_text = phase_list.read_text(encoding="utf-8")
+        except (OSError, UnicodeDecodeError):
+            failures.append(f"{phase_list_rel} is not readable as UTF-8")
+            phase_list_text = ""
+        if phase_list_text:
+            m = re.search(
+                r"^# Phase List — NudgeWhen (\S+)\s*$",
+                phase_list_text,
+                flags=re.M,
+            )
+            if m is None:
+                failures.append(
+                    f"{phase_list_rel} lacks '# Phase List — NudgeWhen X' title"
+                )
+            elif m.group(1) != active_version:
+                failures.append(
+                    f"{phase_list_rel} title identifies '{m.group(1)}' "
+                    f"but contract requires '{active_version}'"
+                )
+    else:
+        failures.append(f"{phase_list_rel} is missing")
+
+    # 3. Release-charter document title (must not present historical as active).
+    charter_rel = contract["release_documents"]["charter"]
+    charter = REPO / charter_rel
+    if charter.is_file():
+        try:
+            charter_text = charter.read_text(encoding="utf-8")
+        except (OSError, UnicodeDecodeError):
+            failures.append(f"{charter_rel} is not readable as UTF-8")
+            charter_text = ""
+        if charter_text:
+            m = re.search(
+                r"^# Release Charter — NudgeWhen (\S+)\s*$",
+                charter_text,
+                flags=re.M,
+            )
+            if m is None:
+                failures.append(
+                    f"{charter_rel} lacks '# Release Charter — NudgeWhen X' title"
+                )
+            elif m.group(1) != active_version:
+                if m.group(1) == historical_version:
+                    failures.append(
+                        f"{charter_rel} title identifies historical release "
+                        f"'{m.group(1)}' as if it were active; "
+                        f"contract requires '{active_version}'"
+                    )
+                else:
+                    failures.append(
+                        f"{charter_rel} title identifies '{m.group(1)}' "
+                        f"but contract requires '{active_version}'"
+                    )
+    else:
+        failures.append(f"{charter_rel} is missing")
+
+    # 4. Document-status phase-progress summary (B5A).
+    # The authoritative phase state comes only from
+    # contract["phase_model"]["expected_statuses"]. The contract loader
+    # already guarantees a contiguous Complete prefix followed by a
+    # Planned suffix, so the highest completed phase is found by scanning
+    # the inclusive numeric range [first_phase, last_phase] in order and
+    # stopping at the first non-Complete entry.
+    phase_model = contract["phase_model"]
+    first_phase = phase_model["first_phase"]
+    last_phase = phase_model["last_phase"]
+    expected_statuses = phase_model["expected_statuses"]
+    last_complete = first_phase - 1
+    for n in range(first_phase, last_phase + 1):
+        if expected_statuses[f"Phase {n}"] == "Complete":
+            last_complete = n
+        else:
+            break
+    if last_complete >= first_phase:
+        expected_completed_phrase = (
+            f"Phases {first_phase} through {last_complete} complete"
+        )
+    else:
+        expected_completed_phrase = "(no phases complete)"
+
+    def _check_doc_status_summary(rel_path: str, text: str) -> None:
+        if not text:
+            return
+        sm = re.search(
+            r"^\*\*Document status:\*\*\s*(.+?)\s*$",
+            text,
+            flags=re.M,
+        )
+        if sm is None:
+            failures.append(
+                f"{rel_path} lacks **Document status:** declaration"
+            )
+            return
+        summary_text = sm.group(1).strip()
+        claim_match = re.search(
+            r"Phases?\s+(\d+)\s+through\s+(\d+)\s+complete",
+            summary_text,
+        )
+        if claim_match is None:
+            observed_claim = "(no completed-range claim)"
+        else:
+            observed_claim = (
+                f"Phases {claim_match.group(1)} through "
+                f"{claim_match.group(2)} complete"
+            )
+        if observed_claim != expected_completed_phrase:
+            failures.append(
+                f"{rel_path} document-status summary is "
+                f"'{summary_text}'; observed completed-range claim is "
+                f"'{observed_claim}' but contract requires "
+                f"'{expected_completed_phrase}'"
+            )
+
+    _check_doc_status_summary(phase_list_rel, phase_list_text)
+    _check_doc_status_summary(charter_rel, charter_text)
+
+    # 5. Persistent CI workflow consistency (B5B).
+    # Inspects only .github/workflows/ci.yml using narrowly targeted
+    # deterministic text/regular-expression checks matched to the
+    # current workflow layout. Verifies exactly five stable CI
+    # invariants: release/** push coverage, main push coverage,
+    # main pull_request coverage, workflow_dispatch presence, and
+    # jobs.validate presence. Does not implement a generic YAML
+    # parser and does not contact GitHub or execute CI.
+    ci_path = REPO / ".github/workflows/ci.yml"
+    ci_text = ""
+    if ci_path.is_file():
+        try:
+            ci_text = ci_path.read_text(encoding="utf-8")
+        except (OSError, UnicodeDecodeError):
+            ci_text = ""
+    # B5C: bounded malformed CI/YAML required structure.
+    # Verifies that the persistent CI workflow owns a top-level
+    # ``on:`` mapping. Removing only the ``on:`` line while leaving
+    # the trigger entries textually present would otherwise leave
+    # the existing B5B checks all satisfied, so this invariant
+    # characterizes a representative malformed required workflow
+    # structure. Not a generic YAML parser.
+    if not re.search(
+        r"^on:\s*$",
+        ci_text, flags=re.M,
+    ):
+        failures.append("CI workflow lacks top-level on mapping")
+    if not re.search(
+        r"^  push:\s*\n[ \t]+branches:\s*\n[ \t]+-[ \t]+release/\*\*\s*$",
+        ci_text, flags=re.M,
+    ):
+        failures.append("CI workflow lacks push coverage for release/**")
+    push_section = re.search(
+        r"^  push:\s*\n((?:[ \t]{4,}[^\n]*\n)*)",
+        ci_text, flags=re.M,
+    )
+    if not push_section or not re.search(
+        r"^[ \t]+-[ \t]+main\s*$",
+        push_section.group(1), flags=re.M,
+    ):
+        failures.append("CI workflow lacks push coverage for main")
+    pull_request_section = re.search(
+        r"^  pull_request:\s*\n((?:[ \t]{4,}[^\n]*\n)*)",
+        ci_text, flags=re.M,
+    )
+    if not pull_request_section or not re.search(
+        r"^[ \t]+-[ \t]+main\s*$",
+        pull_request_section.group(1), flags=re.M,
+    ):
+        failures.append("CI workflow lacks pull_request coverage for main")
+    if not re.search(
+        r"^  workflow_dispatch:\s*$",
+        ci_text, flags=re.M,
+    ):
+        failures.append("CI workflow lacks workflow_dispatch")
+    jobs_section = re.search(
+        r"^jobs:\s*\n((?:[ \t]+[^\n]*\n)*)",
+        ci_text, flags=re.M,
+    )
+    if not jobs_section or not re.search(
+        r"^  validate:\s*$",
+        jobs_section.group(1), flags=re.M,
+    ):
+        failures.append("CI workflow lacks stable validate job")
+    # B5C: bounded stable ``validate`` job display name. The display
+    # name must belong to the ``validate`` job, not the file as a
+    # whole. Derive the ``validate`` job body from the already-derived
+    # ``jobs_section`` and require the literal child name
+    # ``name: validate``. No generic YAML parser.
+    validate_job = None
+    if jobs_section:
+        validate_job = re.search(
+            r"^  validate:\s*\n((?:[ \t]{4,}[^\n]*\n)*)",
+            jobs_section.group(1),
+            flags=re.M,
+        )
+    if not validate_job or not re.search(
+        r"^    name:\s*validate\s*$",
+        validate_job.group(1) if validate_job else "",
+        flags=re.M,
+    ):
+        failures.append("CI workflow validate job display name is not 'validate'")
+    # B5C: bounded read-only ``contents`` permission at the top level.
+    # Verifies the persistent CI workflow declares
+    # ``permissions: contents: read`` so the validate job receives
+    # read-only token scope. Not a remote GitHub permissions check.
+    permissions_section = re.search(
+        r"^permissions:\s*\n((?:[ \t]+[^\n]*\n)*)",
+        ci_text,
+        flags=re.M,
+    )
+    if not permissions_section or not re.search(
+        r"^  contents:\s*read\s*$",
+        permissions_section.group(1),
+        flags=re.M,
+    ):
+        failures.append("CI workflow lacks read-only contents permission")
+
+    # 6. AGENTS.md current-release-context active declarations (B5D).
+    # AGENTS.md is the authoritative repository-local operational
+    # contract. The bounded check inspects only the
+    # ``## Current release context`` section and verifies the two
+    # declarative active fields there. Historical narrative references
+    # elsewhere in AGENTS.md, including historical release narrative
+    # inside the terminated bootstrap-exception record, remain legal.
+    # A historical value placed in an active field fails. No current
+    # phase or current branch generation check is added.
+    agents_path = REPO / "AGENTS.md"
+    agents_text: str | None = None
+    if not agents_path.is_file():
+        failures.append("AGENTS.md is missing")
+    else:
+        try:
+            agents_text = agents_path.read_text(encoding="utf-8")
+        except (OSError, UnicodeDecodeError):
+            failures.append("AGENTS.md is not readable as UTF-8")
+
+    if agents_text is not None:
+        section_match = re.search(
+            r"^## Current release context\s*\n",
+            agents_text,
+            flags=re.M,
+        )
+        if section_match is None:
+            failures.append(
+                "AGENTS.md lacks '## Current release context' section"
+            )
+        else:
+            section_start = section_match.end()
+            next_heading = re.search(
+                r"^## [^#].*$",
+                agents_text[section_start:],
+                flags=re.M,
+            )
+            if next_heading is None:
+                section_text = agents_text[section_start:]
+            else:
+                section_text = agents_text[
+                    section_start : section_start + next_heading.start()
+                ]
+            active_release_match = re.search(
+                r"^- \*\*Active release:\*\*\s*`([^`]+)`\s*$",
+                section_text,
+                flags=re.M,
+            )
+            if active_release_match is None:
+                failures.append(
+                    "AGENTS current release context lacks Active release declaration"
+                )
+            else:
+                observed_release = active_release_match.group(1)
+                if observed_release == historical_version:
+                    failures.append(
+                        f"AGENTS current release context identifies "
+                        f"historical release '{observed_release}' as active; "
+                        f"contract requires '{active_version}'"
+                    )
+                elif observed_release != active_version:
+                    failures.append(
+                        f"AGENTS current release context active release is "
+                        f"'{observed_release}' but contract requires "
+                        f"'{active_version}'"
+                    )
+            active_branch_match = re.search(
+                r"^- \*\*Active branch:\*\*\s*`([^`]+)`\s*$",
+                section_text,
+                flags=re.M,
+            )
+            historical_branch = f"release/{historical_version}"
+            if active_branch_match is None:
+                failures.append(
+                    "AGENTS current release context lacks Active branch declaration"
+                )
+            else:
+                observed_branch = active_branch_match.group(1)
+                if observed_branch == historical_branch:
+                    failures.append(
+                        f"AGENTS current release context identifies "
+                        f"historical branch '{observed_branch}' as active; "
+                        f"contract requires '{active_branch}'"
+                    )
+                elif observed_branch != active_branch:
+                    failures.append(
+                        f"AGENTS current release context active branch is "
+                        f"'{observed_branch}' but contract requires "
+                        f"'{active_branch}'"
+                    )
+
+    # 7. B5E current-facing false-absence contradiction scan.
+    # Inspects exactly three current-facing documents for the three
+    # historical stale-absence concepts owned by this slice: Android
+    # application code absent, CI workflow absent, and published or
+    # released baseline absent. Missing current-facing files are owned
+    # by the existing required/files contract and are not duplicated
+    # here. Files that exist but cannot be read as UTF-8 fail closed.
+    # Not a generic natural-language truth checker; not a historical
+    # document scan; not a production-readiness or product-feature
+    # absence check.
+    current_state_paths = (
+        "README.md",
+        "CONTRIBUTING.md",
+        "SECURITY.md",
+    )
+    b5e_android_absence = re.compile(
+        r"\bno\s+Android\s+application\s+code\b", re.I,
+    )
+    b5e_ci_absence = re.compile(
+        r"\bno\s+CI\s+workflow\b", re.I,
+    )
+    b5e_release_absence = (
+        re.compile(r"\bno\s+published\s+release\b", re.I),
+        re.compile(r"\bno\s+released\s+or\s+runnable\s+application\b", re.I),
+    )
+    for b5e_rel in current_state_paths:
+        b5e_path = REPO / b5e_rel
+        if not b5e_path.is_file():
+            continue
+        try:
+            b5e_text = b5e_path.read_text(encoding="utf-8")
+        except (OSError, UnicodeDecodeError):
+            failures.append(
+                f"{b5e_rel} is not readable as UTF-8 for "
+                f"current-state consistency"
+            )
+            continue
+        if b5e_android_absence.search(b5e_text):
+            failures.append(
+                f"{b5e_rel} falsely claims Android application code is absent"
+            )
+        if b5e_ci_absence.search(b5e_text):
+            failures.append(
+                f"{b5e_rel} falsely claims CI workflow is absent"
+            )
+        for b5e_release_pat in b5e_release_absence:
+            if b5e_release_pat.search(b5e_text):
+                failures.append(
+                    f"{b5e_rel} falsely claims the released baseline is absent"
+                )
+                break
+
+    if failures:
+        emit("FAIL", "docs", "repository-consistency", "; ".join(failures))
+        return False
+
+    emit(
+        "PASS",
+        "docs",
+        "repository-consistency",
+        f"active release identity consistent "
+        f"(version='{active_version}', branch='{active_branch}')",
+    )
+    return True
+
+
 def check_docs(args: argparse.Namespace, fail_fast: bool) -> bool:
     ok = True
     inventory = candidate_inventory(args)
@@ -1093,6 +1546,10 @@ def check_docs(args: argparse.Namespace, fail_fast: bool) -> bool:
 
     if not ok and fail_fast: return False
 
+    if not check_repository_consistency(args, fail_fast):
+        ok = False
+        if fail_fast: return False
+
     exp_min = {
         "title": re.compile(r"^# EXP-\d{4} — .+", re.MULTILINE),
         "doc_status": re.compile(r"^\*\*Document status:\*\*", re.MULTILINE),
@@ -1271,6 +1728,33 @@ def check_android_prerequisites() -> Path | None:
     return sdk
 
 
+def _version_catalog_failures(text: str) -> list[str]:
+    """Return version-catalog mismatch descriptions for the four release-critical keys.
+
+    Bounded repository-specific textual validation. Counts every exact
+    release-critical key in ``text`` and enforces the four expected
+    values. Not a generic TOML parser.
+    """
+    expectations = {
+        "agp": "9.2.1",
+        "kotlinCompose": "2.3.10",
+        "composeBom": "2026.06.00",
+        "activityCompose": "1.13.0",
+    }
+    bad: list[str] = []
+    for key, expected in expectations.items():
+        matches = re.findall(
+            rf'^{re.escape(key)}\s*=\s*"([^"]+)"',
+            text,
+            flags=re.M,
+        )
+        if len(matches) != 1:
+            bad.append(f"{key}=count:{len(matches)}")
+        elif matches[0] != expected:
+            bad.append(f"{key}={matches[0]}")
+    return bad
+
+
 def check_android_content(args: argparse.Namespace, sdk: Path) -> bool:
     ok = True
     prohibited = ("org.jetbrains.kotlin.android", "android.kotlinOptions", "kotlinCompilerExtensionVersion")
@@ -1289,12 +1773,7 @@ def check_android_content(args: argparse.Namespace, sdk: Path) -> bool:
     toml = REPO / "gradle/libs.versions.toml"
     if toml.is_file():
         text = toml.read_text(encoding="utf-8")
-        expectations = {"agp": "9.2.1", "kotlinCompose": "2.3.10", "composeBom": "2026.06.00", "activityCompose": "1.13.0"}
-        bad = []
-        for key, expected in expectations.items():
-            m = re.search(rf'^{key}\s*=\s*"([^"]+)"', text, flags=re.M)
-            if not m or m.group(1) != expected:
-                bad.append(f"{key}={m.group(1) if m else None}")
+        bad = _version_catalog_failures(text)
         if bad:
             emit("FAIL", "android", "version-catalog", f"unexpected: {', '.join(bad)}")
             ok = False

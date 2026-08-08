@@ -356,7 +356,14 @@ The suite does not perform clean-checkout creation, deletion, or any related orc
 
 ## CI
 
-The committed workflow is `.github/workflows/ci.yml`; its only `validate` job step runs `./scripts/validate-local.sh --require-clean`. The shell script (`scripts/validate-local.sh`) sets `PYTHONDONTWRITEBYTECODE=1` and `exec`s `scripts/validate_local.py` with the passed arguments. The Python validator's `release_gate=SATISFIED` literal is emitted only when the validated contract's `release_gate_requires_groups` identifiers are all present in the resolved selection, no failures are recorded, and either `release_gate_requires_android_not_skipped` is `false` or Android is selected and not skipped; it is not emitted on the basis of a partial run.
+The committed workflow is `.github/workflows/ci.yml`; its `validate` job runs the accepted Phase 4 regression suite immediately before the existing clean-checkout validator gate. The clean committed/CI Phase 4 validation sequence is:
+
+```bash
+python3 -B -m unittest tests.test_validator_core tests.test_validator_repository
+./scripts/validate-local.sh --require-clean
+```
+
+The regression suite runs first and uses ordinary GitHub Actions sequential-step semantics, so a failure in the regression step prevents the later validator step from running. The `-B` flag passed to the Python interpreter prevents Python bytecode emission during this command. The second command is the existing full clean-state validator gate; `--require-clean` is appropriate for a clean committed checkout or CI. The shell script (`scripts/validate-local.sh`) sets `PYTHONDONTWRITEBYTECODE=1` and `exec`s `scripts/validate_local.py` with the passed arguments. The Python validator's `release_gate=SATISFIED` literal is emitted only when the validated contract's `release_gate_requires_groups` identifiers are all present in the resolved selection, no failures are recorded, and either `release_gate_requires_android_not_skipped` is `false` or Android is selected and not skipped; it is not emitted on the basis of a partial run.
 
 The persistent CI configuration for `v0.1.1` was generalized in Phase 2 to run on pushes to `release/**`, on pull requests targeting `main`, on pushes to `main`, and on manual `workflow_dispatch`, preserving the stable `validate` job name. Phase 3 work subsequently landed on the active `release/v0.1.1` branch and the following two exact-head CI runs on the active branch are maintainer-supplied remote evidence of the Phase 3A4 subphases:
 
@@ -364,6 +371,19 @@ The persistent CI configuration for `v0.1.1` was generalized in Phase 2 to run o
 - commit `f0ae1e1faed6c364008c7a8fccac37f631b53562` (Phase 3A4c, contract-driven groups, CLI and release gate), automatic CI run `30743100368`, workflow `CI`, branch `release/v0.1.1`, head SHA `f0ae1e1faed6c364008c7a8fccac37f631b53562`, conclusion `success`, job `validate` `success`, `validate-local` step `success`, `upload-debug-apk` step `success`.
 
 This document records those runs as maintainer-supplied evidence; the Build that produced this documentation did not independently query the remote and did not run GitHub Actions itself.
+
+## Dirty-candidate iteration
+
+An intentionally dirty cumulative Phase 4 development candidate — one that still contains uncommitted or untracked changes under maintainer review — is not expected to pass `--require-clean` and is therefore validated through a different sequence than the clean committed/CI gate. The accepted Phase 4 dirty-candidate iteration sequence is:
+
+```bash
+python3 -B -m unittest tests.test_validator_core tests.test_validator_repository
+./scripts/validate-local.sh --group required
+./scripts/validate-local.sh --group docs
+./scripts/validate-local.sh --skip-android
+```
+
+The regression command runs first, the `required` and `docs` groups are exercised next, and the `android` group is exercised with `--skip-android` because Android is expected to be exercised separately under the maintainer's documented Android environment. The dirty-candidate iteration is a partial run: a partial run and a run that uses `--skip-android` produce `release_gate=NOT_SATISFIED` rather than `release_gate=SATISFIED`, and that outcome is correct for a still-dirty candidate. The clean committed/CI canonical gate described in the previous section, not this iteration sequence, is what establishes Phase 4 release-gate satisfaction.
 
 ## Phase 5
 
