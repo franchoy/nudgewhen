@@ -1,6 +1,6 @@
 # Phase List — NudgeWhen v0.1.1
 
-**Document status:** Accepted — Phase 0 complete; v0.1.1 release in progress
+**Document status:** Accepted — Phases 0 through 3 complete; v0.1.1 release in progress
 **Active release branch:** release/v0.1.1
 **Active release charter:** docs/releases/v0.1.1/release-charter.md
 
@@ -303,24 +303,26 @@ The validator implementation, its shell entry point, its documentation, and the 
 - Candidate and clean-checkout semantics remain deterministic.
 - Phase experiment record; ID assigned when the task starts according to the experiment protocol.
 
+**Phase 3 closure evidence (synchronized after manual repository action).** The accepted Phase 3 implementation outcome is `Successful with correction`; the accepted experiment evidence is `EXP-0027`. The exact three-path implementation and evidence commit is `cad89bfe241e10d6661a7746058721e22a5b9880` (subject `refactor: complete phase 3 local validator architecture`, parent recorded in the `EXP-0027` chronology), which directly modified `docs/agentic-development/experiments/EXP-0027.md` (addition), `docs/local-validation.md` (modification), and `scripts/validate_local.py` (modification). That commit was successfully pushed to `origin/release/v0.1.1`; the local HEAD and the remote-tracking hash were established as identical. The exact-head CI run is `30949699383` (workflow `CI`, event `push`, branch `release/v0.1.1`, head SHA `cad89bfe241e10d6661a7746058721e22a5b9880`, conclusion `success`). No product functionality, Android behavior, or Android permission was added or changed; only the validator architecture, its documentation, and the corresponding experiment record were modified. Historical attempt deviations recorded in `EXP-0027.md` remain historical evidence and have not been erased.
+
 ### Status
 
-Planned
+Complete
 
 ### Validation checklist
 
-- [ ] BLOCKED — The validator separates stable, current-release, Android, release-gate, and command-line handling. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — Release-specific information is not duplicated and is read from one authoritative location. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — The release-contract representation is human-reviewable, standard-library-readable, deterministic, validatable, and free of network requirements. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — The `required`, `docs`, `android`, and `all` groups are preserved. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — Candidate and clean-checkout modes are preserved. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — Exit codes `0`, `1`, and `2` are preserved with the same semantics. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — `release_gate=SATISFIED` is emitted only on the complete all-groups run. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — No staging, repository mutation, dependency installation, or network activity is introduced. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — Missing-Git and invalid-invocation paths fail cleanly with exit `2`. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — Historical release documents are not mistaken for the active release contract. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — Existing Android manifest and artifact checks remain at least as strict as v0.1.0. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — Phase experiment record; ID assigned when the task starts according to the experiment protocol. The phase has not started; direct completion evidence is not yet available.
+- [x] PASS — The validator separates stable, current-release, Android, release-gate, and command-line handling. Directly observed by the Phase 3A5-R2 readbacks of `scripts/validate_local.py` (1705 lines through explicit EOF) and `docs/local-validation.md` (374 lines through explicit EOF); the architecture is reflected in the Phase 3A4a, Phase 3A4c, and Phase 3A5 sections of `docs/local-validation.md`.
+- [x] PASS — Release-specific information is not duplicated and is read from one authoritative location. Directly observed by `scripts/release_contract.json` (read through explicit EOF at 65 lines), which is the single source for active release identity, phase model, Android identity, validation groups, and historical pointer; the Phase 3A2 wiring of the `required` group loads, structurally validates, and cross-checks this contract.
+- [x] PASS — The release-contract representation is human-reviewable, standard-library-readable, deterministic, validatable, and free of network requirements. Directly observed by the two-space-indented JSON with sorted logical sections and a top-level `schema_version` field, loaded via the standard library only (`open()`/`read_bytes()`/`json.loads()`), and by the accepted validation totals `SUMMARY pass=8 fail=0 skip=0` (required), `pass=10 fail=0 skip=0` (docs), and `pass=18 fail=0 skip=0` (skip-Android), with `release_gate=NOT_SATISFIED` on the partial runs.
+- [x] PASS — The `required`, `docs`, `android`, and `all` groups are preserved. Directly observed by the contract's `validation.groups = ["required", "docs", "android"]` and `validation.all_alias = "all"`, by the `VALIDATION_HANDLERS` registry that maps each real group identifier to a wrapper, and by the accepted validation totals above.
+- [x] PASS — Candidate and clean-checkout modes are preserved. Directly observed by `docs/local-validation.md` lines 284-290 (the `Candidate and clean-checkout modes` subsection), which retains the candidate-mode untracked-path inventory and the clean-mode tracked-only requirement.
+- [x] PASS — Exit codes `0`, `1`, and `2` are preserved with the same semantics. Directly observed by the exit-code table in `docs/local-validation.md` (lines 178-184) and by the accepted Phase 3A5-R2 validation totals, which were produced with the expected exit codes for the partial and complete runs.
+- [x] PASS — `release_gate=SATISFIED` is emitted only on the complete all-groups run. Directly observed by the release-gate semantics in `docs/local-validation.md` (lines 232-250) and by the accepted Phase 3A5-R2 full-offline run `SUMMARY pass=34 fail=0 skip=0` with `release_gate=SATISFIED`, while the partial runs reported `release_gate=NOT_SATISFIED`.
+- [x] PASS — No staging, repository mutation, dependency installation, or network activity is introduced. Directly observed by `docs/local-validation.md` (the `SDK environment-variable requirements` and `--require-clean` sections) and by the validator's `no_network` and `no_dependency_installation` invariants in the contract; the only Phase 3 paths modified are the three that commit `cad89bfe…` touches.
+- [x] PASS — Missing-Git and invalid-invocation paths fail cleanly with exit `2`. Directly observed by the missing-Git output `FAIL prerequisite/git — git executable not found` / `SUMMARY pass=0 fail=1 skip=0` / `release_gate=NOT_SATISFIED` documented in `docs/local-validation.md` (lines 56-62) and by the invalid-Git-worktree output `FAIL prerequisite/git-worktree — repository is not a Git worktree` / `SUMMARY pass=0 fail=1 skip=0` / `release_gate=NOT_SATISFIED` documented at lines 89-101; the Phase 3A5-R2 controlled invalid-worktree output matched the required three-line result.
+- [x] PASS — Historical release documents are not mistaken for the active release contract. Directly observed by the `historical` block of `scripts/release_contract.json` (`previous_release_version = "v0.1.0"`, `previous_release_docs_root = "docs/releases/v0.1.0"`, `previous_release_is_historical = true`) and by the Phase 3A3a `charter-consistency` check that uses the active charter from `release_documents.charter`.
+- [x] PASS — Existing Android manifest and artifact checks remain at least as strict as v0.1.0. Directly observed by the Phase 3A5 contract-driven Android expectations and the `apk-metadata` / `source-manifest` / `merged-manifest` documentation in `docs/local-validation.md` (lines 113-127 and 332-337), and by the accepted Phase 3A5-R2 Android-offline run `SUMMARY pass=16 fail=0 skip=0` and full-offline run `SUMMARY pass=34 fail=0 skip=0` with `release_gate=SATISFIED`.
+- [x] PASS — Phase experiment record; ID assigned when the task starts according to the experiment protocol. Directly observed by the existence of `docs/agentic-development/experiments/EXP-0027.md` (read through explicit EOF at 563 lines), which preserves the Phase 3R2, Phase 3A5, Phase 3A5-R1, and Phase 3A5-R2 chronology and records the accepted Phase 3 implementation outcome `Successful with correction`.
 
 ## Phase 4 — Validator Regression Suite and Repository-Consistency Enforcement
 

@@ -1,6 +1,6 @@
 # Release Charter — NudgeWhen v0.1.1
 
-**Document status:** Accepted — Phase 0 complete; v0.1.1 release in progress
+**Document status:** Accepted — Phases 0 through 3 complete; v0.1.1 release in progress
 **Release name:** NudgeWhen v0.1.1 — Post-Release Closure and Reusable Validation Baseline
 **Version:** v0.1.1
 **Android artifact identity:** versionCode = 2, versionName = "0.1.1" (delivered in Phase 5)
@@ -21,6 +21,10 @@ Phase 0 is `Complete`. The observed two-commit history on `release/v0.1.1` is th
 
 `v0.1.1` is a patch release with no new product functionality. It does not introduce reminder scheduling, notifications, voice or speech behavior, location handling, contextual triggers, persistence, networking, services, receivers, providers, background execution, or analytics. It exists only to convert the successful but release-specific `v0.1.0` repository into a durable baseline for future development.
 
+## Phase 3 status
+
+Phase 3 (Reusable Local-Validator Architecture) is `Complete`. The accepted implementation outcome is `Successful with correction`. The Phase 3 implementation and evidence commit is `cad89bfe241e10d6661a7746058721e22a5b9880` (subject `refactor: complete phase 3 local validator architecture`, branch `release/v0.1.1`), which directly modified the three authorized Phase 3 paths (`docs/agentic-development/experiments/EXP-0027.md` added; `docs/local-validation.md` and `scripts/validate_local.py` modified) and was successfully pushed to `origin/release/v0.1.1`. The exact-head CI run is `30949699383` (workflow `CI`, event `push`, branch `release/v0.1.1`, head SHA `cad89bfe241e10d6661a7746058721e22a5b9880`, conclusion `success`). No product functionality, Android behavior, or Android permission was added or changed by the Phase 3 implementation; the deliverable is the reusable validator architecture, its single release-contract source, and its updated documentation. Phase 4 (Validator Regression Suite and Repository-Consistency Enforcement) remains unstarted or planned. The overall `v0.1.1` release remains in progress; no pull request, merge, tag, published release, or release completion is claimed by this charter. Phase 0, Phase 1, and Phase 2 are also `Complete`.
+
 ## Release identity
 
 - Version: `v0.1.1`
@@ -28,7 +32,7 @@ Phase 0 is `Complete`. The observed two-commit history on `release/v0.1.1` is th
 - Active release branch: `release/v0.1.1`
 - Active release charter: `docs/releases/v0.1.1/release-charter.md`
 - Active phase list: `docs/releases/v0.1.1/phase-list.md`
-- Current phase: Phase 1 — Post-Release State and Documentation Closure
+- Current phase: Phase 4 — Validator Regression Suite and Repository-Consistency Enforcement
 
 ## Exact release objective
 
