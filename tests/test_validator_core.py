@@ -461,16 +461,23 @@ class MainExitSemanticsTests(unittest.TestCase):
         self.assertIn("release_gate=NOT_SATISFIED", rendered)
 
 
-class TrackedPycRejectionTests(unittest.TestCase):
-    """``check_required`` must reject tracked ``.pyc`` paths through the
-    real ``required/no-pyc`` branch. Because ``fail_fast`` is true, the
-    real checker must stop immediately after this rejection and the
+class TrackedBytecodeRejectionTests(unittest.TestCase):
+    """``check_required`` must reject tracked Python bytecode/cache-output
+    paths through the real ``required/no-bytecode`` branch. A tracked path
+    is treated as bytecode/cache output when its basename ends in
+    ``.pyc``, ``.pyo``, or ``.pyd`` or when one of its Git path
+    components is exactly ``__pycache__``. Because ``fail_fast`` is true,
+    the real checker must stop immediately after this rejection and the
     wrapper, ``.gitignore``, and ``.gitattributes`` fixtures must never
     be reached. The validator's own ``REQUIRED_FILES``, ``git_ls_files``
     and ``check_release_contract`` are temporarily patched, and every
-    patched object is restored even when an assertion fails."""
+    patched object is restored even when an assertion fails. The four
+    tests collectively cover the four bytecode/cache-output
+    classifications, including the ``pkg/__pycache__/marker.txt`` case
+    in which the basename has no bytecode extension but the path
+    contains a ``__pycache__`` path component."""
 
-    def test_tracked_pyc_is_rejected_with_required_no_pyc_line(self) -> None:
+    def test_tracked_pyc_is_rejected_with_required_no_bytecode_line(self) -> None:
         with _helpers.patched_module_attribute(
             "REQUIRED_FILES", ()
         ), _helpers.patched_module_attribute(
@@ -483,7 +490,152 @@ class TrackedPycRejectionTests(unittest.TestCase):
                 result = validate_local.check_required(args, True)
         self.assertFalse(result)
         self.assertIn(
-            "FAIL required/no-pyc \u2014 tracked bytecode: bad.pyc",
+            "FAIL required/no-bytecode \u2014 tracked bytecode: bad.pyc",
+            out.getvalue(),
+        )
+
+    def test_tracked_pyo_is_rejected_with_required_no_bytecode_line(self) -> None:
+        with _helpers.patched_module_attribute(
+            "REQUIRED_FILES", ()
+        ), _helpers.patched_module_attribute(
+            "git_ls_files", lambda: ["bad.pyo"]
+        ), _helpers.patched_module_attribute(
+            "check_release_contract", lambda *a, **k: True
+        ):
+            args = _make_args(fail_fast=True, require_clean=False)
+            with _helpers.capture_stdout_stderr() as (out, _):
+                result = validate_local.check_required(args, True)
+        self.assertFalse(result)
+        self.assertIn(
+            "FAIL required/no-bytecode \u2014 tracked bytecode: bad.pyo",
+            out.getvalue(),
+        )
+
+    def test_tracked_pyd_is_rejected_with_required_no_bytecode_line(self) -> None:
+        with _helpers.patched_module_attribute(
+            "REQUIRED_FILES", ()
+        ), _helpers.patched_module_attribute(
+            "git_ls_files", lambda: ["bad.pyd"]
+        ), _helpers.patched_module_attribute(
+            "check_release_contract", lambda *a, **k: True
+        ):
+            args = _make_args(fail_fast=True, require_clean=False)
+            with _helpers.capture_stdout_stderr() as (out, _):
+                result = validate_local.check_required(args, True)
+        self.assertFalse(result)
+        self.assertIn(
+            "FAIL required/no-bytecode \u2014 tracked bytecode: bad.pyd",
+            out.getvalue(),
+        )
+
+    def test_tracked_pycache_component_is_rejected_with_required_no_bytecode_line(
+        self,
+    ) -> None:
+        with _helpers.patched_module_attribute(
+            "REQUIRED_FILES", ()
+        ), _helpers.patched_module_attribute(
+            "git_ls_files", lambda: ["pkg/__pycache__/marker.txt"]
+        ), _helpers.patched_module_attribute(
+            "check_release_contract", lambda *a, **k: True
+        ):
+            args = _make_args(fail_fast=True, require_clean=False)
+            with _helpers.capture_stdout_stderr() as (out, _):
+                result = validate_local.check_required(args, True)
+        self.assertFalse(result)
+        self.assertIn(
+            "FAIL required/no-bytecode \u2014 tracked bytecode: pkg/__pycache__/marker.txt",
+            out.getvalue(),
+        )
+
+
+class GitignorePythonRulesTests(unittest.TestCase):
+    """``check_required`` must verify the ``GITIGNORE_PYTHON_REQUIRED``
+    rules through the real ``required/gitignore-python`` branch.
+
+    Test 1 creates a controlled temporary directory containing a
+    ``.gitignore`` that includes every ``GITIGNORE_REQUIRED`` rule plus
+    the two ``GITIGNORE_PYTHON_REQUIRED`` rules. Patching ``REPO``,
+    ``REQUIRED_FILES``, ``git_ls_files`` and ``check_release_contract``
+    through ``_helpers.patched_module_attribute`` confines the test to
+    the bounded invariant, the originals are restored even when an
+    assertion fails, and the real validator must emit the exact
+    ``PASS required/gitignore-python \u2014 Python bytecode ignore rules
+    present`` line.
+
+    Test 2 creates a controlled temporary directory containing a
+    ``.gitignore`` that includes every ``GITIGNORE_REQUIRED`` rule plus
+    only one of the two ``GITIGNORE_PYTHON_REQUIRED`` rules. The real
+    validator must emit the exact
+    ``FAIL required/gitignore-python \u2014 missing rules: *.py[cod]``
+    line, naming exactly the missing rule."""
+
+    def test_both_required_python_ignore_rules_emit_pass_required_gitignore_python(
+        self,
+    ) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            tmp_root = Path(tmpdir)
+            gi_path = tmp_root / ".gitignore"
+            gi_path.write_text(
+                "build/\n"
+                "local.properties\n"
+                "*.apk\n"
+                "*.aab\n"
+                "*.jks\n"
+                "*.keystore\n"
+                "session-ses_*.md\n"
+                "__pycache__/\n"
+                "*.py[cod]\n",
+                encoding="utf-8",
+            )
+            with _helpers.patched_module_attribute(
+                "REPO", tmp_root
+            ), _helpers.patched_module_attribute(
+                "REQUIRED_FILES", ()
+            ), _helpers.patched_module_attribute(
+                "git_ls_files", lambda: []
+            ), _helpers.patched_module_attribute(
+                "check_release_contract", lambda *a, **k: True
+            ):
+                args = _make_args(fail_fast=False, require_clean=False)
+                with _helpers.capture_stdout_stderr() as (out, _):
+                    validate_local.check_required(args, False)
+        self.assertIn(
+            "PASS required/gitignore-python \u2014 Python bytecode ignore rules present",
+            out.getvalue(),
+        )
+
+    def test_missing_one_required_python_ignore_rule_emits_fail_required_gitignore_python(
+        self,
+    ) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            tmp_root = Path(tmpdir)
+            gi_path = tmp_root / ".gitignore"
+            gi_path.write_text(
+                "build/\n"
+                "local.properties\n"
+                "*.apk\n"
+                "*.aab\n"
+                "*.jks\n"
+                "*.keystore\n"
+                "session-ses_*.md\n"
+                "__pycache__/\n",
+                encoding="utf-8",
+            )
+            with _helpers.patched_module_attribute(
+                "REPO", tmp_root
+            ), _helpers.patched_module_attribute(
+                "REQUIRED_FILES", ()
+            ), _helpers.patched_module_attribute(
+                "git_ls_files", lambda: []
+            ), _helpers.patched_module_attribute(
+                "check_release_contract", lambda *a, **k: True
+            ):
+                args = _make_args(fail_fast=False, require_clean=False)
+                with _helpers.capture_stdout_stderr() as (out, _):
+                    result = validate_local.check_required(args, False)
+        self.assertFalse(result)
+        self.assertIn(
+            "FAIL required/gitignore-python \u2014 missing rules: *.py[cod]",
             out.getvalue(),
         )
 
@@ -720,6 +872,287 @@ class VersionCatalogMalformedInputTests(unittest.TestCase):
         self.assertNotIn("kotlinCompose=count", rendered)
         self.assertNotIn("composeBom=count", rendered)
         self.assertNotIn("activityCompose=count", rendered)
+
+
+class WrapperJarSha256Tests(unittest.TestCase):
+    """``check_required`` must verify the committed Gradle wrapper JAR's
+    SHA-256 against the approved Gradle 9.4.1 value through the real
+    ``required/wrapper-jar-sha256`` branch.
+
+    Test 1 exercises the real repository: the committed wrapper JAR
+    matches the approved SHA-256, so the validator must emit the
+    ``PASS required/wrapper-jar-sha256`` line. Test 2 creates a
+    controlled temporary JAR outside the repository whose bytes
+    intentionally produce a different SHA-256, then invokes the real
+    validator against that isolated tree and asserts the
+    ``FAIL required/wrapper-jar-sha256`` line includes the observed
+    SHA-256 and does not expose the temporary absolute path. Both
+    tests invoke the real ``check_required`` against the production
+    ``REQUIRED_FILES``, ``git_ls_files`` and ``check_release_contract``
+    symbol names through narrow ``patched_module_attribute`` patches
+    that are restored even when an assertion fails. No validator
+    business logic is reimplemented.
+    """
+
+    def test_committed_wrapper_jar_passes_required_wrapper_jar_sha256(self) -> None:
+        """The real committed Gradle 9.4.1 wrapper JAR must satisfy the
+        bounded SHA-256 verification and emit the exact PASS line."""
+        with _helpers.patched_module_attribute(
+            "REQUIRED_FILES", ()
+        ), _helpers.patched_module_attribute(
+            "git_ls_files", lambda: []
+        ), _helpers.patched_module_attribute(
+            "check_release_contract", lambda *a, **k: True
+        ):
+            args = _make_args(fail_fast=False, require_clean=False)
+            with _helpers.capture_stdout_stderr() as (out, _):
+                validate_local.check_required(args, False)
+
+        rendered = out.getvalue()
+        self.assertIn(
+            "PASS required/wrapper-jar-sha256 \u2014 wrapper JAR SHA-256 verified",
+            rendered,
+        )
+        # The approved SHA value itself must be present in the real
+        # validator's constant so the committed JAR continues to
+        # match the maintainer-supplied approved value.
+        self.assertEqual(
+            validate_local.WRAPPER_JAR_EXPECTED_SHA,
+            "55243ef57851f12b070ad14f7f5bb8302daceeebc5bce5ece5fa6edb23e1145c",
+        )
+
+    def test_mismatched_wrapper_jar_fails_required_wrapper_jar_sha256(self) -> None:
+        """A controlled temporary JAR whose bytes produce a different
+        SHA-256 must be rejected with FAIL that includes the observed
+        SHA-256 and does not expose the temporary absolute path."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            tmp_root = Path(tmpdir)
+            gradle_dir = tmp_root / "gradle" / "wrapper"
+            gradle_dir.mkdir(parents=True)
+            tmp_jar = gradle_dir / "gradle-wrapper.jar"
+            tmp_jar_bytes = b"phase5a-mismatched-wrapper-jar-bytes"
+            tmp_jar.write_bytes(tmp_jar_bytes)
+            observed_sha = hashlib.sha256(tmp_jar_bytes).hexdigest()
+            tmp_jar_abs = str(tmp_jar.resolve())
+
+            with _helpers.patched_module_attribute(
+                "REPO", tmp_root
+            ), _helpers.patched_module_attribute(
+                "REQUIRED_FILES", ()
+            ), _helpers.patched_module_attribute(
+                "git_ls_files", lambda: []
+            ), _helpers.patched_module_attribute(
+                "check_release_contract", lambda *a, **k: True
+            ):
+                args = _make_args(fail_fast=False, require_clean=False)
+                with _helpers.capture_stdout_stderr() as (out, _):
+                    validate_local.check_required(args, False)
+
+        rendered = out.getvalue()
+        self.assertIn(
+            "FAIL required/wrapper-jar-sha256 \u2014 "
+            f"unexpected SHA-256: {observed_sha}",
+            rendered,
+        )
+        # The temporary absolute path must not appear in any output.
+        self.assertNotIn(tmp_jar_abs, rendered)
+        # The temporary root must not appear either, in any form.
+        self.assertNotIn(str(tmp_root.resolve()), rendered)
+
+
+class DependabotYamlTests(unittest.TestCase):
+    """``check_required`` must verify the bounded Phase 5C Dependabot
+    configuration through the real ``required/dependabot-yaml`` branch.
+
+    Test 1 (positive) creates an isolated ``TemporaryDirectory`` containing
+    only a ``.github/dependabot.yml`` populated with the canonical
+    two-ecosystem configuration. It patches ``REPO``, ``REQUIRED_FILES``,
+    ``git_ls_files`` and ``check_release_contract`` through
+    ``_helpers.patched_module_attribute`` and invokes the real
+    ``check_required`` against the controlled tree. It asserts the
+    captured stdout contains the exact
+    ``PASS required/dependabot-yaml — Dependabot configuration verified``
+    line.
+
+    Test 2 (representative negative case) uses the same isolated
+    ``check_required`` invocation but with a controlled
+    ``.github/dependabot.yml`` that omits the ``github-actions``
+    ecosystem. It asserts the captured stdout contains the exact
+    ``FAIL required/dependabot-yaml — ecosystems must equal: gradle, github-actions``
+    line.
+
+    Tests 3 through 7 invoke the production ``_dependabot_failures``
+    helper directly (the single bounded Phase 5C source of truth) against
+    mutated copies of the canonical text. The helper is the same logic
+    that ``check_required`` invokes, so no parallel test-only parser or
+    policy implementation is introduced.
+
+    No validator business logic is reimplemented. No YAML library is
+    used. ``tempfile``, ``Path``, and the existing ``_helpers`` are used.
+    The real Git index is not touched. No non-ignored repository output
+    is created. The real ``.github/dependabot.yml`` is not mutated by
+    negative fixtures.
+    """
+
+    def _canonical_text(self) -> str:
+        return (
+            'version: 2\n'
+            'updates:\n'
+            '  - package-ecosystem: "gradle"\n'
+            '    directory: "/"\n'
+            '    schedule:\n'
+            '      interval: "weekly"\n'
+            '    open-pull-requests-limit: 5\n'
+            '\n'
+            '  - package-ecosystem: "github-actions"\n'
+            '    directory: "/"\n'
+            '    schedule:\n'
+            '      interval: "weekly"\n'
+            '    open-pull-requests-limit: 5\n'
+        )
+
+    def test_canonical_dependabot_configuration_passes_required_dependabot_yaml(
+        self,
+    ) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            tmp_root = Path(tmpdir)
+            gh_dir = tmp_root / ".github"
+            gh_dir.mkdir()
+            (gh_dir / "dependabot.yml").write_text(
+                self._canonical_text(), encoding="utf-8",
+            )
+            with _helpers.patched_module_attribute(
+                "REPO", tmp_root,
+            ), _helpers.patched_module_attribute(
+                "REQUIRED_FILES", (),
+            ), _helpers.patched_module_attribute(
+                "git_ls_files", lambda: [],
+            ), _helpers.patched_module_attribute(
+                "check_release_contract", lambda *a, **k: True,
+            ):
+                args = _make_args(fail_fast=False, require_clean=False)
+                with _helpers.capture_stdout_stderr() as (out, _):
+                    validate_local.check_required(args, False)
+        self.assertIn(
+            "PASS required/dependabot-yaml \u2014 Dependabot configuration verified",
+            out.getvalue(),
+        )
+
+    def test_missing_one_required_ecosystem_fails_required_dependabot_yaml(
+        self,
+    ) -> None:
+        only_gradle = (
+            'version: 2\n'
+            'updates:\n'
+            '  - package-ecosystem: "gradle"\n'
+            '    directory: "/"\n'
+            '    schedule:\n'
+            '      interval: "weekly"\n'
+            '    open-pull-requests-limit: 5\n'
+        )
+        with tempfile.TemporaryDirectory() as tmpdir:
+            tmp_root = Path(tmpdir)
+            gh_dir = tmp_root / ".github"
+            gh_dir.mkdir()
+            (gh_dir / "dependabot.yml").write_text(
+                only_gradle, encoding="utf-8",
+            )
+            with _helpers.patched_module_attribute(
+                "REPO", tmp_root,
+            ), _helpers.patched_module_attribute(
+                "REQUIRED_FILES", (),
+            ), _helpers.patched_module_attribute(
+                "git_ls_files", lambda: [],
+            ), _helpers.patched_module_attribute(
+                "check_release_contract", lambda *a, **k: True,
+            ):
+                args = _make_args(fail_fast=False, require_clean=False)
+                with _helpers.capture_stdout_stderr() as (out, _):
+                    validate_local.check_required(args, False)
+        rendered = out.getvalue()
+        self.assertIn(
+            "FAIL required/dependabot-yaml \u2014 ecosystems must equal: gradle, github-actions",
+            rendered,
+        )
+
+    def test_additional_ecosystem_fails(self) -> None:
+        text = (
+            'version: 2\n'
+            'updates:\n'
+            '  - package-ecosystem: "gradle"\n'
+            '    directory: "/"\n'
+            '    schedule:\n'
+            '      interval: "weekly"\n'
+            '    open-pull-requests-limit: 5\n'
+            '\n'
+            '  - package-ecosystem: "github-actions"\n'
+            '    directory: "/"\n'
+            '    schedule:\n'
+            '      interval: "weekly"\n'
+            '    open-pull-requests-limit: 5\n'
+            '\n'
+            '  - package-ecosystem: "npm"\n'
+            '    directory: "/"\n'
+            '    schedule:\n'
+            '      interval: "weekly"\n'
+            '    open-pull-requests-limit: 5\n'
+        )
+        failures = validate_local._dependabot_failures(text)
+        self.assertIn(
+            "ecosystems must equal: gradle, github-actions", failures,
+        )
+
+    def test_top_level_version_other_than_2_fails(self) -> None:
+        text = self._canonical_text().replace("version: 2", "version: 3", 1)
+        failures = validate_local._dependabot_failures(text)
+        self.assertIn("top-level version must equal 2", failures)
+
+    def test_non_root_directory_fails(self) -> None:
+        text = self._canonical_text().replace(
+            'directory: "/"', 'directory: "/app"', 1,
+        )
+        failures = validate_local._dependabot_failures(text)
+        # The first entry (gradle) has a non-root directory
+        self.assertIn("gradle directory must equal /", failures)
+
+    def test_wrong_schedule_interval_and_limit_fail(self) -> None:
+        with self.subTest(variant="wrong schedule interval"):
+            bad_interval = self._canonical_text().replace(
+                '      interval: "weekly"', '      interval: "daily"', 1,
+            )
+            failures = validate_local._dependabot_failures(bad_interval)
+            self.assertIn(
+                "gradle schedule.interval must equal weekly", failures,
+            )
+        with self.subTest(variant="wrong open-pull-requests-limit"):
+            bad_limit = self._canonical_text().replace(
+                "open-pull-requests-limit: 5",
+                "open-pull-requests-limit: 10",
+                1,
+            )
+            failures = validate_local._dependabot_failures(bad_limit)
+            self.assertIn(
+                "gradle open-pull-requests-limit must equal 5", failures,
+            )
+
+    def test_forbidden_policy_keys_fail(self) -> None:
+        forbidden_keys = (
+            "auto-merge",
+            "vulnerability-alerts",
+            "groups",
+            "assignees",
+            "reviewers",
+            "milestone",
+            "ignore",
+            "labels",
+            "target-branch",
+            "registries",
+        )
+        for key in forbidden_keys:
+            with self.subTest(forbidden_key=key):
+                text = self._canonical_text() + f"{key}:\n  enabled: true\n"
+                failures = validate_local._dependabot_failures(text)
+                self.assertIn(f"forbidden key: {key}", failures)
 
 
 if __name__ == "__main__":

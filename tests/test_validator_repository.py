@@ -1130,8 +1130,8 @@ class AndroidContractNegativeTests(unittest.TestCase):
     def test_current_app_version_name_mismatch_fails_release_contract(self) -> None:
         """B5F2 row 19: when the temporary fixture's
         ``app/build.gradle.kts`` is intentionally overwritten so that
-        the current ``versionName`` line changes from ``"0.1.0"`` to
-        the premature future ``"0.1.1"`` while every other Gradle
+        the current ``versionName`` line changes from ``"0.1.1"`` to
+        the premature future ``"0.1.2"`` while every other Gradle
         contract-derived field remains valid, the real
         ``_load_release_contract`` must return ``None`` and set
         ``_CONTRACT_ERROR`` to the exact concise production reason
@@ -1139,9 +1139,9 @@ class AndroidContractNegativeTests(unittest.TestCase):
         The test asserts the message identifies ``versionName`` and
         does NOT identify ``versionCode``, isolating the row 19
         contradiction to the current versionName. The temporary
-        ``"0.1.1"`` value is used only as invalid Phase 4/Phase 5
-        boundary test input; the real ``app/build.gradle.kts`` is
-        not modified. No production code is changed."""
+        ``"0.1.2"`` value is used only as invalid Phase 5D boundary
+        test input; the real ``app/build.gradle.kts`` is not modified.
+        No production code is changed."""
         with tempfile.TemporaryDirectory() as td:
             repo = Path(td)
             contract_path = _helpers.create_consistency_fixture(
@@ -1152,10 +1152,10 @@ class AndroidContractNegativeTests(unittest.TestCase):
             )
             gradle = repo / "app" / "build.gradle.kts"
             gradle_text = gradle.read_text(encoding="utf-8")
-            self.assertIn('versionName = "0.1.0"', gradle_text)
+            self.assertIn('versionName = "0.1.1"', gradle_text)
             bad_gradle = gradle_text.replace(
-                'versionName = "0.1.0"',
                 'versionName = "0.1.1"',
+                'versionName = "0.1.2"',
                 1,
             )
             gradle.write_text(bad_gradle, encoding="utf-8")

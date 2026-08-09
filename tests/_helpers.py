@@ -243,8 +243,8 @@ def create_consistency_fixture(
         "compileSdk = 36\n"
         "minSdk = 26\n"
         "targetSdk = 36\n"
-        "versionCode = 1\n"
-        'versionName = "0.1.0"\n',
+        "versionCode = 2\n"
+        'versionName = "0.1.1"\n',
         encoding="utf-8",
     )
 

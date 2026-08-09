@@ -40,6 +40,10 @@ GRADLEW_BAT_EXPECTED_SHA = (
     "fedad02c18e266ec094995a5751b7fe1eb6e74f66bf75db64fae2e50eb22c234"
 )
 
+WRAPPER_JAR_EXPECTED_SHA = (
+    "55243ef57851f12b070ad14f7f5bb8302daceeebc5bce5ece5fa6edb23e1145c"
+)
+
 PRIVATE_PATTERN = re.compile(r"^session-ses_[A-Za-z0-9_]+\.md$")
 
 EMAIL_PATTERN = re.compile(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}")
@@ -222,6 +226,7 @@ REQUIRED_FILES = (
     "scripts/release_contract.json",
     "docs/local-validation.md",
     ".github/PULL_REQUEST_TEMPLATE.md",
+    ".github/dependabot.yml",
     ".github/ISSUE_TEMPLATE/bug_report.yml",
     ".github/ISSUE_TEMPLATE/feature_request.yml",
     ".github/ISSUE_TEMPLATE/config.yml",
@@ -233,6 +238,11 @@ REQUIRED_FILES = (
 
 GITIGNORE_REQUIRED = (
     "build/", "local.properties", "*.apk", "*.aab", "*.jks", "*.keystore", "session-ses_*.md",
+)
+
+GITIGNORE_PYTHON_REQUIRED = (
+    "__pycache__/",
+    "*.py[cod]",
 )
 
 GITATTRIBUTES_CONTRACT = (
@@ -632,6 +642,30 @@ def check_required(args: argparse.Namespace, fail_fast: bool) -> bool:
         label = "all required files present (tracked)" if clean_mode else "all required files present"
         emit("PASS", "required", "files", label)
 
+    # Bounded Dependabot configuration check (Phase 5C). Runs only
+    # after the required-file presence check has established that
+    # .github/dependabot.yml exists in the working tree. Uses the
+    # production _dependabot_failures helper as the single source of
+    # truth for the bounded Dependabot policy. No YAML dependency
+    # is introduced; the helper is a bounded line/indentation parser.
+    dependabot_path = REPO / ".github/dependabot.yml"
+    if dependabot_path.is_file():
+        dependabot_text = dependabot_path.read_text(encoding="utf-8")
+        dependabot_bad = _dependabot_failures(dependabot_text)
+        if dependabot_bad:
+            emit(
+                "FAIL", "required", "dependabot-yaml",
+                "; ".join(dependabot_bad),
+            )
+            ok = False
+            if fail_fast:
+                return False
+        else:
+            emit(
+                "PASS", "required", "dependabot-yaml",
+                "Dependabot configuration verified",
+            )
+
     for rel in tracked:
         base = rel.split("/")[-1]
         if base == "local.properties":
@@ -654,8 +688,13 @@ def check_required(args: argparse.Namespace, fail_fast: bool) -> bool:
             emit("FAIL", "required", "no-screenshot", f"tracked screenshot: {rel}")
             ok = False
             if fail_fast: return False
-        if base.endswith(".pyc"):
-            emit("FAIL", "required", "no-pyc", f"tracked bytecode: {rel}")
+        if (
+            base.endswith(".pyc")
+            or base.endswith(".pyo")
+            or base.endswith(".pyd")
+            or "__pycache__" in rel.split("/")
+        ):
+            emit("FAIL", "required", "no-bytecode", f"tracked bytecode: {rel}")
             ok = False
             if fail_fast: return False
     if ok:
@@ -689,6 +728,13 @@ def check_required(args: argparse.Namespace, fail_fast: bool) -> bool:
     jar = REPO / "gradle/wrapper/gradle-wrapper.jar"
     if jar.is_file() and jar.stat().st_size > 0:
         emit("PASS", "required", "wrapper-jar", "wrapper JAR is non-empty")
+        jar_hash = hashlib.sha256(jar.read_bytes()).hexdigest()
+        if jar_hash == WRAPPER_JAR_EXPECTED_SHA:
+            emit("PASS", "required", "wrapper-jar-sha256", "wrapper JAR SHA-256 verified")
+        else:
+            emit("FAIL", "required", "wrapper-jar-sha256", f"unexpected SHA-256: {jar_hash}")
+            ok = False
+            if fail_fast: return False
     else:
         emit("FAIL", "required", "wrapper-jar", "wrapper JAR missing or empty")
         ok = False
@@ -704,6 +750,13 @@ def check_required(args: argparse.Namespace, fail_fast: bool) -> bool:
             if fail_fast: return False
         else:
             emit("PASS", "required", "gitignore", "all required rules present")
+            missing_py = [r for r in GITIGNORE_PYTHON_REQUIRED if r not in text]
+            if missing_py:
+                emit("FAIL", "required", "gitignore-python", f"missing rules: {', '.join(missing_py)}")
+                ok = False
+                if fail_fast: return False
+            else:
+                emit("PASS", "required", "gitignore-python", "Python bytecode ignore rules present")
     else:
         emit("FAIL", "required", "gitignore", ".gitignore missing")
         ok = False
@@ -1752,6 +1805,110 @@ def _version_catalog_failures(text: str) -> list[str]:
             bad.append(f"{key}=count:{len(matches)}")
         elif matches[0] != expected:
             bad.append(f"{key}={matches[0]}")
+    return bad
+
+
+DEPENDABOT_EXPECTED_ECOSYSTEMS = ("gradle", "github-actions")
+
+DEPENDABOT_FORBIDDEN_KEYS = (
+    "auto-merge",
+    "vulnerability-alerts",
+    "groups",
+    "assignees",
+    "reviewers",
+    "milestone",
+    "ignore",
+    "labels",
+    "target-branch",
+    "registries",
+)
+
+
+def _dependabot_failures(text: str) -> list[str]:
+    """Return Dependabot configuration mismatch descriptions for the
+    bounded Phase 5C contract.
+
+    Bounded repository-specific textual validation. Verifies the
+    narrow two-ecosystem configuration required by Phase 5C and
+    rejects forbidden policy keys. Not a generic YAML parser.
+    Deterministic line/indentation parsing and regular expressions only.
+    """
+    bad: list[str] = []
+
+    # 1. Top-level version must equal 2
+    version_match = re.search(r"^version:\s*(\d+)\s*$", text, flags=re.M)
+    if version_match is None:
+        bad.append("top-level version must equal 2")
+        return bad
+    if version_match.group(1) != "2":
+        bad.append("top-level version must equal 2")
+        return bad
+
+    # 2. Top-level updates: block. Locate the start of the updates
+    # body; the bounded parser then scans forward to EOF to find each
+    # list entry, since the empty line that may separate the two
+    # required entries is part of the bounded configuration shape.
+    updates_match = re.search(r"^updates:\s*\n", text, flags=re.M)
+    if not updates_match:
+        bad.append("malformed bounded Dependabot configuration")
+        return bad
+    entries_text = text[updates_match.end():]
+
+    # 3. Each list entry begins with "- package-ecosystem: ..."
+    entry_re = re.compile(
+        r"^  - package-ecosystem:\s*\"([^\"]+)\"\s*\n"
+        r"((?:[ \t]{4,}[^\n]*\n)*)",
+        flags=re.M,
+    )
+    entries = list(entry_re.finditer(entries_text))
+
+    if len(entries) != 2:
+        bad.append("ecosystems must equal: gradle, github-actions")
+        return bad
+
+    ecosystems = [m.group(1) for m in entries]
+    if ecosystems != list(DEPENDABOT_EXPECTED_ECOSYSTEMS):
+        bad.append("ecosystems must equal: gradle, github-actions")
+        return bad
+
+    # 4. Per-entry directory / schedule.interval / open-pull-requests-limit
+    for idx, m in enumerate(entries):
+        body = m.group(2)
+        ecosystem = ecosystems[idx]
+
+        d_match = re.search(
+            r"^    directory:\s*\"([^\"]+)\"\s*$", body, flags=re.M,
+        )
+        if d_match is None or d_match.group(1) != "/":
+            bad.append(f"{ecosystem} directory must equal /")
+
+        sched_match = re.search(
+            r"^    schedule:\s*\n((?:[ \t]{6,}[^\n]*\n)*)",
+            body, flags=re.M,
+        )
+        if not sched_match:
+            bad.append(f"{ecosystem} schedule.interval must equal weekly")
+        else:
+            int_match = re.search(
+                r"^      interval:\s*\"([^\"]+)\"\s*$",
+                sched_match.group(1), flags=re.M,
+            )
+            if int_match is None or int_match.group(1) != "weekly":
+                bad.append(f"{ecosystem} schedule.interval must equal weekly")
+
+        oprl_match = re.search(
+            r"^    open-pull-requests-limit:\s*(\d+)\s*$",
+            body, flags=re.M,
+        )
+        if oprl_match is None or oprl_match.group(1) != "5":
+            bad.append(f"{ecosystem} open-pull-requests-limit must equal 5")
+
+    # 5. Forbidden keys (any reasonable indentation)
+    for key in DEPENDABOT_FORBIDDEN_KEYS:
+        pattern = rf"^[ \t]*{re.escape(key)}\s*:"
+        if re.search(pattern, text, flags=re.M):
+            bad.append(f"forbidden key: {key}")
+
     return bad
 
 

@@ -123,7 +123,7 @@ The Android group uses the contract for at least the following:
 - `android.launcher_activity_merged` replaces the previous hard-coded `io.github.franchoy.nudgewhen.MainActivity` expectation in the merged-manifest check.
 - The application-derived dynamic receiver permission name is now built as `f"{android.package_name}.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"` rather than embedding the package name twice.
 
-The current successful repository continues expecting version code `1` and version name `0.1.0` for the `apk-metadata` check, because those are the contract's current committed `current_version_code` and `current_version_name` values before Phase 5. A future Phase 5 update of the contract and Gradle metadata will change those values through a contract and source edit only, without requiring another Python source edit for those APK fields. The current-versus-target version semantics are unchanged before Phase 5: the validator validates the APK against `current_version_code` and `current_version_name`, and `target_version_code` and `target_version_name` remain Phase 5 metadata.
+At the time Phase 3A5 was accepted, the successful repository expected version code `1` and version name `0.1.0` for the `apk-metadata` check because those were then the contract's current committed `current_version_code` and `current_version_name` values. Phase 5D has since updated the working-tree candidate contract and Gradle metadata to version code `2` and version name `0.1.1` without requiring another Python source edit for those APK fields. The validator continues to validate APK metadata against `current_version_code` and `current_version_name` rather than against the target fields.
 
 #### Stable Android implementation invariants
 
@@ -236,7 +236,7 @@ The literal `release_gate=SATISFIED` is printed only when all of the following a
 - no selected check produced a `FAIL` result;
 - if `validation.release_gate_requires_android_not_skipped` is `true`, the identifier `android` is in the resolved selection and `--skip-android` is not set.
 
-Containment is used rather than exact set equality: an extra group in the selection does not prevent the release gate from being satisfied, as long as the contract's required groups are all present and no check has failed. For the current contract, `validation.release_gate_requires_groups` is `["required", "docs", "android"]` and `validation.release_gate_requires_android_not_skipped` is `true`, so a successful complete `required` + `docs` + `android` run without `--skip-android` still satisfies the release gate, and a `--group required docs android --offline` run produces `SUMMARY pass=34 fail=0 skip=0` and `release_gate=SATISFIED` with exit `0`.
+Containment is used rather than exact set equality: an extra group in the selection does not prevent the release gate from being satisfied, as long as the contract's required groups are all present and no check has failed. For the current contract, `validation.release_gate_requires_groups` is `["required", "docs", "android"]` and `validation.release_gate_requires_android_not_skipped` is `true`, so a successful complete `required` + `docs` + `android` run without `--skip-android` still satisfies the release gate, and a `--group required docs android --offline` run produces `SUMMARY pass=38 fail=0 skip=0` and `release_gate=SATISFIED` with exit `0`.
 
 The `SUMMARY` line is the authoritative count of every emitted `PASS`, `FAIL`, and `SKIP` result. Prerequisite passes and prerequisite failures are recorded through the same result collector as content checks, and every emitted result contributes to the summary exactly once. No `PASS` or `FAIL` is printed without being counted, and no result is counted without being printed.
 
@@ -255,15 +255,36 @@ The following counts describe the current validation inventory and may change on
 
 | Run | Expected summary | Expected `release_gate` | Expected exit |
 |---|---|---|---|
-| `--group required` (succeeding) | `SUMMARY pass=8 fail=0 skip=0` | `NOT_SATISFIED` | `0` |
+| `--group required` (succeeding) | `SUMMARY pass=11 fail=0 skip=0` | `NOT_SATISFIED` | `0` |
 | `--group docs` (succeeding) | `SUMMARY pass=11 fail=0 skip=0` | `NOT_SATISFIED` | `0` |
 | `--group android --offline` (succeeding) | `SUMMARY pass=16 fail=0 skip=0` | `NOT_SATISFIED` | `0` |
-| `--skip-android` (succeeding) | `SUMMARY pass=19 fail=0 skip=0` | `NOT_SATISFIED` | `0` |
-| `--offline` all-groups (succeeding) | `SUMMARY pass=35 fail=0 skip=0` | `SATISFIED` | `0` |
+| `--skip-android` (succeeding) | `SUMMARY pass=22 fail=0 skip=0` | `NOT_SATISFIED` | `0` |
+| `--offline` all-groups (succeeding) | `SUMMARY pass=38 fail=0 skip=0` | `SATISFIED` | `0` |
 | Missing Java (`--group android`) | `SUMMARY pass=1 fail=1 skip=0` | `NOT_SATISFIED` | `2` |
 | Missing SDK (`--group android`) | `SUMMARY pass=2 fail=1 skip=0` | `NOT_SATISFIED` | `2` |
 
-The current phase model is `5 Complete, 3 Planned`: `Complete` is `Phase 0`, `Phase 1`, `Phase 2`, `Phase 3`, and `Phase 4`; `Planned` is `Phase 5`, `Phase 6`, and `Phase 7`. The required-group total of eight passes is the sum of one `release-contract` check (loaded, structurally validated, and cross-checked by Phase 3A2) and seven pre-existing checks (`files`, `no-prohibited`, `gradlew-exec`, `shell-exec`, `wrapper-jar`, `gitignore`, `gitattributes`); the seven pre-existing checks remain unchanged in their semantics. The Android-group total of sixteen passes is the sum of the six prerequisite passes (`python`, `java`, `sdk-platform`, `sdk-build-tools`, `aapt2`, `gradlew-exec`) and the ten content checks (`build-config`, `version-catalog`, `gradle-wrapper`, `app-build-config`, `source-manifest`, `gradle-projects`, `gradle-build`, `apk-exists`, `apk-metadata`, `merged-manifest`). The ordinary all-groups total of thirty-five passes is the sum of eight required, eleven docs, and sixteen android (`8 + 11 + 16 = 35`). The skip-Android total of nineteen passes is the sum of eight required and eleven docs (`8 + 11 = 19`). The docs-group total of eleven passes is the sum of `utf8`, `trailing-ws`, `gradlew-bat-crlf`, `md-links`, `phase-headings`, `phase-status`, `readme-active-release`, `charter-consistency`, `exp7-structure`, `no-pii`, and the Phase 4 repository-consistency check (`repository-consistency`); for the current `v0.1.1` release contract, the active phase list reports `5 Complete, 3 Planned` (Phase 0, Phase 1, Phase 2, Phase 3, Phase 4 are `Complete`; Phase 5, Phase 6, Phase 7 are `Planned`).
+The current phase model is `5 Complete, 3 Planned`: `Complete` is `Phase 0`, `Phase 1`, `Phase 2`, `Phase 3`, and `Phase 4`; `Planned` is `Phase 5`, `Phase 6`, and `Phase 7`. The required-group total of eleven passes consists of one `release-contract` check (loaded, structurally validated, and cross-checked by Phase 3A2), seven pre-Phase-5 checks (`files`, `no-prohibited`, `gradlew-exec`, `shell-exec`, `wrapper-jar`, `gitignore`, `gitattributes`), and three Phase 5 additions (`wrapper-jar-sha256`, `gitignore-python`, `dependabot-yaml`); `1 + 7 + 3 = 11`. The Phase 5A `wrapper-jar-sha256` check confirms the committed `gradle-wrapper.jar` matches the approved `WRAPPER_JAR_EXPECTED_SHA`; the Phase 5B `gitignore-python` check confirms the canonical Python bytecode ignore rules (`__pycache__/`, `*.py[cod]`) are present; the Phase 5C `dependabot-yaml` check confirms the bounded Dependabot configuration. The Android-group total of sixteen passes is the sum of the six prerequisite passes (`python`, `java`, `sdk-platform`, `sdk-build-tools`, `aapt2`, `gradlew-exec`) and the ten content checks (`build-config`, `version-catalog`, `gradle-wrapper`, `app-build-config`, `source-manifest`, `gradle-projects`, `gradle-build`, `apk-exists`, `apk-metadata`, `merged-manifest`). The ordinary all-groups total of thirty-eight passes is the sum of eleven required, eleven docs, and sixteen android (`11 + 11 + 16 = 38`). The skip-Android total of twenty-two passes is the sum of eleven required and eleven docs (`11 + 11 = 22`). The docs-group total of eleven passes is the sum of `utf8`, `trailing-ws`, `gradlew-bat-crlf`, `md-links`, `phase-headings`, `phase-status`, `readme-active-release`, `charter-consistency`, `exp7-structure`, `no-pii`, and the Phase 4 repository-consistency check (`repository-consistency`); for the current `v0.1.1` release contract, the active phase list reports `5 Complete, 3 Planned` (Phase 0, Phase 1, Phase 2, Phase 3, Phase 4 are `Complete`; Phase 5, Phase 6, Phase 7 are `Planned`).
+
+The Phase 5 inventory progression that brought the `required` group from eight to eleven is recorded as:
+
+```text
+Phase 5A:
++1 required/wrapper-jar-sha256
+
+Phase 5B:
++1 required/gitignore-python
+
+Phase 5C:
++1 required/dependabot-yaml
+
+Phase 5D:
+no validator-count change
+
+Phase 5I:
+no validator-count change
+```
+
+The cumulative regression inventory is `78 tests` from `python3 -B -m unittest tests.test_validator_core tests.test_validator_repository`.
 
 ## Partial-run limitations
 
@@ -395,7 +416,7 @@ The `android` group validates the source `AndroidManifest.xml` for the exact bou
 
 The `android` group then parses the AGP-merged debug manifest and requires the exact maintainer-approved allowlist: one signature permission whose name is built as `f"{android.package_name}.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"` (for the current contract this resolves to `io.github.franchoy.nudgewhen.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION`) with a matching `uses-permission`; the application direct children must be exactly one activity, one provider, one receiver, and two `uses-library` elements; the activity name is taken from `android.launcher_activity_merged` in the validated contract; the provider is `androidx.startup.InitializationProvider` (exported false) with exactly three initializer metadata entries (`EmojiCompatInitializer`, `ProcessLifecycleInitializer`, `ProfileInstallerInitializer`) each with value `androidx.startup`; the receiver is `androidx.profileinstaller.ProfileInstallReceiver` (exported true, permission `android.permission.DUMP`); the optional libraries are `androidx.window.extensions` and `androidx.window.sidecar`, each with `required="false"`.
 
-The `android` group then runs `aapt2 dump badging` on the produced debug APK and requires the exact package, version code, version name, compile SDK, minimum SDK, target SDK, and launcher activity values generated from the validated contract's `android` block (`package_name`, `current_version_code`, `current_version_name`, `compile_sdk`, `min_sdk`, `target_sdk`, and `launcher_activity_merged`). The current successful repository continues expecting version code `1` and version name `0.1.0` because those are the contract's current committed values before Phase 5.
+The `android` group then runs `aapt2 dump badging` on the produced debug APK and requires the exact package, version code, version name, compile SDK, minimum SDK, target SDK, and launcher activity values generated from the validated contract's `android` block (`package_name`, `current_version_code`, `current_version_name`, `compile_sdk`, `min_sdk`, `target_sdk`, and `launcher_activity_merged`). For the current Phase 5 working-tree candidate, the validated contract uses `current_version_code = 2` and `current_version_name = 0.1.1`, so the APK-metadata check expects version code `2` and version name `0.1.1`. Those Phase 5 values are candidate state until the maintainer creates the implementation/evidence commit.
 
 ## Release-charter non-functionality predicate
 
@@ -452,7 +473,70 @@ The regression command runs first, the `required` and `docs` groups are exercise
 
 ## Phase 5
 
-Phase 4 is `Complete`. The current phase is `Phase 5 — Supply-Chain, Workspace Hygiene, and Release Metadata`. Phase 5 is `Planned`. The current committed Android metadata is `versionCode = 1` and `versionName = 0.1.0`; the Phase 5 target is `versionCode = 2` and `versionName = 0.1.1`. Phase 5 will own the Gradle distribution checksum, the approved wrapper-JAR checksum, the `.gitignore` bytecode rules, Dependabot, and the Android version metadata transition, together with any dependency work authorized by Phase 5. None of those items has been implemented by the Phase 4 closure. No pull request, merge, tag, published release, or release completion is claimed for the active `v0.1.1` train.
+Phase 4 is `Complete`. The current phase is `Phase 5 — Supply-Chain, Workspace Hygiene, and Release Metadata`. Phase 5 is `Planned`. The current Phase 5 working-tree candidate Android metadata is `versionCode = 2` and `versionName = 0.1.1`. The Phase 5 target is also `versionCode = 2` and `versionName = 0.1.1`, so the candidate has completed the intended current-versus-target transition. These values are not yet described as committed Phase 5 state because the Phase 5 implementation/evidence commit has not yet been created.
+
+### v0.1.1 Phase 5 integration
+
+```text
+5A Gradle supply-chain integrity:
+implemented and technically accepted
+
+5B Python workspace hygiene:
+implemented and technically accepted
+
+5C Dependabot:
+implemented and technically accepted
+
+5D Android release metadata:
+implemented and technically accepted
+
+controlled Gradle bad-distribution checksum rejection:
+directly proven by Phase 5I
+
+Android/APK metadata:
+directly observed by Phase 5I
+
+Phase 5:
+Planned; implementation/evidence commit and post-commit
+clean/CI evidence remain to be created
+```
+
+#### Phase 5I direct validator evidence
+
+```text
+required:
+11/0/0
+
+docs:
+11/0/0
+
+skip-Android:
+22/0/0
+
+Android offline:
+16/0/0
+
+full offline:
+38/0/0
+release_gate=SATISFIED
+
+Android source-manifest:
+PASS
+
+Android APK metadata:
+PASS
+
+Android merged-manifest:
+PASS
+
+controlled Gradle bad-distribution checksum rejection:
+PASS
+
+regression:
+78 tests / OK
+```
+
+Phase 5 owns the Gradle distribution checksum, the approved wrapper-JAR checksum, the `.gitignore` bytecode rules, Dependabot, and the Android version metadata transition. The Phase 5A / 5B / 5C / 5D source implementations and the Phase 5D evidence chain are technically accepted. The controlled Gradle bad-distribution checksum rejection proof is recorded as a direct Phase 5I observation against a temporary `file://` distribution with an isolated `GRADLE_USER_HOME`, a temporary wrapper properties file, and a temporary fake distribution, leaving the repository and its wrapper files untouched. The Phase 5I Android/offline run directly observed the assembled debug APK carrying the Phase 5D contract-driven metadata (`versionCode = 2`, `versionName = 0.1.1`) through the successful `android/apk-metadata` check together with the contract and live `app/build.gradle.kts` readback. The post-commit clean committed-state proof (`./scripts/validate-local.sh --require-clean`), the maintainer implementation/evidence commit, the push, and the exact-head CI run are all not yet performed and are not pre-claimed by this Build. Phase 6 has not been activated. Phase 5 remains `Planned`.
 
 ## Product functionality
 
