@@ -1,12 +1,12 @@
 # Local Validation — NudgeWhen v0.1.1
 
-**Document status:** Release-aware carried-forward baseline — the v0.1.0 Phase 4 local-validation baseline is carried forward into the active `v0.1.1` release train on `release/v0.1.1`; a single release-contract source was introduced in Phase 3A1, Phase 3A2 wires the `required` group to load, structurally validate, and cross-check that contract, Phase 3A3a extends the `docs` group with contract-driven active release-document checks (active phase list, per-phase status, README active release, charter consistency) plus `.json` text hygiene, Phase 3A4a added the clean missing-Git prerequisite failure that does not produce a traceback, Phase 3A4c made the active validation groups, default order, all-groups alias, and release-gate requirements contract-driven while preserving the existing CLI, candidate-mode, clean-checkout, exit-code, no-network, and no-dependency-installation semantics, and Phase 3A5 adds the invalid-Git-worktree prerequisite and moves the Android-group release-specific expectations (namespace, application ID, compile SDK, minimum SDK, target SDK, package name, current version code, current version name, source launcher activity, merged launcher activity, and the application-derived dynamic receiver permission name) onto the validated release contract — Phase 3's reusable validator architecture is accepted and complete; controlled Phase 4 negative-path regression coverage remains future work
+**Document status:** Release-aware carried-forward baseline — the v0.1.0 Phase 4 local-validation baseline is carried forward into the active `v0.1.1` release train on `release/v0.1.1`; a single release-contract source was introduced in Phase 3A1, Phase 3A2 wires the `required` group to load, structurally validate, and cross-check that contract, Phase 3A3a extends the `docs` group with contract-driven active release-document checks (active phase list, per-phase status, README active release, charter consistency) plus `.json` text hygiene, Phase 3A4a added the clean missing-Git prerequisite failure that does not produce a traceback, Phase 3A4c made the active validation groups, default order, all-groups alias, and release-gate requirements contract-driven while preserving the existing CLI, candidate-mode, clean-checkout, exit-code, no-network, and no-dependency-installation semantics, and Phase 3A5 adds the invalid-Git-worktree prerequisite and moves the Android-group release-specific expectations (namespace, application ID, compile SDK, minimum SDK, target SDK, package name, current version code, current version name, source launcher activity, merged launcher activity, and the application-derived dynamic receiver permission name) onto the validated release contract — Phase 3's reusable validator architecture is accepted and complete; Phase 4 added the standard-library regression suite under `tests/` and additional repository-consistency checks in the validator and is accepted and complete
 
 ## Purpose and scope
 
 This document describes the Phase 4 local validation suite for the NudgeWhen release train. The suite is a small, deterministic, dependency-free set of checks that the maintainer can run from a fresh checkout to confirm that the repository is in a valid pre-release state. The suite is intentionally local: it does not clone, fetch, push, commit, create worktrees, or modify repository content. It writes only into the ignored Gradle and Android build output paths when the Android group is run.
 
-The Phase 4 local-validation implementation baseline is the `v0.1.0` local-validation baseline. It was established on `release/v0.1.0`, was carried through the released `v0.1.0` GitHub release, and remains the foundation of the active `v0.1.1` release train on `release/v0.1.1`. The v0.1.0 validator baseline remains the foundation; Phase 3A2 added the required-group release-contract validation that loads, structurally validates, and source cross-checks `scripts/release_contract.json` as a single `release-contract` check within the `required` group, Phase 3A3a added contract-driven active release-document checks and `.json` text hygiene to the `docs` group, Phase 3A4a added the clean missing-Git prerequisite failure that does not produce a traceback, and Phase 3A4c made the active validation groups, default order, all-groups alias, and release-gate requirements contract-driven while preserving the existing CLI, candidate-mode, clean-checkout, exit-code, no-network, and no-dependency-installation semantics. Phase 3A5 completes the remaining Phase 3 implementation work by adding the invalid-Git-worktree prerequisite and by moving the Android-group release-specific expectations (namespace, application ID, compile SDK, minimum SDK, target SDK, package name, current version code, current version name, source launcher activity, merged launcher activity, and the application-derived dynamic receiver permission name) onto the validated release contract. The accepted Phase 3 reusable validator architecture is complete; controlled Phase 4 negative-path regression coverage remains future work.
+The Phase 4 local-validation implementation baseline is the `v0.1.0` local-validation baseline. It was established on `release/v0.1.0`, was carried through the released `v0.1.0` GitHub release, and remains the foundation of the active `v0.1.1` release train on `release/v0.1.1`. The v0.1.0 validator baseline remains the foundation; Phase 3A2 added the required-group release-contract validation that loads, structurally validates, and source cross-checks `scripts/release_contract.json` as a single `release-contract` check within the `required` group, Phase 3A3a added contract-driven active release-document checks and `.json` text hygiene to the `docs` group, Phase 3A4a added the clean missing-Git prerequisite failure that does not produce a traceback, and Phase 3A4c made the active validation groups, default order, all-groups alias, and release-gate requirements contract-driven while preserving the existing CLI, candidate-mode, clean-checkout, exit-code, no-network, and no-dependency-installation semantics. Phase 3A5 completes the remaining Phase 3 implementation work by adding the invalid-Git-worktree prerequisite and by moving the Android-group release-specific expectations (namespace, application ID, compile SDK, minimum SDK, target SDK, package name, current version code, current version name, source launcher activity, merged launcher activity, and the application-derived dynamic receiver permission name) onto the validated release contract. The accepted Phase 3 reusable validator architecture is complete. Phase 4 added the standard-library regression suite under `tests/` and additional repository-consistency checks in the validator and is accepted and complete.
 
 ## Dynamic private-working-material invariant
 
@@ -31,15 +31,15 @@ Phase 3A2 is intentionally narrow with respect to the `android` group, the CLI a
 
 ### Phase 3A3a — contract-driven docs-group wiring
 
-Phase 3A3a extends the `docs` group to reuse the release contract that the `required` group loads and validates. `scripts/release_contract.json` is the authoritative current-release contract for both groups. The `required` group continues to load and validate the contract as a single `release-contract` check that emits `PASS required/release-contract — release contract loaded and validated`. The same cached contract is then reused silently by the `docs` group for its active release-document checks. A successful silent contract load in the `docs` group does not add a `PASS docs/...` line and does not change the docs count of ten passes; a contract prerequisite failure emits exactly one `FAIL prerequisite/release-contract — [concise reason]` line and produces exit `2`. Controlled negative-path regression testing remains deferred to Phase 4 and is not yet claimed; comprehensive absolute-path redaction guarantees are not claimed for the docs-group output.
+Phase 3A3a extends the `docs` group to reuse the release contract that the `required` group loads and validates. `scripts/release_contract.json` is the authoritative current-release contract for both groups. The `required` group continues to load and validate the contract as a single `release-contract` check that emits `PASS required/release-contract — release contract loaded and validated`. The same cached contract is then reused silently by the `docs` group for its active release-document checks. A successful silent contract load in the `docs` group does not add a `PASS docs/...` line and does not change the docs count of eleven passes; a contract prerequisite failure emits exactly one `FAIL prerequisite/release-contract — [concise reason]` line and produces exit `2`. Comprehensive absolute-path redaction guarantees are not claimed for the docs-group output.
 
-The phase-list path comes from `release_documents.phase_list`. The phase range comes from `phase_model.first_phase` and `phase_model.last_phase`. Expected statuses come from `phase_model.expected_statuses`. The `docs/phase-headings` check requires the exact ordered and unique declared range; for the current contract, Phase 0 through Phase 7 are required. Each phase is bounded from its own phase heading to the next phase heading or EOF. Each bounded phase requires exactly one `### Status` heading. The status subsection ends at the next Markdown heading of any level or the phase-section end. Exactly one nonblank, unformatted `Complete` or `Planned` line is required. The observed value must equal the phase-specific contract value; a later heading or phase cannot supply an earlier phase's status. The successful state for the current contract is `4 Complete, 4 Planned`. Controlled negative fixtures for the active phase-list and per-phase status checks remain deferred to Phase 4 and do not yet exist.
+The phase-list path comes from `release_documents.phase_list`. The phase range comes from `phase_model.first_phase` and `phase_model.last_phase`. Expected statuses come from `phase_model.expected_statuses`. The `docs/phase-headings` check requires the exact ordered and unique declared range; for the current contract, Phase 0 through Phase 7 are required. Each phase is bounded from its own phase heading to the next phase heading or EOF. Each bounded phase requires exactly one `### Status` heading. The status subsection ends at the next Markdown heading of any level or the phase-section end. Exactly one nonblank, unformatted `Complete` or `Planned` line is required. The observed value must equal the phase-specific contract value; a later heading or phase cannot supply an earlier phase's status. The successful state for the current contract is `5 Complete, 3 Planned`.
 
 The `docs/readme-active-release` check requires the README to contain the contract's active release version and active branch. The `docs/charter-consistency` check uses the charter path from `release_documents.charter` and verifies that the charter is consistent with the absence of all seven product-functionality categories in any non-negation context. The historical v0.1.0 charter and phase list are no longer treated as active sources for the active release-document checks. Historical `EXP-0007` structure validation is preserved as an intentionally historical stable check that is independent of the active contract.
 
 The `.json` extension now participates in the docs-group UTF-8 and trailing-whitespace validation. `.json` files are added to the text inventory alongside the existing text extensions, and `scripts/release_contract.json` is included in the UTF-8 and trailing-whitespace checks through the same `docs/utf8` and `docs/trailing-ws` PASS lines.
 
-The contract is a data source for the validator; it is not itself a validator, and it does not run, install dependencies, or perform network access. The contract is loaded through the standard library only (`open()` / `read_bytes()` / `json.loads()`); no third-party library is introduced. The Phase 3 reusable validator architecture is accepted and complete; controlled Phase 4 negative-path regression coverage remains future work.
+The contract is a data source for the validator; it is not itself a validator, and it does not run, install dependencies, or perform network access. The contract is loaded through the standard library only (`open()` / `read_bytes()` / `json.loads()`); no third-party library is introduced. The Phase 3 reusable validator architecture is accepted and complete. The Phase 4 regression suite and repository-consistency enforcement are accepted and complete; controlled regression coverage for the negative-path contradiction classes is exercised by the accepted Phase 4 implementation.
 
 ### Phase 3A4 — contract-first CLI, Git prerequisite, group registry, and release gate
 
@@ -193,7 +193,7 @@ release_gate=NOT_SATISFIED
 
 The process then exits with status `2`; `exit=2` is not a fourth validator-output line. The historical controlled shell command that captured the missing-Git behavior printed `exit=2` separately to expose the captured process status. The three result lines contain no Python traceback, and the absolute path of the `git` executable is never included in the result message. The Git prerequisite is checked only after contract validation and after `argparse` argument parsing; it is therefore not reached when the contract is invalid (in which case the contract prerequisite failure exits `2` first) or when the CLI is malformed (in which case `argparse` exits `2` first).
 
-A missing Java executable produces a single `FAIL prerequisite/java` line and exit `2`; it does not produce a Python traceback or expose the absolute executable path. A release-contract prerequisite failure produces a single `FAIL prerequisite/release-contract` line and exit `2`; expected handled prerequisite failures do not produce a Python traceback. An invalid contract takes precedence over `--help`, malformed CLI handling, and the Git prerequisite: the contract is loaded and validated before `argparse` is constructed, so an invalid contract replaces the standard `argparse` help or error output for that invocation. Controlled negative-path regression coverage remains future work, and comprehensive path-redaction guarantees are not yet claimed.
+A missing Java executable produces a single `FAIL prerequisite/java` line and exit `2`; it does not produce a Python traceback or expose the absolute executable path. A release-contract prerequisite failure produces a single `FAIL prerequisite/release-contract` line and exit `2`; expected handled prerequisite failures do not produce a Python traceback. An invalid contract takes precedence over `--help`, malformed CLI handling, and the Git prerequisite: the contract is loaded and validated before `argparse` is constructed, so an invalid contract replaces the standard `argparse` help or error output for that invocation. The accepted Phase 4 regression suite provides the controlled negative-path coverage for the implemented contradiction classes; comprehensive path-redaction guarantees are not yet claimed.
 
 The valid-contract invalid-Git-worktree behavior added by Phase 3A5 is exactly three output lines from the validator:
 
@@ -249,21 +249,21 @@ Consequences:
 - A prerequisite failure (exit `2`) always prevents release-gate satisfaction.
 - Only a successful run that contains every contract-required group, that records no failures, and that does not skip Android when the contract forbids skipping it can satisfy the release gate.
 
-## Expected summary counts (Phase 4 candidate)
+## Expected summary counts
 
-The following counts describe the Phase 4 candidate and may change only when the declared validation inventory changes. A maintainer reading a frozen result can compare the printed `SUMMARY` line against these counts to detect missing checks, duplicate emissions, or summary-accounting defects.
+The following counts describe the current validation inventory and may change only when the declared validation inventory changes. A maintainer reading a frozen result can compare the printed `SUMMARY` line against these counts to detect missing checks, duplicate emissions, or summary-accounting defects.
 
 | Run | Expected summary | Expected `release_gate` | Expected exit |
 |---|---|---|---|
 | `--group required` (succeeding) | `SUMMARY pass=8 fail=0 skip=0` | `NOT_SATISFIED` | `0` |
-| `--group docs` (succeeding) | `SUMMARY pass=10 fail=0 skip=0` | `NOT_SATISFIED` | `0` |
+| `--group docs` (succeeding) | `SUMMARY pass=11 fail=0 skip=0` | `NOT_SATISFIED` | `0` |
 | `--group android --offline` (succeeding) | `SUMMARY pass=16 fail=0 skip=0` | `NOT_SATISFIED` | `0` |
-| `--skip-android` (succeeding) | `SUMMARY pass=18 fail=0 skip=0` | `NOT_SATISFIED` | `0` |
-| `--offline` all-groups (succeeding) | `SUMMARY pass=34 fail=0 skip=0` | `SATISFIED` | `0` |
+| `--skip-android` (succeeding) | `SUMMARY pass=19 fail=0 skip=0` | `NOT_SATISFIED` | `0` |
+| `--offline` all-groups (succeeding) | `SUMMARY pass=35 fail=0 skip=0` | `SATISFIED` | `0` |
 | Missing Java (`--group android`) | `SUMMARY pass=1 fail=1 skip=0` | `NOT_SATISFIED` | `2` |
 | Missing SDK (`--group android`) | `SUMMARY pass=2 fail=1 skip=0` | `NOT_SATISFIED` | `2` |
 
-The Android-group total of sixteen passes is the sum of the six prerequisite passes (`python`, `java`, `sdk-platform`, `sdk-build-tools`, `aapt2`, `gradlew-exec`) and the ten content checks (`build-config`, `version-catalog`, `gradle-wrapper`, `app-build-config`, `source-manifest`, `gradle-projects`, `gradle-build`, `apk-exists`, `apk-metadata`, `merged-manifest`). The all-groups total of thirty-four passes is the sum of eight required, ten docs, and sixteen android. The required-group total of eight passes is the sum of one `release-contract` check (loaded, structurally validated, and cross-checked by Phase 3A2) and seven pre-existing checks (`files`, `no-prohibited`, `gradlew-exec`, `shell-exec`, `wrapper-jar`, `gitignore`, `gitattributes`); the seven pre-existing checks remain unchanged in their semantics. The docs-group total of ten passes is the sum of `utf8`, `trailing-ws`, `gradlew-bat-crlf`, `md-links`, `phase-headings`, `phase-status`, `readme-active-release`, `charter-consistency`, `exp7-structure`, and `no-pii`; for the current `v0.1.1` release contract, the active phase list reports `4 Complete, 4 Planned` (Phase 0, Phase 1, Phase 2, Phase 3 are `Complete`; Phase 4, Phase 5, Phase 6, Phase 7 are `Planned`).
+The current phase model is `5 Complete, 3 Planned`: `Complete` is `Phase 0`, `Phase 1`, `Phase 2`, `Phase 3`, and `Phase 4`; `Planned` is `Phase 5`, `Phase 6`, and `Phase 7`. The required-group total of eight passes is the sum of one `release-contract` check (loaded, structurally validated, and cross-checked by Phase 3A2) and seven pre-existing checks (`files`, `no-prohibited`, `gradlew-exec`, `shell-exec`, `wrapper-jar`, `gitignore`, `gitattributes`); the seven pre-existing checks remain unchanged in their semantics. The Android-group total of sixteen passes is the sum of the six prerequisite passes (`python`, `java`, `sdk-platform`, `sdk-build-tools`, `aapt2`, `gradlew-exec`) and the ten content checks (`build-config`, `version-catalog`, `gradle-wrapper`, `app-build-config`, `source-manifest`, `gradle-projects`, `gradle-build`, `apk-exists`, `apk-metadata`, `merged-manifest`). The ordinary all-groups total of thirty-five passes is the sum of eight required, eleven docs, and sixteen android (`8 + 11 + 16 = 35`). The skip-Android total of nineteen passes is the sum of eight required and eleven docs (`8 + 11 = 19`). The docs-group total of eleven passes is the sum of `utf8`, `trailing-ws`, `gradlew-bat-crlf`, `md-links`, `phase-headings`, `phase-status`, `readme-active-release`, `charter-consistency`, `exp7-structure`, `no-pii`, and the Phase 4 repository-consistency check (`repository-consistency`); for the current `v0.1.1` release contract, the active phase list reports `5 Complete, 3 Planned` (Phase 0, Phase 1, Phase 2, Phase 3, Phase 4 are `Complete`; Phase 5, Phase 6, Phase 7 are `Planned`).
 
 ## Partial-run limitations
 
@@ -277,13 +277,20 @@ Partial runs (any subset of the three groups) are useful for a maintainer checki
 
 `--require-clean` is the strictest run. It requires the non-ignored Git state to be empty before validation starts, and to remain empty after validation finishes. The validation suite itself does not write tracked content; an increase in non-ignored status lines after the run is a failure of the run, not of the suite.
 
-In `--require-clean` mode, every required release file must be returned by `git ls-files`. Filesystem presence alone is insufficient; an ignored-but-untracked required file does not satisfy the check. The five Phase 4 candidate files remain required in clean mode and must be tracked — they are not excluded from the required-file list.
+In `--require-clean` mode, every required release file must be returned by `git ls-files`. Filesystem presence alone is insufficient; an ignored-but-untracked required file does not satisfy the check. The four Phase 4 regression-suite paths are required tracked files in clean mode and must be tracked — they are not excluded from the required-file list:
+
+```text
+tests/__init__.py
+tests/_helpers.py
+tests/test_validator_core.py
+tests/test_validator_repository.py
+```
 
 `--require-clean` is intended for the clean-checkout proof, not for ordinary developer iteration. The ordinary maintainer run is `release_gate` oriented and does not require a clean state.
 
 ## Candidate and clean-checkout modes
 
-Without `--require-clean` the validator operates in candidate mode. The documentation/text inventory is built from every path returned by `git ls-files -z` plus the five allowed untracked candidate paths (`.gitattributes`, `scripts/validate-local.sh`, `scripts/validate_local.py`, `docs/local-validation.md`, `docs/agentic-development/experiments/EXP-0007.md`) when present on disk. UTF-8, line-ending, trailing-whitespace, Markdown link, placeholder and privacy checks apply to the untracked candidate files as well as to the tracked text files.
+Without `--require-clean` the validator operates in candidate mode. The documentation/text inventory is built from every path returned by `git ls-files -z` plus the nine-entry candidate-mode allowlist (`.gitattributes`, `scripts/validate-local.sh`, `scripts/validate_local.py`, `docs/local-validation.md`, `docs/agentic-development/experiments/EXP-0007.md`, `tests/__init__.py`, `tests/_helpers.py`, `tests/test_validator_core.py`, `tests/test_validator_repository.py`) when present on disk. UTF-8, line-ending, trailing-whitespace, Markdown link, placeholder and privacy checks apply to the untracked candidate files as well as to the tracked text files.
 
 In candidate mode the shell entry point must be executable in the working tree; in clean mode it must be tracked and executable in Git.
 
@@ -316,9 +323,63 @@ A first developer run on a fresh checkout may require dependency downloads. Grad
 
 ## Official Phase 4 proof
 
-The official Phase 4 proof is the clean-checkout run, performed by an authorized post-Build administrative action that creates a temporary local clone, commits the nine final candidate paths into the clone with command-scoped synthetic identity, runs the suite inside the clone with `--offline --require-clean`, requires `release_gate=SATISFIED`, and removes the clone. The proof is performed under a separate authorization, not by the suite itself.
+The official Phase 4 proof is the accepted implementation/evidence commit and the maintainer-supplied remote CI evidence, not a temporary local clone or a synthetic-identity commit. The accepted proof is:
 
-The Phase 4 proof uses `--offline` because the documented environment already has the required machine-level caches provisioned.
+```text
+implementation/evidence commit:
+65a41bf59ef0b05a3ff40217a031a585e503036f
+
+subject:
+test: enforce validator repository consistency
+
+post-commit working tree:
+clean
+
+regression command:
+python3 -B -m unittest tests.test_validator_core tests.test_validator_repository
+
+regression:
+Ran 64 tests
+OK
+
+clean gate command:
+./scripts/validate-local.sh --require-clean
+
+clean gate:
+SUMMARY pass=37 fail=0 skip=0
+release_gate=SATISFIED
+
+push:
+release/v0.1.1 advanced to 65a41bf59ef0b05a3ff40217a031a585e503036f
+
+exact-head CI:
+run 31258760694
+workflow CI
+event push
+branch release/v0.1.1
+head SHA 65a41bf59ef0b05a3ff40217a031a585e503036f
+conclusion success
+required job validate
+required job result success
+```
+
+The exact-head CI run `31258760694` is maintainer-supplied completed remote evidence; this Build did not query GitHub and did not run GitHub Actions itself. The accepted proof records the real implementation/evidence commit, the clean committed-state regression, the clean committed-state validator, the push of `release/v0.1.1` to `65a41bf59ef0b05a3ff40217a031a585e503036f`, and the exact-head CI run that followed. The clean committed/CI canonical Phase 4 sequence is:
+
+```bash
+python3 -B -m unittest tests.test_validator_core tests.test_validator_repository
+./scripts/validate-local.sh --require-clean
+```
+
+The accepted Phase 4 dirty-candidate iteration sequence is:
+
+```bash
+python3 -B -m unittest tests.test_validator_core tests.test_validator_repository
+./scripts/validate-local.sh --group required
+./scripts/validate-local.sh --group docs
+./scripts/validate-local.sh --skip-android
+```
+
+Dirty partial runs correctly report `release_gate=NOT_SATISFIED`; the dirty-candidate sequence is not a substitute for the clean committed/CI canonical gate.
 
 ## Empty-cache and fresh-machine reproducibility
 
@@ -370,6 +431,10 @@ The persistent CI configuration for `v0.1.1` was generalized in Phase 2 to run o
 - commit `7612620dc252a9987a6b0e7519fbabb7501884aa` (Phase 3A4a, missing-Git prerequisite), automatic CI run `30740368544`, workflow `CI`, branch `release/v0.1.1`, head SHA `7612620dc252a9987a6b0e7519fbabb7501884aa`, conclusion `success`, job `validate` `success`;
 - commit `f0ae1e1faed6c364008c7a8fccac37f631b53562` (Phase 3A4c, contract-driven groups, CLI and release gate), automatic CI run `30743100368`, workflow `CI`, branch `release/v0.1.1`, head SHA `f0ae1e1faed6c364008c7a8fccac37f631b53562`, conclusion `success`, job `validate` `success`, `validate-local` step `success`, `upload-debug-apk` step `success`.
 
+The Phase 4 implementation/evidence commit `65a41bf59ef0b05a3ff40217a031a585e503036f` (subject `test: enforce validator repository consistency`) was pushed to `release/v0.1.1` and the following exact-head CI run is maintainer-supplied remote evidence of the Phase 4 closure:
+
+- commit `65a41bf59ef0b05a3ff40217a031a585e503036f` (Phase 4 implementation/evidence), automatic CI run `31258760694`, workflow `CI`, branch `release/v0.1.1`, head SHA `65a41bf59ef0b05a3ff40217a031a585e503036f`, conclusion `success`, job `validate` `success`.
+
 This document records those runs as maintainer-supplied evidence; the Build that produced this documentation did not independently query the remote and did not run GitHub Actions itself.
 
 ## Dirty-candidate iteration
@@ -387,7 +452,7 @@ The regression command runs first, the `required` and `docs` groups are exercise
 
 ## Phase 5
 
-Phase 5 (GitHub Actions CI Baseline) is complete on `v0.1.0`. The release branch required the `validate` check, the Phase 4 local validator was the command executed by CI, and the published `v0.1.0` GitHub release reflects this state. Phase 6 (Agent Evaluation Evidence) of `v0.1.0` is also complete; the historical "Phase 6 remains `Planned`" wording in earlier drafts of this document reflected the document's draft state at that time and no longer represents the final `v0.1.0` release state. The present document does not claim that any new release has been published or that any release pull request has been merged on the active `v0.1.1` train.
+Phase 4 is `Complete`. The current phase is `Phase 5 — Supply-Chain, Workspace Hygiene, and Release Metadata`. Phase 5 is `Planned`. The current committed Android metadata is `versionCode = 1` and `versionName = 0.1.0`; the Phase 5 target is `versionCode = 2` and `versionName = 0.1.1`. Phase 5 will own the Gradle distribution checksum, the approved wrapper-JAR checksum, the `.gitignore` bytecode rules, Dependabot, and the Android version metadata transition, together with any dependency work authorized by Phase 5. None of those items has been implemented by the Phase 4 closure. No pull request, merge, tag, published release, or release completion is claimed for the active `v0.1.1` train.
 
 ## Product functionality
 

@@ -1,6 +1,6 @@
 # Release Charter — NudgeWhen v0.1.1
 
-**Document status:** Accepted — Phases 0 through 3 complete; v0.1.1 release in progress
+**Document status:** Accepted — Phases 0 through 4 complete; v0.1.1 release in progress
 **Release name:** NudgeWhen v0.1.1 — Post-Release Closure and Reusable Validation Baseline
 **Version:** v0.1.1
 **Android artifact identity:** versionCode = 2, versionName = "0.1.1" (delivered in Phase 5)
@@ -23,7 +23,11 @@ Phase 0 is `Complete`. The observed two-commit history on `release/v0.1.1` is th
 
 ## Phase 3 status
 
-Phase 3 (Reusable Local-Validator Architecture) is `Complete`. The accepted implementation outcome is `Successful with correction`. The Phase 3 implementation and evidence commit is `cad89bfe241e10d6661a7746058721e22a5b9880` (subject `refactor: complete phase 3 local validator architecture`, branch `release/v0.1.1`), which directly modified the three authorized Phase 3 paths (`docs/agentic-development/experiments/EXP-0027.md` added; `docs/local-validation.md` and `scripts/validate_local.py` modified) and was successfully pushed to `origin/release/v0.1.1`. The exact-head CI run is `30949699383` (workflow `CI`, event `push`, branch `release/v0.1.1`, head SHA `cad89bfe241e10d6661a7746058721e22a5b9880`, conclusion `success`). No product functionality, Android behavior, or Android permission was added or changed by the Phase 3 implementation; the deliverable is the reusable validator architecture, its single release-contract source, and its updated documentation. Phase 4 (Validator Regression Suite and Repository-Consistency Enforcement) remains unstarted or planned. The overall `v0.1.1` release remains in progress; no pull request, merge, tag, published release, or release completion is claimed by this charter. Phase 0, Phase 1, and Phase 2 are also `Complete`.
+Phase 3 (Reusable Local-Validator Architecture) is `Complete`. The accepted implementation outcome is `Successful with correction`. The Phase 3 implementation and evidence commit is `cad89bfe241e10d6661a7746058721e22a5b9880` (subject `refactor: complete phase 3 local validator architecture`, branch `release/v0.1.1`), which directly modified the three authorized Phase 3 paths (`docs/agentic-development/experiments/EXP-0027.md` added; `docs/local-validation.md` and `scripts/validate_local.py` modified) and was successfully pushed to `origin/release/v0.1.1`. The exact-head CI run is `30949699383` (workflow `CI`, event `push`, branch `release/v0.1.1`, head SHA `cad89bfe241e10d6661a7746058721e22a5b9880`, conclusion `success`). No product functionality, Android behavior, or Android permission was added or changed by the Phase 3 implementation; the deliverable is the reusable validator architecture, its single release-contract source, and its updated documentation. The overall `v0.1.1` release remains in progress; no pull request, merge, tag, published release, or release completion is claimed by this charter. Phase 0, Phase 1, and Phase 2 are also `Complete`.
+
+## Phase 4 status
+
+Phase 4 (Validator Regression Suite and Repository-Consistency Enforcement) is `Complete`. The accepted implementation outcome is `Successful with correction`. The accepted experiment is `EXP-0028`. The implementation/evidence commit is `65a41bf59ef0b05a3ff40217a031a585e503036f` (subject `test: enforce validator repository consistency`, branch `release/v0.1.1`), which directly modified the eight authorized Phase 4 implementation/evidence paths (`.github/workflows/ci.yml`, `docs/agentic-development/experiments/EXP-0028.md` (added), `docs/local-validation.md`, `scripts/validate_local.py`, `tests/__init__.py`, `tests/_helpers.py`, `tests/test_validator_core.py`, `tests/test_validator_repository.py`) and was successfully pushed to `origin/release/v0.1.1`. The clean committed-state regression accepted the 64-test matrix (`python3 -B -m unittest tests.test_validator_core tests.test_validator_repository` → `Ran 64 tests / OK`). The clean committed-state validator accepted the full `--require-clean` proof (`./scripts/validate-local.sh --require-clean` → `SUMMARY pass=37 fail=0 skip=0` and `release_gate=SATISFIED`). The exact-head CI run is `31258760694` (workflow `CI`, event `push`, branch `release/v0.1.1`, head SHA `65a41bf59ef0b05a3ff40217a031a585e503036f`, conclusion `success`, required `validate` job `success`). No product functionality, Android behavior, or Android permission was added or changed by the Phase 4 implementation. The Android release metadata transition remains delivered in Phase 5; the current committed `versionCode` and `versionName` remain `1` and `0.1.0` respectively, and the Phase 5 target remains `2` and `0.1.1`. The overall `v0.1.1` release remains in progress; no pull request, merge, tag, published release, or release completion is claimed by this charter. The Phase 4 closure-overlay commit, push, and exact-head CI are separate maintainer repository actions; this charter does not claim that those actions have already occurred.
 
 ## Release identity
 
@@ -32,7 +36,7 @@ Phase 3 (Reusable Local-Validator Architecture) is `Complete`. The accepted impl
 - Active release branch: `release/v0.1.1`
 - Active release charter: `docs/releases/v0.1.1/release-charter.md`
 - Active phase list: `docs/releases/v0.1.1/phase-list.md`
-- Current phase: Phase 4 — Validator Regression Suite and Repository-Consistency Enforcement
+- Current phase: Phase 5 — Supply-Chain, Workspace Hygiene, and Release Metadata
 
 ## Exact release objective
 

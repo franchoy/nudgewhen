@@ -1,6 +1,6 @@
 # Phase List — NudgeWhen v0.1.1
 
-**Document status:** Accepted — Phases 0 through 3 complete; v0.1.1 release in progress
+**Document status:** Accepted — Phases 0 through 4 complete; v0.1.1 release in progress
 **Active release branch:** release/v0.1.1
 **Active release charter:** docs/releases/v0.1.1/release-charter.md
 
@@ -373,17 +373,17 @@ The test suite, its fixtures, the consistency check additions, the documented ru
 
 ### Status
 
-Planned
+Complete
 
 ### Validation checklist
 
-- [ ] BLOCKED — A standard-library test suite exists under an agreed `tests/` structure. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — Tests cover argument parsing, group resolution, unknown and contradictory arguments, exit codes, release-gate calculation, missing `.git`, malformed inputs, broken Markdown links, stale active-branch references, false absence claims, phase-status summary disagreement, CI trigger coverage, missing wrapper checksum, bytecode detection, clean and dirty working-tree behavior, and direct invocation of the real validator. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — The validator detects active governance pointing to a completed release, current-facing documentation naming a deleted release branch, contradictions between individual phase statuses and their summary, CI restricted to one historical release branch, and application version metadata disagreeing with the active release contract. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — Tests use temporary directories, avoid network access, avoid touching the real Git index, avoid creating non-ignored output, and run with Python bytecode generation suppressed or safely isolated. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — The complete validator regression suite passes. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — CI executes both the tests and the real validator. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — Phase experiment record; ID assigned when the task starts according to the experiment protocol. The phase has not started; direct completion evidence is not yet available.
+- [x] PASS — A standard-library test suite exists under an agreed `tests/` structure and is part of the accepted Phase 4 implementation/evidence commit `65a41bf59ef0b05a3ff40217a031a585e503036f`. Directly observed by the committed `tests/__init__.py`, `tests/_helpers.py`, `tests/test_validator_core.py`, and `tests/test_validator_repository.py` paths.
+- [x] PASS — The accepted 64-test matrix covers the required CLI, repository, malformed-input, stale-state, CI, bytecode, clean/dirty state and real-validator behaviors. Directly observed by the clean committed-state regression result `Ran 64 tests in 0.164s / OK` from `python3 -B -m unittest tests.test_validator_core tests.test_validator_repository`.
+- [x] PASS — Repository-consistency enforcement covers the required stale-governance, stale-current-document, phase-summary, CI and release-metadata contradiction classes. Directly observed by the accepted Phase 4 implementation and by `EXP-0028.md`.
+- [x] PASS — The regression architecture uses temporary isolated fixtures, no network-backed tests, no real-index mutation and Python bytecode suppression/isolation as required. Directly observed by the accepted Phase 4 implementation; the regression command uses the `-B` flag and the suite does not perform network or real-index mutation.
+- [x] PASS — The clean committed-state regression ran 64 tests and completed OK. Directly observed by the clean committed-state proof `python3 -B -m unittest tests.test_validator_core tests.test_validator_repository` → `Ran 64 tests / OK`.
+- [x] PASS — Exact-head CI run `31258760694` succeeded on `65a41bf59ef0b05a3ff40217a031a585e503036f`, with CI executing the regression step before the real clean validator gate. Directly observed by the accepted remote CI evidence recorded for the implementation/evidence commit.
+- [x] PASS — `EXP-0028.md` exists as the accepted Phase 4 experiment record. Directly observed by the existence of `docs/agentic-development/experiments/EXP-0028.md`; the accepted Phase 4 outcome is `Successful with correction` and historical attempt deviations are preserved.
 
 ## Phase 5 — Supply-Chain, Workspace Hygiene, and Release Metadata
 
