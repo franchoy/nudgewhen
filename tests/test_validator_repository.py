@@ -197,7 +197,7 @@ class RepositoryConsistencyTests(unittest.TestCase):
     GOOD_PHASE_LIST = (
         "# Phase List — NudgeWhen v0.1.1\n"
         "\n"
-        "**Document status:** Accepted — Phases 0 through 4 complete; v0.1.1 release in progress\n"
+        "**Document status:** Accepted — Phases 0 through 5 complete; v0.1.1 release in progress\n"
         "\n"
         "## Phase 0 — Test\n"
         "### Status\n"
@@ -207,7 +207,7 @@ class RepositoryConsistencyTests(unittest.TestCase):
     GOOD_CHARTER = (
         "# Release Charter — NudgeWhen v0.1.1\n"
         "\n"
-        "**Document status:** Accepted — Phases 0 through 4 complete; v0.1.1 release in progress\n"
+        "**Document status:** Accepted — Phases 0 through 5 complete; v0.1.1 release in progress\n"
         "\n"
         "## Explicit non-goals\n"
         "\n"
@@ -272,7 +272,7 @@ class RepositoryConsistencyTests(unittest.TestCase):
         "- **Active branch:** `release/v0.1.1`\n"
         "- **Active release charter:** `docs/releases/v0.1.1/release-charter.md`\n"
         "- **Active phase list:** `docs/releases/v0.1.1/phase-list.md`\n"
-        "- **Current phase:** Phase 5 — Supply-Chain, Workspace Hygiene, and Release Metadata\n"
+        "- **Current phase:** Phase 6 — Integrated Evidence and Agent Evaluation\n"
         "- **Bootstrap exception (historical, terminated):** The previous `v0.1.0` release and `release/v0.1.0` branch are historical and not active.\n"
     )
 
@@ -391,7 +391,7 @@ class RepositoryConsistencyTests(unittest.TestCase):
         wrong_phase_list = (
             "# Phase List — NudgeWhen v0.1.0\n"
             "\n"
-            "**Document status:** Accepted — Phases 0 through 4 complete; v0.1.1 release in progress\n"
+            "**Document status:** Accepted — Phases 0 through 5 complete; v0.1.1 release in progress\n"
         )
         with tempfile.TemporaryDirectory() as td:
             repo = Path(td)
@@ -417,7 +417,7 @@ class RepositoryConsistencyTests(unittest.TestCase):
         wrong_charter = (
             "# Release Charter — NudgeWhen v0.1.0\n"
             "\n"
-            "**Document status:** Accepted — Phases 0 through 4 complete; v0.1.1 release in progress\n"
+            "**Document status:** Accepted — Phases 0 through 5 complete; v0.1.1 release in progress\n"
         )
         with tempfile.TemporaryDirectory() as td:
             repo = Path(td)
@@ -475,7 +475,7 @@ class RepositoryConsistencyTests(unittest.TestCase):
                 self.assertEqual(check, "repository-consistency")
                 self.assertIn("phase-list", message)
                 self.assertIn("Phases 0 through 3 complete", message)
-                self.assertIn("Phases 0 through 4 complete", message)
+                self.assertIn("Phases 0 through 5 complete", message)
 
     def test_charter_document_status_summary_mismatch_fails(self) -> None:
         """B5A: when the release-charter document-status line claims an
@@ -513,7 +513,7 @@ class RepositoryConsistencyTests(unittest.TestCase):
                 self.assertEqual(check, "repository-consistency")
                 self.assertIn("charter", message)
                 self.assertIn("Phases 0 through 3 complete", message)
-                self.assertIn("Phases 0 through 4 complete", message)
+                self.assertIn("Phases 0 through 5 complete", message)
 
     def test_ci_missing_release_push_fails(self) -> None:
         """B5B: when the persistent CI workflow omits ``release/**`` from

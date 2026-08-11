@@ -1,6 +1,6 @@
 # Phase List — NudgeWhen v0.1.1
 
-**Document status:** Accepted — Phases 0 through 4 complete; v0.1.1 release in progress
+**Document status:** Accepted — Phases 0 through 5 complete; v0.1.1 release in progress
 **Active release branch:** release/v0.1.1
 **Active release charter:** docs/releases/v0.1.1/release-charter.md
 
@@ -432,31 +432,34 @@ The Gradle wrapper, the `.gitignore` ignore patterns, the wrapper-integrity chec
 
 ### Completion evidence
 
-- Gradle rejects a distribution whose checksum does not match.
-- The wrapper JAR checksum matches the approved value.
-- Python compilation cannot leave visible non-ignored bytecode in the repository.
-- Dependabot configuration parses and covers both declared ecosystems.
-- The assembled APK reports `versionCode = 2` and `versionName = 0.1.1`.
-- Source and merged manifest allowlists remain satisfied.
-- Phase experiment record; ID assigned when the task starts according to the experiment protocol.
+- Gradle rejects a distribution whose checksum does not match. Directly observed by the retained Phase 5I controlled Gradle bad-distribution checksum rejection proof using a temporary `mktemp` directory, the real `gradlew` and approved wrapper JAR copied in isolation, a temporary `gradle-wrapper.properties` pointing at a `file://` fake distribution, an isolated `GRADLE_USER_HOME`, and `gradlew --version`; the expected `Verification of Gradle distribution failed!` failure with `Expected checksum:` and `Actual checksum:` was observed; the repository wrapper files were not modified; see `EXP-0029.md` §5I.
+- The wrapper JAR checksum matches the approved value. Directly observed by the retained Phase 5A pre-Build `sha256sum gradle/wrapper/gradle-wrapper.jar` (`55243ef57851f12b070ad14f7f5bb8302daceeebc5bce5ece5fa6edb23e1145c`) and the retained Phase 5I `required/wrapper-jar-sha256 — wrapper JAR SHA-256 verified` PASS line; see `EXP-0029.md` §3 and §5I.
+- Python compilation cannot leave visible non-ignored bytecode in the repository. Directly observed by the retained Phase 5B `required/gitignore-python — Python bytecode ignore rules present` PASS line and the retained Phase 5B `required/no-bytecode` failure branch covering `.pyc`, `.pyo`, `.pyd`, and `__pycache__`; see `EXP-0029.md` §5B.3 and §5B.4.
+- Dependabot configuration parses and covers both declared ecosystems. Directly observed by the retained Phase 5C `required/dependabot-yaml — Dependabot configuration verified` PASS line; see `EXP-0029.md` §5C.3 and §5C.4.
+- The assembled APK reports `versionCode = 2` and `versionName = 0.1.1`. Directly observed by the retained Phase 5I Android/offline validator run `PASS android/apk-metadata — APK metadata matches`, and the retained Phase 5I `app/build.gradle.kts` and `scripts/release_contract.json` readback of `versionCode = 2` / `versionName = "0.1.1"` and `current_version_code = 2` / `current_version_name = "0.1.1"`; see `EXP-0029.md` §5I.
+- Source and merged manifest allowlists remain satisfied. Directly observed by the retained Phase 5I Android/offline validator runs `PASS android/source-manifest — exact source-manifest boundary satisfied` and `PASS android/merged-manifest — merged-manifest contract satisfied`; see `EXP-0029.md` §5I.
+- The implementation/evidence commit is `edf9da3cf5fef652c595936188e5918c2bd6e7f2` (subject `chore: complete phase 5 implementation and evidence`, branch `release/v0.1.1`). Maintainer-supplied evidence; this Build did not independently query the remote.
+- The exact-head CI run is `31334416352` (workflow `CI`, event `push`, branch `release/v0.1.1`, head SHA `edf9da3cf5fef652c595936188e5918c2bd6e7f2`, conclusion `success`, required `validate` job `success`, debug APK artifact produced). Maintainer-supplied evidence; this Build did not independently query the remote.
+- No product functionality, Android behavior, or Android permission was introduced by the Phase 5 implementation.
+- Phase experiment record; ID assigned when the task starts according to the experiment protocol. Directly observed by the existence of `docs/agentic-development/experiments/EXP-0029.md`, which preserves the cumulative Phase 5A / 5B / 5C / 5D / 5I / 5I-C1 / 5I-C2 chronology and the accepted Phase 5 implementation/evidence record.
 
 ### Status
 
-Planned
+Complete
 
 ### Validation checklist
 
-- [ ] BLOCKED — The Gradle 9.4.1 `distributionSha256Sum` is present in `gradle/wrapper/gradle-wrapper.properties`. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — The committed Gradle wrapper JAR matches the approved checksum. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — `validateDistributionUrl=true` is preserved. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — GitHub Actions remain pinned to full commit SHAs. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — `.github/dependabot.yml` covers Gradle and GitHub Actions ecosystems. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — Dependabot creates reviewable PRs only and does not auto-merge. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — The `__pycache__/` and `*.py[cod]` ignore patterns are present in `.gitignore`. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — The validator rejects tracked bytecode and prohibited generated output. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — The Android artifact reports `versionCode = 2` and `versionName = 0.1.1`. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — Source and merged manifest allowlists remain satisfied. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — Phase experiment record; ID assigned when the task starts according to the experiment protocol. The phase has not started; direct completion evidence is not yet available.
+- [x] PASS — The Gradle 9.4.1 `distributionSha256Sum` is present in `gradle/wrapper/gradle-wrapper.properties`. Directly observed by the retained Phase 5A post-implementation readback (`distributionSha256Sum=2ab2958f2a1e51120c326cad6f385153bb11ee93b3c216c5fccebfdfbb7ec6cb`); see `EXP-0029.md` §7.1.
+- [x] PASS — The committed Gradle wrapper JAR matches the approved checksum. Directly observed by the retained Phase 5A pre-Build `sha256sum gradle/wrapper/gradle-wrapper.jar` (`55243ef57851f12b070ad14f7f5bb8302daceeebc5bce5ece5fa6edb23e1145c`) and the retained Phase 5I `required/wrapper-jar-sha256 — wrapper JAR SHA-256 verified` PASS line; see `EXP-0029.md` §3 and §5I.
+- [x] PASS — `validateDistributionUrl=true` is preserved. Directly observed by the retained Phase 5A post-implementation readback of `gradle/wrapper/gradle-wrapper.properties`; see `EXP-0029.md` §7.1.
+- [x] PASS — GitHub Actions remain pinned to full commit SHAs. Directly observed by the retained Phase 2 implementation; the Phase 5 cumulative candidate does not modify `.github/workflows/ci.yml`; see `EXP-0029.md` §5I preserved facts.
+- [x] PASS — `.github/dependabot.yml` covers Gradle and GitHub Actions ecosystems. Directly observed by the retained Phase 5C post-implementation complete readback confirming `version: 2` with exactly two `updates` entries for `gradle` and `github-actions`; see `EXP-0029.md` §5C.3.
+- [x] PASS — Dependabot creates reviewable PRs only and does not auto-merge. Directly observed by the retained Phase 5C `DEPENDABOT_FORBIDDEN_KEYS` enforcement of the bounded no-auto-merge contract; see `EXP-0029.md` §5C.3.
+- [x] PASS — The `__pycache__/` and `*.py[cod]` ignore patterns are present in `.gitignore`. Directly observed by the retained Phase 5B post-implementation readback (`__pycache__/` and `*.py[cod]` at lines 41–42); see `EXP-0029.md` §5B.3.
+- [x] PASS — The validator rejects tracked bytecode and prohibited generated output. Directly observed by the retained Phase 5B generalized `required/no-bytecode` branch covering `.pyc`, `.pyo`, `.pyd`, and `__pycache__`, and the retained Phase 5B `required/gitignore-python — Python bytecode ignore rules present` PASS line; see `EXP-0029.md` §5B.3 and §5B.4.
+- [x] PASS — The Android artifact reports `versionCode = 2` and `versionName = 0.1.1`. Directly observed by the retained Phase 5I Android/offline validator run `PASS android/apk-metadata — APK metadata matches`, and the retained Phase 5I `app/build.gradle.kts` and `scripts/release_contract.json` readback of `versionCode = 2` / `versionName = "0.1.1"` and `current_version_code = 2` / `current_version_name = "0.1.1"`; see `EXP-0029.md` §5I.
+- [x] PASS — Source and merged manifest allowlists remain satisfied. Directly observed by the retained Phase 5I Android/offline validator runs `PASS android/source-manifest — exact source-manifest boundary satisfied` and `PASS android/merged-manifest — merged-manifest contract satisfied`; see `EXP-0029.md` §5I.
+- [x] PASS — Phase experiment record; ID assigned when the task starts according to the experiment protocol. Directly observed by the existence of `docs/agentic-development/experiments/EXP-0029.md`, which preserves the cumulative Phase 5A / 5B / 5C / 5D / 5I / 5I-C1 / 5I-C2 chronology.
 
 ## Phase 6 — Integrated Evidence and Agent Evaluation
 
