@@ -342,6 +342,14 @@ The exact SDK path is a local command argument and is not recorded anywhere in c
 
 A first developer run on a fresh checkout may require dependency downloads. Gradle will resolve the AGP, Kotlin Compose, Compose BOM, and Activity Compose dependencies. Once the machine-level caches are provisioned, subsequent runs can use `--offline`.
 
+## Core Codespace environment
+
+The repository includes a lightweight Core GitHub Codespaces environment for command-line development and validation. The environment was proven on a 2-core Codespace using JDK 17, Python 3, the Android SDK Platform 36, Android Build Tools 36.0.0, the repository Gradle 9.4.1 wrapper, OpenCode 1.18.16, and the existing NudgeWhen local-validation workflow.
+
+After the fresh Codespace completed its first dependency-resolving Android run, `./scripts/validate-local.sh --group android --offline` produced `SUMMARY pass=16 fail=0 skip=0`, and `./scripts/validate-local.sh --offline` produced `SUMMARY pass=38 fail=0 skip=0` with `release_gate=SATISFIED`. This establishes the Core Codespace as a proven command-line reproduction environment for the current `v0.1.1` validation baseline. It does not change the release lifecycle: Phase 6 remains `Planned`.
+
+OpenCode Go authentication is a private maintainer action and no credential value is stored in repository evidence. The full sanitized Codespace evidence, including the OpenCode/MiniMax M3 smoke test and its minor instruction-discipline deviations, is recorded in [EXP-0030](agentic-development/experiments/EXP-0030.md).
+
 ## Official Phase 4 proof
 
 The official Phase 4 proof is the accepted implementation/evidence commit and the maintainer-supplied remote CI evidence, not a temporary local clone or a synthetic-identity commit. The accepted proof is:
