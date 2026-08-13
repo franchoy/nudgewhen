@@ -1,6 +1,6 @@
 # Phase List — NudgeWhen v0.1.1
 
-**Document status:** Accepted — Phases 0 through 5 complete; v0.1.1 release in progress
+**Document status:** Accepted — Phases 0 through 6 complete; v0.1.1 release in progress
 **Active release branch:** release/v0.1.1
 **Active release charter:** docs/releases/v0.1.1/release-charter.md
 
@@ -508,18 +508,18 @@ The v0.1.1 agent evaluation document, the v0.1.1 charter and phase-list status f
 
 ### Status
 
-Planned
+Complete
 
 ### Validation checklist
 
-- [ ] BLOCKED — `docs/releases/v0.1.1/agent-evaluation.md` exists and classifies each repeated lesson. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — Every completed phase has an accepted experiment record. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — Every deviation is classified and resolved or explicitly accepted. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — The evaluation distinguishes repository-enforced, tool-enforced, prose-only, and deferred controls. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — No unsupported "the validator guarantees agent behavior" claim is made. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — The v0.1.0 deferred candidates are explicitly dispositioned. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — All Phase 0 through 5 statuses are synchronized. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — Phase experiment record; ID assigned when the task starts according to the experiment protocol. The phase has not started; direct completion evidence is not yet available.
+- [x] PASS — `docs/releases/v0.1.1/agent-evaluation.md` exists and classifies each repeated lesson (nine-lesson matrix preserved in Section 7 and Section 8 of the evaluation).
+- [x] PASS — Every completed phase has an accepted experiment record (Phases 0 through 5 accepted experiment identifiers are recorded in Section 2 of the evaluation; Phase 6 accepted experiment evidence is `EXP-0031`).
+- [x] PASS — Every deviation is classified and resolved or explicitly accepted (preserved deviations and maintainer corrections for Build 1, Build 1-R1, Build 1-R2, and Build 1-R3 are recorded in `EXP-0031.md`; no outstanding deviation remains for Phase 6).
+- [x] PASS — The evaluation distinguishes repository-enforced, tool-enforced, prose-only, and deferred controls (Sections 3, 4, 5, and 6 of the evaluation).
+- [x] PASS — No unsupported "the validator guarantees agent behavior" claim is made (Section 3 explicitly states that deterministic controls do not guarantee natural-language agent behavior; Section 12 distinguishes prevented/detected controls from Section 13 model-sensitive residues).
+- [x] PASS — The v0.1.0 deferred candidates are explicitly dispositioned (C-01 through C-07 and D-01 through D-07 disposition is preserved in Section 10 of the evaluation).
+- [x] PASS — All Phase 0 through 5 statuses are synchronized (this phase list, the release charter, and `scripts/release_contract.json` agree that Phases 0 through 5 are `Complete`; Phase 7 remains `Planned`).
+- [x] PASS — Phase 6 experiment evidence exists in `EXP-0031.md` (EXP-0031 records the 6P-A through 6P-F1 chronology, Build 1, Build 1-R1, Build 1-R2, and Build 1-R3 stages, the corresponding maintainer audits, and the R3 later evidence supplied for lifecycle synchronization).
 
 ## Phase 7 — Full Pre-Release Gate and Release-PR Preparation
 

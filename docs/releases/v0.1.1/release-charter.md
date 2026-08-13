@@ -1,6 +1,6 @@
 # Release Charter — NudgeWhen v0.1.1
 
-**Document status:** Accepted — Phases 0 through 5 complete; v0.1.1 release in progress
+**Document status:** Accepted — Phases 0 through 6 complete; v0.1.1 release in progress
 **Release name:** NudgeWhen v0.1.1 — Post-Release Closure and Reusable Validation Baseline
 **Version:** v0.1.1
 **Android artifact identity:** versionCode = 2, versionName = "0.1.1" (delivered in Phase 5)
@@ -33,6 +33,20 @@ Phase 4 (Validator Regression Suite and Repository-Consistency Enforcement) is `
 
 Phase 5 (Supply-Chain, Workspace Hygiene, and Release Metadata) is `Complete`. The accepted retained technical Phase 5 integration evidence is recorded in `EXP-0029.md`. The retained Phase 5A/5B/5C/5D technical implementations are technically accepted; the retained Phase 5I technical integration is accepted; the retained controlled Gradle bad-distribution checksum rejection proof was directly observed; the retained cumulative regression accepted the 78-test matrix (`python3 -B -m unittest tests.test_validator_core tests.test_validator_repository` → `Ran 78 tests / OK`); the retained `required` group ran `11/0/0`, the retained `docs` group ran `11/0/0`, the retained `skip-Android` group ran `22/0/0`, the retained `Android offline` group ran `16/0/0`, and the retained `full offline` run produced `38/0/0` with `release_gate=SATISFIED`. The retained Phase 5 Android metadata is `versionCode = 2` and `versionName = 0.1.1`. The implementation/evidence commit is `edf9da3cf5fef652c595936188e5918c2bd6e7f2` (subject `chore: complete phase 5 implementation and evidence`, branch `release/v0.1.1`) and was successfully pushed to `origin/release/v0.1.1`. The exact-head CI run is `31334416352` (workflow `CI`, event `push`, branch `release/v0.1.1`, head SHA `edf9da3cf5fef652c595936188e5918c2bd6e7f2`, conclusion `success`, required `validate` job `success`, debug APK artifact produced). The Android release metadata transition is now delivered in Phase 5; the committed `versionCode` and `versionName` are `2` and `0.1.1` respectively. No product functionality, Android behavior, or Android permission was introduced by the Phase 5 implementation. The overall `v0.1.1` release remains in progress; no pull request, merge, tag, published release, or release completion is claimed by this charter. Phase 5 formal closure is established by closure-overlay commit `b7f3f5201ab9840be64c383fee33243186fd96ce` (subject `chore: close phase 5 formal closure`, parent `edf9da3cf5fef652c595936188e5918c2bd6e7f2`), its successful push to `origin/release/v0.1.1`, the matching remote release-branch SHA, and exact-head CI run `31468730138` with conclusion `success` and required `validate` job successful.
 
+## Phase 6 status
+
+Phase 6 (Integrated Evidence and Agent Evaluation) is `Complete` as the local
+lifecycle-closure candidate. The accepted integrated evaluation is recorded in
+`docs/releases/v0.1.1/agent-evaluation.md`, and the cumulative Phase 6
+experiment record is `docs/agentic-development/experiments/EXP-0031.md`.
+The accepted direct historical-lesson recurrence set remains Lessons 1, 2, 5,
+and 9. No product functionality, Android behavior, or Android permission was
+introduced by Phase 6. Phase 7 (Full Pre-Release Gate and Release-PR
+Preparation) remains `Planned` and owns the full clean Android / release gate.
+This charter does not pre-certify the current recovery's later validation,
+terminal status, terminal HEAD, staging, commit, push, CI, maintainer
+acceptance, Phase 7 completion, release pull request, tag, or release.
+
 ## Release identity
 
 - Version: `v0.1.1`
@@ -40,7 +54,7 @@ Phase 5 (Supply-Chain, Workspace Hygiene, and Release Metadata) is `Complete`. T
 - Active release branch: `release/v0.1.1`
 - Active release charter: `docs/releases/v0.1.1/release-charter.md`
 - Active phase list: `docs/releases/v0.1.1/phase-list.md`
-- Current phase: Phase 6 — Integrated Evidence and Agent Evaluation
+- Current phase: Phase 7 — Full Pre-Release Gate and Release-PR Preparation
 
 ## Exact release objective
 
@@ -53,7 +67,7 @@ Phase 5 (Supply-Chain, Workspace Hygiene, and Release Metadata) is `Complete`. T
 - add a standard-library validator regression test suite and repository-consistency enforcement, so that the validator itself is tested and catches stale-state contradictions that escaped `v0.1.0` validation;
 - strengthen supply-chain and workspace-hygiene controls (Gradle distribution checksum, approved wrapper-JAR checksum validation, bytecode ignore patterns, review-only Dependabot configuration for Gradle and GitHub Actions);
 - update release metadata to `versionCode = 2` and `versionName = "0.1.1"` for the Android artifact (delivered in Phase 5);
-- produce integrated OpenCode and MiniMax M3 evaluation evidence that distinguishes repository-enforced controls, tool-enforced controls, prose-only controls, and deferred candidates;
+- produce integrated OpenCode and MiniMax M3 evaluation evidence that distinguishes repository-enforced controls, tool-enforced controls, prose-only controls, and deferred candidates (delivered in Phase 6);
 - prepare, but not execute, a single release-bearing pull request from `release/v0.1.1` into `main`, an annotated tag, and a GitHub release.
 
 `v0.1.1` does not introduce any reminder capability or other product functionality.
