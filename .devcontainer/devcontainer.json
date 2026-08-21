@@ -1,0 +1,7 @@
+{
+  "name": "NudgeWhen Core Codespace",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "remoteUser": "vscode"
+}

@@ -36,3 +36,7 @@ google-services.json
 
 # opencode sesion export files
 session-ses_*.md
+
+# Python
+__pycache__/
+*.py[cod]

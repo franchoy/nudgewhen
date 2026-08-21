@@ -4,7 +4,13 @@ NudgeWhen is in an early experimental stage. This document explains how to repor
 
 ## Current state
 
-At the time of writing, there is no released or runnable application. There is no Android application code, no Gradle build, no APK, no test suite, no CI workflow, and no published release. There is no supported-version matrix. Supported-version guidance will be added when releasable software exists.
+NudgeWhen is an early experimental project. The current and historical release states are:
+
+- `v0.1.0` is the historical released baseline. The published GitHub `v0.1.0` release, the merged `v0.1.0` release pull request, and the `v0.1.0` release branch exist as historical evidence and are not the active release train.
+- `v0.1.1` is the active documentation, governance, validation, CI, supply-chain, workspace-hygiene, and release metadata hardening release train. It is developed on the single branch `release/v0.1.1`, which is the current state. The published `v0.1.1` release, the merged `v0.1.1` release pull request, and the annotated `v0.1.1` tag do not yet exist.
+- A minimal Android application project exists, including Android source, Gradle build files, the Gradle wrapper, an Android manifest, Android resources, a GitHub Actions CI workflow, a local validation suite, and a locally generated debug APK at `app/build/outputs/apk/debug/app-debug.apk` (ignored and not committed).
+- The released `v0.1.0` baseline contains no reminder, voice, speech, location, geofencing, notification, persistence, contextual-trigger, networking, analytics, telemetry, or background-service functionality. It is a static-screen Android technical baseline only. No production-readiness, stability, security, or compatibility guarantee is made.
+- This document does not create a production support promise. There is no supported-version matrix at this stage. Supported-version guidance will be added when a releasable production-oriented version exists.
 
 ## Primary reporting route: GitHub private vulnerability reporting
 
@@ -60,6 +66,8 @@ The project does not currently have:
 - An out-of-band communication channel for security.
 - Encryption guarantees beyond what the chosen platform provides.
 - A privacy program.
+- A production-readiness, stability, security, or compatibility guarantee.
+- A supported-version matrix or a formal support channel.
 
 ## Ordinary non-security defects
 

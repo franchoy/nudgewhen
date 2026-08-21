@@ -4,32 +4,32 @@ Thank you for your interest in NudgeWhen. This document explains how to contribu
 
 ## Current state of the project
 
-NudgeWhen is in the early stages of an open-source release train. At this phase:
+NudgeWhen is an early-stage experimental open-source Android project. At this phase:
 
-- There is no Android application code, no Gradle build, no test suite, no CI workflow, no published release, and no installation procedure.
-- The repository currently contains project documentation, an agentic-workflow experiment record, and the community-health files for the current phase.
+- The `v0.1.0` release is complete and historical; see `docs/releases/v0.1.0/` for its record.
+- The active in-progress release is `v0.1.1`, developed on the `release/v0.1.1` branch.
+- The repository contains Android source, Gradle build files, a manifest and resources, documentation, agentic-workflow experiment records, and community-health files.
 - A single maintainer reviews contributions.
-- The community-health files (`README.md`, `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md`) are the primary artefacts of this phase.
+- There is no production-readiness or support guarantee; this is experimental software.
 
-Application-code contribution instructions are conditional on application code existing later. They are not provided here.
+Android source, Gradle, manifest, resources, validation, and CI artefacts now exist in the repository. Contribution instructions for them are below.
+
+## Branches and pull-request targets
+
+External contributors should work on a topic branch and target the current release branch. The durable convention is `release/vX.Y.Z`; the current binding is `release/v0.1.1`. The historical `release/v0.1.0` branch remains in the repository as evidence of the completed release and is not the current target for new work. The maintainer reviews and decides whether to merge; there is no guaranteed review time and no guaranteed acceptance.
 
 ## What is useful right now
 
-The following contributions are useful at this stage:
+The following contributions are useful at this stage when they are explicitly scoped and discussed in an issue first:
 
 - Documentation improvements: clearer wording, better organization, corrected typos, expanded explanations.
 - Design discussion: contextual-reminder scenarios, voice-first and local-first considerations, accessibility considerations.
 - Community-file improvements: the issue forms, the pull-request template, this contributing guide, the code of conduct, and the security policy.
 - Use cases: realistic situations where a voice-first, local-first contextual reminder would help.
-- Narrowly scoped proposals: small, focused changes that can be reviewed quickly.
-
-The following contributions are not yet applicable:
-
-- Android source code, Gradle changes, manifest changes, or resource changes.
-- Test code.
-- CI workflow changes.
-- OpenCode governance changes (for example, `AGENTS.md` or `opencode.json`).
-- Release automation.
+- Narrowly scoped code changes: small, focused changes to Android source, Gradle, manifest, or resources that can be reviewed quickly.
+- Validation improvements: small, focused changes to local validation scripts or validation documentation that can be reviewed quickly.
+- CI-related changes: small, focused changes to continuous integration workflow files.
+- Release-process improvements: small, focused changes to release automation or release documentation.
 
 ## Issue-first discussion
 
@@ -47,18 +47,16 @@ Pull requests should be:
 - Self-contained: do not include unrelated changes, reformatting, or drive-by modifications.
 - Linked to the relevant issue when one exists.
 
-External contributors should open pull requests from a topic branch against the current release branch (`release/v0.1.0` at the time of writing). The maintainer will review and decide whether to merge. There is no guaranteed review time and no guaranteed acceptance.
+External contributors should open pull requests from a topic branch against the current release branch (`release/v0.1.1` at the time of writing). The maintainer will review and decide whether to merge. There is no guaranteed review time and no guaranteed acceptance.
 
 ## Validation
 
-Validation expectations depend on what currently exists:
+Validation guidance depends on the authorized scope of the change:
 
-- For documentation-only changes, re-read the affected files and verify that the Markdown renders correctly. There is no automated Markdown linter required at this stage.
-- For community-file changes, re-read the affected files and verify the YAML or Markdown parses.
-- For any change that affects links, verify that the relative links resolve to existing files.
-- Do not claim validation that did not occur. If a check is not applicable at this stage, say so.
-
-Application-code validation, test runs, and CI runs are not applicable at this stage because they do not exist yet.
+- The local validation suite is `./scripts/validate-local.sh`. It is the sanctioned entry point for the validation groups defined by the project.
+- For documentation-only changes, focused readback of the affected files and verification that relative links resolve to existing files may be used when that is the authorized scope.
+- For broader code, validator, or Android changes, the appropriate local validation group or the full suite must be run when authorized.
+- Do not claim validation that did not occur. If a check was not run as part of the authorized scope, say so.
 
 ## Commit messages
 

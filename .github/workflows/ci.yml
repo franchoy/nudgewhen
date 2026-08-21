@@ -3,10 +3,11 @@ name: CI
 on:
   push:
     branches:
-      - release/v0.1.0
+      - release/**
+      - main
   pull_request:
     branches:
-      - release/v0.1.0
+      - main
   workflow_dispatch:
 
 permissions:
@@ -30,6 +31,9 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
+
+      - name: validator-regressions
+        run: python3 -B -m unittest tests.test_validator_core tests.test_validator_repository
 
       - name: validate-local
         run: ./scripts/validate-local.sh --require-clean
