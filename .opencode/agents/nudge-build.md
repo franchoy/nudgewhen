@@ -1,7 +1,7 @@
 ---
 description: Executes explicitly scoped NudgeWhen Build tasks with approval-gated mutation and validation
 mode: primary
-model: opencode-go/minimax-m3
+model: minimax/MiniMax-M3
 steps: 30
 permission:
   "*": deny

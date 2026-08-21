@@ -1,7 +1,7 @@
 ---
 description: Audits NudgeWhen repository evidence without mutation
 mode: primary
-model: opencode-go/minimax-m3
+model: minimax/MiniMax-M3
 steps: 20
 permission:
   "*": deny

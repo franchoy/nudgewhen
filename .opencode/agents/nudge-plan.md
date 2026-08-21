@@ -1,7 +1,7 @@
 ---
 description: Plans NudgeWhen work without mutating repository state
 mode: primary
-model: opencode-go/minimax-m3
+model: minimax/MiniMax-M3
 steps: 8
 permission:
   "*": deny
