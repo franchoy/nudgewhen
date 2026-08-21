@@ -1,6 +1,12 @@
 # NudgeWhen v0.1.1 — Agent Evaluation
 
-**Document status:** Final accepted Phase 6 evaluation; Phase 6 is `Complete`. L1-R4 was subsequently accepted by the maintainer as the terminal Phase 6 evidence synchronization, and no L1-R5 was required solely to copy its terminal post-write evidence. The Phase 6 repository closure (commit `aae92b10b6edd6960e535c2187ec42f026a370f7`) and the post-closure CI repair (recorded in `EXP-0032.md`) are now completed; the post-closure repair commit is `bf29cecda485adb2d7c55744e4692d1cf984e0a2` with successful exact-head CI `31867111333`. Phase 7 remains `Planned`. This file was corrected by Build 1-R2 in response to the maintainer audit of Build 1-R1, by Build 1-R3 in response to the maintainer audit of Build 1-R2, by the L1-R1 recovery Build in response to the maintainer audit of the prior L1 attempt, and then re-synchronized to closed-state wording by the L1-R2 recovery Build. Lifecycle L1 was `Blocked by specification`; its call-6 release-charter Read truncation hard-stop failure is additional Lesson 1 evidence; its call-9 and call-10 future-evidence overstatements are additional Lesson 2 and Lesson 5 evidence; its call-14 validator hard stop was correctly honored; and no new Lesson 9 recurrence is assigned. Lifecycle L1-R1 was technically `Partially successful` with overall outcome `Partially successful`, scope `deviation without approval`, and response integrity `failed`; L1-R1 adds direct evidence to Lessons 1, 2 and 5 only and no new Lesson 9 recurrence. The manually restored charter between L1-R1 and L1-R2 removes the unaccepted L1 historical-content replacement before L1-R2 lifecycle edits are applied. Original Build 1, Build 1-R1, Build 1-R2, Build 1-R3, Lifecycle L1, and Lifecycle L1-R1 defects are preserved in `EXP-0031.md`.
+**Document status:** Final accepted Phase 6 evaluation; Phase 6 is `Complete`. L1-R4 was subsequently accepted by the maintainer as the terminal Phase 6 evidence synchronization, and no L1-R5 was required solely to copy its terminal post-write evidence. The Phase 6 repository closure (commit `aae92b10b6edd6960e535c2187ec42f026a370f7`) and the post-closure CI repair (recorded in `EXP-0032.md`) are now completed; the post-closure repair commit is `bf29cecda485adb2d7c55744e4692d1cf984e0a2` with successful exact-head CI `31867111333`. Phase 6: Closed
+Phase 7: Complete in the local combined lifecycle-closure candidate
+Release: not yet complete
+PR / merge / merged-main SHA / tag / GitHub release: not yet performed / available
+This L2-B Build and the combined nine-path candidate: pending maintainer audit and repository action
+
+This file was corrected by Build 1-R2 in response to the maintainer audit of Build 1-R1, by Build 1-R3 in response to the maintainer audit of Build 1-R2, by the L1-R1 recovery Build in response to the maintainer audit of the prior L1 attempt, and then re-synchronized to closed-state wording by the L1-R2 recovery Build. Lifecycle L1 was `Blocked by specification`; its call-6 release-charter Read truncation hard-stop failure is additional Lesson 1 evidence; its call-9 and call-10 future-evidence overstatements are additional Lesson 2 and Lesson 5 evidence; its call-14 validator hard stop was correctly honored; and no new Lesson 9 recurrence is assigned. Lifecycle L1-R1 was technically `Partially successful` with overall outcome `Partially successful`, scope `deviation without approval`, and response integrity `failed`; L1-R1 adds direct evidence to Lessons 1, 2 and 5 only and no new Lesson 9 recurrence. The manually restored charter between L1-R1 and L1-R2 removes the unaccepted L1 historical-content replacement before L1-R2 lifecycle edits are applied. Original Build 1, Build 1-R1, Build 1-R2, Build 1-R3, Lifecycle L1, and Lifecycle L1-R1 defects are preserved in `EXP-0031.md`.
 
 ## 1. Purpose and evidence-provenance model
 
@@ -207,7 +213,8 @@ These behaviors are observable in the transcript and in the experiment records; 
 
 ## 14. Residual risk and missing Phase 6 release controls
 
-No remaining residual risk identified in this Build currently demonstrates a missing Phase 6 release control. Phase 7, not Phase 6, owns the full clean Android / release gate.
+No remaining residual risk identified in this Build currently demonstrates a missing Phase 6 release control. Phase 7 owned the full clean Android / release gate; the accepted Phase 7
+evidence establishes that gate as satisfied. Phase 6 did not own that gate.
 
 ## 15. No new helper / skill / plugin / tool / framework justified
 
@@ -223,4 +230,11 @@ Phase 6 is `Complete` and CLOSED. L1-R3 maintainer audit remains accepted with i
 
 The Phase 6 closure commit is `aae92b10b6edd6960e535c2187ec42f026a370f7`. Its initial exact-head CI run `31694777547` failed because six repository-consistency references still used the `Phases 0 through 5 complete` fixture wording after the contract advanced to `Phases 0 through 6 complete`. The post-closure repair is recorded in `EXP-0032.md`; the repair commit is `bf29cecda485adb2d7c55744e4692d1cf984e0a2`, and exact-head CI run `31867111333` succeeded with the required `validate` job successful.
 
-Phase 6 is CLOSED. Phase 7 (`Full Pre-Release Gate and Release-PR Preparation`) remains `Planned` and owns the full pre-release gate. This evaluation does not pre-certify any current Build future validation, commit, push, CI, Phase 7 completion, PR, merge, tag, or release.
+Phase 6 is CLOSED. Phase 7 (Full Pre-Release Gate and Release-PR Preparation) is `Complete` in the local combined lifecycle-closure candidate. The overall v0.1.1 release is not complete. Release PR creation, merge, verified merged-main SHA, post-merge CI, annotated tag, GitHub release, and final release sign-off remain separately authorized later actions. This evaluation does not pre-certify this R2 Build's validation, staging, commit, push, CI, or maintainer acceptance.
+
+## 18. Terminal note — Phase 7 substantive evidence and provider migration
+
+- Phase 7 substantive evidence is `EXP-0033.md`.
+- The official-MiniMax provider migration is an operational provider change, not a MiniMax-M3 model-policy change.
+- Historical OpenCode Go experiment evidence is preserved as historical.
+- Future OpenCode Go reevaluation is outside this release closure and requires explicit authorization and validation.

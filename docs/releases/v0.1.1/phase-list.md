@@ -1,6 +1,6 @@
 # Phase List — NudgeWhen v0.1.1
 
-**Document status:** Accepted — Phases 0 through 6 complete; v0.1.1 release in progress
+**Document status:** Accepted — Phases 0 through 7 complete; v0.1.1 release in progress
 **Active release branch:** release/v0.1.1
 **Active release charter:** docs/releases/v0.1.1/release-charter.md
 
@@ -590,29 +590,63 @@ The pre-release validation and CI evidence, the protected-branch configuration e
 
 ### Status
 
-Planned
+Complete
 
 ### Validation checklist
 
-- [ ] BLOCKED — Every previous phase is `Complete`. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — The validator regression suite passes. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — The complete local repository gate passes. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — The release gate prints `release_gate=SATISFIED`. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — Validation leaves the clean checkout clean. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — CI ran automatically on `release/v0.1.1`. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — The `validate` job passed. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — The debug APK was produced. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — The APK reports `versionCode=2` and `versionName=0.1.1`. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — Source and merged manifests satisfy the approved allowlists. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — No product functionality or permissions were introduced. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — No stale current-facing v0.1.0 branch or capability claim remains. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — `main` protection requires the stable `validate` check. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — Wrapper and distribution integrity checks pass. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — The dependency-update configuration is present and review-only. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — The branch contains no tracked build output, bytecode, screenshots, private material, or unintended files. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — The release branch is clean and ready for the one final pull request. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — The pull request has not been opened; the tag has not been created; the release has not been published; the branch has not been deleted. The phase has not started; direct completion evidence is not yet available.
-- [ ] BLOCKED — Phase experiment record; ID assigned when the task starts according to the experiment protocol. The phase has not started; direct completion evidence is not yet available.
+- [x] PASS — All previous phases are `Complete`; Phase 6 is closed.
+- [x] PASS — Phase 7 experiment evidence exists in `EXP-0033` and preserves
+  the accepted planning, Build 7-1 / R1, Build 7-2, Build 7-3, remote, gate,
+  artifact, and release-preparation chronology.
+- [x] PASS — Validator regression evidence exists: `Ran 78 tests` / `OK`.
+- [x] PASS — Clean full local gate evidence exists:
+  `SUMMARY pass=40 fail=0 skip=0`, `release_gate=SATISFIED`.
+- [x] PASS — The underlying ordinary required/docs/android inventory remains
+  `11 + 11 + 16 = 38`.
+- [x] PASS — Clean-state checks passed before and after the accepted
+  `--offline --require-clean` run.
+- [x] PASS — Android build, APK existence, APK metadata, and merged-manifest
+  checks passed in the accepted clean full gate.
+- [x] PASS — Main protection requires the stable `validate` context under
+  active ruleset `17924125` (`Protect main`) at the accepted protection
+  evidence boundary.
+- [x] PASS — At the accepted remote-accounting boundary, `main` was an
+  ancestor of release with `0` main-only and `32` release-only commits.
+- [x] PASS — Phase 7 terminal-preparation exact-head release CI exists
+  through run `31874324923` at
+  `34a126544cf838751085703d4dba499cb9434163`; workflow `CI`, event `push`,
+  branch `release/v0.1.1`, conclusion `success`, required `validate` job
+  `success`.
+- [x] PASS — Debug artifact evidence exists for the accepted Phase 7
+  preparation boundary: `app-debug-apk`, artifact id `9244047079`,
+  `expired=false`, artifact `size_in_bytes=10955677`, digest
+  `sha256:7557255b34d5f9f10e0ce86b7202ba2ac3eead5f8f5e6c76a78bad01d311a8fc`.
+- [x] PASS — The accepted local APK binary size `11419133` bytes remains
+  distinct from the GitHub Actions artifact size.
+- [x] PASS — The later official-MiniMax provider migration is confined to
+  OpenCode root / agent configuration and preserves repository validation.
+- [x] PASS — `nudge-plan`, `nudge-audit`, `nudge-build`, and the root default
+  all executed successfully without an explicit model override using
+  `MiniMax-M3`.
+- [x] PASS — Final provider-migration HEAD is
+  `99fb02704bb72feb7c5bbe0576bda0b4b664b7f1`.
+- [x] PASS — Exact-head migration CI run `32497896798` succeeded on
+  `release/v0.1.1`; required `validate` completed successfully.
+- [x] PASS — Current-head CI artifact `app-debug-apk` exists with digest
+  `sha256:d73dbb21cfeb7be0e0df6089cadc5e10f9457991c4952f5c609870b6a1662b23`.
+- [x] PASS — Proposed release PR title/body is prepared; the PR has not been
+  created.
+- [x] PASS — Proposed annotated tag `v0.1.1` with message
+  `NudgeWhen v0.1.1` is prepared; its target remains `Not available` until
+  merged `main` is independently verified.
+- [x] PASS — Proposed GitHub release title/body is prepared; it has not been
+  published.
+- [x] PASS — No new product functionality, Android behavior, or Android
+  permission was introduced by Phase 7.
+- [x] PASS — Phase 7 lifecycle transition to `Complete` is authorized by the
+  maintainer; release PR creation, merge, post-merge main verification/CI,
+  annotated tag, GitHub release, and release completion remain separate
+  later actions.
 
 ## Cross-references
 

@@ -145,3 +145,45 @@ Fresh-process runtime validation is mandatory after every permanent harness modi
 ## What this document does not contain
 
 This document does not contain the complete authorization matrix. It does not contain a speculative future-phase implementation or validation proposal. It does not repeat historical detail already preserved in experiment records. It does not contain a release-specific document; release-specific governance lives in the active release charter and the active phase list.
+
+## Current provider strategy
+
+NudgeWhen continues to use MiniMax M3 as its selected implementation model.
+
+During v0.1.1, model access was temporarily migrated from OpenCode Go to the official MiniMax provider after a changed OpenCode Go recurring charge was blocked as anomalous during renewal.
+
+This is an operational provider migration, not a model-selection policy change.
+
+Current live configuration:
+
+- provider: MiniMax;
+- model: `minimax/MiniMax-M3`;
+- root default: MiniMax M3;
+- `nudge-plan`: MiniMax M3;
+- `nudge-build`: MiniMax M3;
+- `nudge-audit`: MiniMax M3.
+
+The longer-term preference is to reevaluate OpenCode Go when:
+
+- billing/payment is reliable again; and
+- economics remain acceptable.
+
+Reason: OpenCode Go may preserve broader future model-selection flexibility.
+
+A return to OpenCode Go is NOT automatic and NOT pre-authorized.
+
+Any future provider change requires explicit maintainer authorization and must re-prove:
+
+- configuration correctness;
+- provider/model discovery;
+- root default smoke;
+- `nudge-plan` smoke;
+- `nudge-build` smoke;
+- `nudge-audit` smoke;
+- repository regression;
+- local validator;
+- exact-head CI.
+
+Historical records that name `opencode-go/minimax-m3` remain historical evidence and are not rewritten.
+
+Do NOT duplicate the full AGENTS authorization matrix.

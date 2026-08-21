@@ -1,6 +1,6 @@
 # Release Charter — NudgeWhen v0.1.1
 
-**Document status:** Accepted — Phases 0 through 6 complete; v0.1.1 release in progress
+**Document status:** Accepted — Phases 0 through 7 complete; v0.1.1 release in progress
 **Release name:** NudgeWhen v0.1.1 — Post-Release Closure and Reusable Validation Baseline
 **Version:** v0.1.1
 **Android artifact identity:** versionCode = 2, versionName = "0.1.1" (delivered in Phase 5)
@@ -47,6 +47,44 @@ This charter does not pre-certify the current recovery's later validation,
 terminal status, terminal HEAD, staging, commit, push, CI, maintainer
 acceptance, Phase 7 completion, release pull request, tag, or release.
 
+## Phase 7 status
+
+Phase 7 (Full Pre-Release Gate and Release-PR Preparation) is `Complete` as
+the local lifecycle-closure candidate authorized by the maintainer after
+acceptance of the complete pre-release evidence package.
+
+Accepted Phase 7 evidence includes:
+
+- the sanitized Phase 7 experiment record `EXP-0033`;
+- regression `78` tests / `OK`;
+- the clean full local gate with
+  `SUMMARY pass=40 fail=0 skip=0` and `release_gate=SATISFIED`;
+- the underlying ordinary validation inventory of `38`;
+- protected-main evidence requiring the stable `validate` status;
+- release/main ancestry and release-change accounting;
+- exact-head release-branch CI through Phase 7 terminal preparation;
+- prepared release-PR, annotated-tag, and GitHub-release proposals;
+- the later bounded OpenCode provider migration culminating at
+  `99fb02704bb72feb7c5bbe0576bda0b4b664b7f1`;
+- successful root-default and custom-agent execution through the official
+  `minimax/MiniMax-M3` provider/model;
+- exact-head migration CI run `32497896798`, successful on
+  `release/v0.1.1`, with `validate` successful.
+
+Phase 7 completion does NOT mean the v0.1.1 release itself is complete.
+
+The release PR has not been created.
+Merge has not occurred.
+A verified merged-main SHA is not yet available.
+The annotated tag has not been created.
+The GitHub release has not been published.
+
+Those are separately authorized post-Phase-7 release-completion actions.
+
+This status section does NOT pre-certify this lifecycle-synchronization
+Build's later validation, staging, commit, push, exact-head CI, or maintainer
+audit.
+
 ## Release identity
 
 - Version: `v0.1.1`
@@ -54,7 +92,7 @@ acceptance, Phase 7 completion, release pull request, tag, or release.
 - Active release branch: `release/v0.1.1`
 - Active release charter: `docs/releases/v0.1.1/release-charter.md`
 - Active phase list: `docs/releases/v0.1.1/phase-list.md`
-- Current phase: Phase 7 — Full Pre-Release Gate and Release-PR Preparation
+- Current phase: None — Phases 0 through 7 are `Complete`; release-PR opening is the next separately authorized repository action
 
 ## Exact release objective
 
@@ -93,7 +131,7 @@ The v0.1.1 work continues to use OpenCode and MiniMax M3. The exact displayed mo
 7. **Validator regression suite and repository-consistency enforcement.** Add a standard-library test suite under an agreed `tests/` structure, with bounded fixtures, that invokes the actual validator behavior and that detects the stale-state contradictions that escaped `v0.1.0` validation. This deliverable is in Phase 4.
 8. **Supply-chain, workspace hygiene, and release metadata.** Add the Gradle 9.4.1 `distributionSha256Sum`, validate the committed Gradle wrapper JAR against the approved checksum, preserve `validateDistributionUrl=true`, continue pinning GitHub Actions to full commit SHAs, add a review-only Dependabot configuration for Gradle and GitHub Actions, add the `__pycache__/` and `*.py[cod]` ignore patterns, and update the Android version metadata to `versionCode = 2` and `versionName = "0.1.1"`. This deliverable is in Phase 5.
 9. **Integrated evidence and agent evaluation.** Produce an evaluation summary that classifies controls as repository-enforced, tool-enforced, prose-only, or deferred, and that records the disposition of relevant `v0.1.0` deferred candidates. This deliverable is in Phase 6.
-10. **Pre-release gate and release-pull-request preparation.** Run the full clean pre-release gate and prepare, but not execute, the single release-bearing pull request, merge, annotated tag, GitHub release, and release-branch deletion. This deliverable is in Phase 7.
+10. **Pre-release gate and release-pull-request preparation.** Run the full clean pre-release gate and prepare, but not execute, the single release-bearing pull request, merge, annotated tag, GitHub release, and release-branch deletion. This deliverable is in Phase 7 (delivered in Phase 7).
 
 ## Explicit non-goals
 
