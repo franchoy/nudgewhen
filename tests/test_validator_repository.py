@@ -11,6 +11,7 @@ from __future__ import annotations
 import argparse
 import contextlib
 import io
+import json
 import shutil
 import subprocess
 import tempfile
@@ -1169,6 +1170,608 @@ class AndroidContractNegativeTests(unittest.TestCase):
                 )
                 self.assertIn("versionName", err or "")
                 self.assertNotIn("versionCode", err or "")
+
+
+class ProductScopeSchemaTests(unittest.TestCase):
+    """Contract-schema tests for the new ``product_scope`` field.
+
+    The validator's ``_load_release_contract`` must accept or reject
+    ``contract.product_scope.allowed_capabilities`` based on the
+    closed capability vocabulary rules established by Phase 0C-2
+    Candidate A. A missing or invalid ``product_scope`` is a contract
+    load failure with a concise ``_CONTRACT_ERROR`` reason. The
+    closed-vocabulary derivation uses the existing
+    ``NON_FUNCTIONALITY_CATEGORIES`` tuple and is not a duplicate
+    hard-coded list.
+    """
+
+    def _build_fixture_contract(
+        self,
+        repo: Path,
+        product_scope_value: object | None,
+    ) -> Path:
+        """Construct the consistency fixture in ``repo`` and then
+        overwrite its contract's ``product_scope`` with the supplied
+        value.
+
+        ``product_scope_value`` semantics:
+
+        - ``None``: remove ``product_scope`` from the contract;
+        - a ``dict``: set ``contract["product_scope"]`` to that dict;
+        - any other value (e.g. ``[]``): set ``contract["product_scope"]``
+          to that non-dict value (used to exercise the wrong-type path).
+
+        Returns the contract path inside the fixture.
+        """
+        contract_path = _helpers.create_consistency_fixture(
+            repo,
+            RepositoryConsistencyTests.GOOD_README,
+            RepositoryConsistencyTests.GOOD_PHASE_LIST,
+            RepositoryConsistencyTests.GOOD_CHARTER,
+        )
+        contract = json.loads(contract_path.read_text(encoding="utf-8"))
+        if product_scope_value is None:
+            contract.pop("product_scope", None)
+        else:
+            contract["product_scope"] = product_scope_value
+        contract_path.write_text(
+            json.dumps(contract, indent=2), encoding="utf-8",
+        )
+        return contract_path
+
+    def test_live_shape_empty_capabilities_succeeds(self) -> None:
+        """The live v0.1.1 contract shape with
+        ``allowed_capabilities: []`` must load successfully and the
+        loaded contract must expose the empty list under the new
+        top-level ``product_scope`` object."""
+        with tempfile.TemporaryDirectory() as td:
+            repo = Path(td)
+            contract_path = self._build_fixture_contract(
+                repo, {"allowed_capabilities": []},
+            )
+            with _helpers.patched_repo_and_contract(repo, contract_path):
+                result = validate_local._load_release_contract()
+                self.assertIsNotNone(result)
+                self.assertIsNone(validate_local._CONTRACT_ERROR)
+                self.assertEqual(
+                    result["product_scope"]["allowed_capabilities"], [],
+                )
+
+    def test_missing_product_scope_fails(self) -> None:
+        """When the top-level ``product_scope`` object is absent, the
+        real ``_load_release_contract`` must return ``None`` and set
+        ``_CONTRACT_ERROR`` to a reason that mentions ``product_scope``."""
+        with tempfile.TemporaryDirectory() as td:
+            repo = Path(td)
+            contract_path = self._build_fixture_contract(repo, None)
+            with _helpers.patched_repo_and_contract(repo, contract_path):
+                result = validate_local._load_release_contract()
+                self.assertIsNone(result)
+                err = validate_local._CONTRACT_ERROR
+                self.assertIsNotNone(err)
+                self.assertIn("product_scope", err or "")
+
+    def test_product_scope_wrong_type_fails(self) -> None:
+        """When ``product_scope`` is present but is not a JSON object,
+        the real ``_load_release_contract`` must return ``None`` and set
+        ``_CONTRACT_ERROR`` to a reason that mentions ``product_scope``
+        and its type requirement."""
+        with tempfile.TemporaryDirectory() as td:
+            repo = Path(td)
+            contract_path = self._build_fixture_contract(repo, [])
+            with _helpers.patched_repo_and_contract(repo, contract_path):
+                result = validate_local._load_release_contract()
+                self.assertIsNone(result)
+                err = validate_local._CONTRACT_ERROR
+                self.assertIsNotNone(err)
+                self.assertIn("product_scope", err or "")
+                self.assertIn("object", err or "")
+
+    def test_missing_allowed_capabilities_fails(self) -> None:
+        """When ``product_scope`` is an object but lacks the
+        ``allowed_capabilities`` field, the real ``_load_release_contract``
+        must return ``None`` and set ``_CONTRACT_ERROR`` to a reason
+        mentioning ``allowed_capabilities``."""
+        with tempfile.TemporaryDirectory() as td:
+            repo = Path(td)
+            contract_path = self._build_fixture_contract(repo, {})
+            with _helpers.patched_repo_and_contract(repo, contract_path):
+                result = validate_local._load_release_contract()
+                self.assertIsNone(result)
+                err = validate_local._CONTRACT_ERROR
+                self.assertIsNotNone(err)
+                self.assertIn("allowed_capabilities", err or "")
+
+    def test_allowed_capabilities_wrong_type_fails(self) -> None:
+        """When ``product_scope.allowed_capabilities`` is present but is
+        not a list, the real ``_load_release_contract`` must return
+        ``None`` and set ``_CONTRACT_ERROR`` to a reason that mentions
+        ``allowed_capabilities`` and the list-type requirement."""
+        with tempfile.TemporaryDirectory() as td:
+            repo = Path(td)
+            contract_path = self._build_fixture_contract(
+                repo, {"allowed_capabilities": "reminders"},
+            )
+            with _helpers.patched_repo_and_contract(repo, contract_path):
+                result = validate_local._load_release_contract()
+                self.assertIsNone(result)
+                err = validate_local._CONTRACT_ERROR
+                self.assertIsNotNone(err)
+                self.assertIn("allowed_capabilities", err or "")
+                self.assertIn("list", err or "")
+
+    def test_non_string_entry_fails(self) -> None:
+        """When ``product_scope.allowed_capabilities`` contains a
+        non-string entry, the real ``_load_release_contract`` must
+        return ``None`` and set ``_CONTRACT_ERROR`` to a reason that
+        identifies the offending index and the non-empty string
+        requirement. The non-string and empty-string cases are covered
+        by distinct deterministic tests so that the contract-load
+        failure mode for each input shape is observable independently.
+        """
+        with tempfile.TemporaryDirectory() as td:
+            repo = Path(td)
+            contract_path = self._build_fixture_contract(
+                repo, {"allowed_capabilities": ["reminders", 7]},
+            )
+            with _helpers.patched_repo_and_contract(repo, contract_path):
+                result = validate_local._load_release_contract()
+                self.assertIsNone(result)
+                err = validate_local._CONTRACT_ERROR
+                self.assertIsNotNone(err)
+                self.assertIn("allowed_capabilities[1]", err or "")
+                self.assertIn("non-empty string", err or "")
+
+    def test_empty_string_entry_fails(self) -> None:
+        """When ``product_scope.allowed_capabilities`` contains an empty
+        string entry, the real ``_load_release_contract`` must return
+        ``None`` and set ``_CONTRACT_ERROR`` to a reason that identifies
+        the offending index and the non-empty string requirement. The
+        non-string and empty-string cases are covered by distinct
+        deterministic tests so that the contract-load failure mode for
+        each input shape is observable independently."""
+        with tempfile.TemporaryDirectory() as td:
+            repo = Path(td)
+            contract_path = self._build_fixture_contract(
+                repo, {"allowed_capabilities": ["reminders", ""]},
+            )
+            with _helpers.patched_repo_and_contract(repo, contract_path):
+                result = validate_local._load_release_contract()
+                self.assertIsNone(result)
+                err = validate_local._CONTRACT_ERROR
+                self.assertIsNotNone(err)
+                self.assertIn("allowed_capabilities[1]", err or "")
+                self.assertIn("non-empty string", err or "")
+
+    def test_unknown_capability_fails(self) -> None:
+        """When ``product_scope.allowed_capabilities`` contains an
+        identifier outside the closed capability vocabulary, the real
+        ``_load_release_contract`` must return ``None`` and set
+        ``_CONTRACT_ERROR`` to a reason that names the offending
+        identifier."""
+        with tempfile.TemporaryDirectory() as td:
+            repo = Path(td)
+            contract_path = self._build_fixture_contract(
+                repo, {"allowed_capabilities": ["reminders", "magic"]},
+            )
+            with _helpers.patched_repo_and_contract(repo, contract_path):
+                result = validate_local._load_release_contract()
+                self.assertIsNone(result)
+                err = validate_local._CONTRACT_ERROR
+                self.assertIsNotNone(err)
+                self.assertIn("magic", err or "")
+                self.assertIn("known capability", err or "")
+
+    def test_duplicate_capability_fails(self) -> None:
+        """When ``product_scope.allowed_capabilities`` contains a
+        duplicate identifier, the real ``_load_release_contract`` must
+        return ``None`` and set ``_CONTRACT_ERROR`` to a reason that
+        mentions the duplicate restriction."""
+        with tempfile.TemporaryDirectory() as td:
+            repo = Path(td)
+            contract_path = self._build_fixture_contract(
+                repo, {"allowed_capabilities": ["reminders", "reminders"]},
+            )
+            with _helpers.patched_repo_and_contract(repo, contract_path):
+                result = validate_local._load_release_contract()
+                self.assertIsNone(result)
+                err = validate_local._CONTRACT_ERROR
+                self.assertIsNotNone(err)
+                self.assertIn("duplicate", err or "")
+
+    def test_valid_reminders_persistence_succeeds(self) -> None:
+        """A contract whose ``allowed_capabilities`` is the closed
+        vocabulary subset ``["reminders", "persistence"]`` must load
+        successfully and the loaded contract must expose the
+        identifiers unchanged."""
+        with tempfile.TemporaryDirectory() as td:
+            repo = Path(td)
+            contract_path = self._build_fixture_contract(
+                repo, {"allowed_capabilities": ["reminders", "persistence"]},
+            )
+            with _helpers.patched_repo_and_contract(repo, contract_path):
+                result = validate_local._load_release_contract()
+                self.assertIsNotNone(result)
+                self.assertIsNone(validate_local._CONTRACT_ERROR)
+                self.assertEqual(
+                    result["product_scope"]["allowed_capabilities"],
+                    ["reminders", "persistence"],
+                )
+
+
+class ProductScopeCharterTests(unittest.TestCase):
+    """Charter-consistency tests for the release-aware
+    ``product_scope`` authorization.
+
+    Each test invokes the real ``check_charter_consistency`` function
+    against an isolated temporary fixture and reads the resulting
+    ``docs/charter-consistency`` result line from the validator's
+    module-level ``_RESULTS`` collector. The real ``_load_release_contract``
+    is invoked first so that the cached contract used by the check is
+    the fixture's contract.
+    """
+
+    CHARTER_HEADER = (
+        "# Release Charter — NudgeWhen v0.1.1\n"
+        "\n"
+        "**Document status:** Accepted — Phases 0 through 7 complete; "
+        "v0.1.1 release in progress\n"
+    )
+
+    def _charter_with_section(
+        self,
+        goals_section_body: str,
+        non_goals_section_body: str = (
+            "We will not add the listed capabilities in this release.\n"
+        ),
+        include_non_goals: bool = True,
+    ) -> str:
+        """Build a charter that has the standard header, an explicit
+        non-goals section by default, and a goals section whose body
+        is the supplied string. The explicit non-goals section
+        immediately precedes the goals section (no background filler,
+        no other intervening section) so that the historical
+        cross-section 300-character negation-detection window would
+        absorb negation text from the non-goals section into the
+        goals-section claim. The corrected section-bounded
+        implementation inspects only the goals section for inline
+        negation, leaving positive goals claims correctly classified.
+        The non-goals body must contain a negation keyword (e.g.
+        ``not ``) so that the historical cross-section 300-character
+        window would actually misclassify the adjacent goals claim;
+        tests for each unauthorized capability pass a tailored
+        non-goals body that targets that capability."""
+        parts = [self.CHARTER_HEADER]
+        if include_non_goals:
+            parts.append("\n## Explicit non-goals\n\n")
+            parts.append(non_goals_section_body)
+        parts.append("\n\n## Goals\n\n")
+        parts.append(goals_section_body)
+        return "".join(parts)
+
+    def _negation_charter(self, claim: str) -> str:
+        """Build a charter whose only mention of the capability pattern
+        is in a non-goals section with explicit negation wording."""
+        return (
+            self.CHARTER_HEADER
+            + "\n## Explicit non-goals\n\n"
+            + f"- We will not add {claim} in this release.\n"
+        )
+
+    def _setup(
+        self,
+        td: str,
+        allowed_capabilities: list[str] | None,
+        charter_text: str,
+    ) -> tuple[Path, Path]:
+        """Create the consistency fixture, overwrite its contract's
+        ``product_scope.allowed_capabilities``, overwrite its charter,
+        and return ``(repo, contract_path)``."""
+        repo = Path(td)
+        contract_path = _helpers.create_consistency_fixture(
+            repo,
+            RepositoryConsistencyTests.GOOD_README,
+            RepositoryConsistencyTests.GOOD_PHASE_LIST,
+            charter_text,
+        )
+        contract = json.loads(contract_path.read_text(encoding="utf-8"))
+        if allowed_capabilities is None:
+            contract.pop("product_scope", None)
+        else:
+            contract["product_scope"] = {
+                "allowed_capabilities": list(allowed_capabilities),
+            }
+        contract_path.write_text(
+            json.dumps(contract, indent=2), encoding="utf-8",
+        )
+        return repo, contract_path
+
+    def _invoke_charter_check(
+        self,
+        td: str,
+        allowed_capabilities: list[str],
+        charter_text: str,
+    ) -> bool:
+        """Set up the fixture, invoke ``check_charter_consistency``,
+        and return ONLY the boolean ``ok`` result of the check. The
+        full ``(status, group, check, message)`` tuple from the
+        emitted ``docs/charter-consistency`` result line is captured
+        on ``self`` before the ``patched_repo_and_contract`` context
+        manager restores the original ``_RESULTS`` collector and is
+        exposed by ``_last_charter_result`` after the context exits.
+
+        Returning only ``ok`` keeps the test call sites free of
+        tuple-unpacking hazards. A non-empty tuple would be truthy
+        even when its first element is ``False``; returning the bool
+        directly lets ``self.assertFalse(ok)`` and
+        ``self.assertTrue(ok)`` operate on the correct semantic
+        value.
+        """
+        repo, contract_path = self._setup(
+            td, allowed_capabilities, charter_text,
+        )
+        with _helpers.patched_repo_and_contract(repo, contract_path):
+            contract = validate_local._load_release_contract()
+            self.assertIsNotNone(contract)
+            charter = repo / "docs/releases/v0.1.1/release-charter.md"
+            ok = validate_local.check_charter_consistency(
+                contract, charter, False,
+            )
+            results = [
+                r for r in validate_local._RESULTS
+                if r[2] == "charter-consistency"
+            ]
+            self.assertEqual(
+                len(results), 1,
+                "expected exactly one charter-consistency result",
+            )
+            self._last_charter = tuple(results[0])
+        return ok
+
+    def _last_charter_result(self) -> tuple[str, str, str, str]:
+        """Return the most recent ``(status, group, check, message)``
+        tuple captured by ``_invoke_charter_check``."""
+        return self._last_charter
+
+    def test_unauthorized_positive_reminder_claim_fails(self) -> None:
+        """When ``allowed_capabilities`` is empty and the charter makes a
+        positive (non-negated) claim about reminders, the real
+        ``check_charter_consistency`` must return ``False`` and emit a
+        single ``docs/charter-consistency`` FAIL whose message identifies
+        the unauthorized capability as a charter claim. The adjacent
+        ``## Explicit non-goals`` section carries negation wording that
+        the historical cross-section 300-character window would have
+        wrongly absorbed into the goals-section claim; the corrected
+        section-bounded window keeps the goals claim positive and
+        fails the unauthorized scope check."""
+        with tempfile.TemporaryDirectory() as td:
+            charter = self._charter_with_section(
+                goals_section_body=(
+                    "We will add reminder scheduling in this release.\n"
+                ),
+                non_goals_section_body=(
+                    "We will not add reminder scheduling in this release.\n"
+                ),
+            )
+            ok = self._invoke_charter_check(td, [], charter)
+            self.assertFalse(ok)
+            status, _, _, message = self._last_charter_result()
+            self.assertEqual(status, "FAIL")
+            self.assertIn("reminders", message)
+
+    def test_authorized_positive_reminder_claim_succeeds(self) -> None:
+        """When ``allowed_capabilities`` contains ``reminders`` and the
+        charter makes a positive (non-negated) claim about reminders,
+        the real ``check_charter_consistency`` must return ``True`` and
+        emit a single ``docs/charter-consistency`` PASS whose message
+        names the release-aware contract. The adjacent non-goals
+        section uses the same adjacent-section topology as the
+        unauthorized tests so the only difference is the
+        ``allowed_capabilities`` membership."""
+        with tempfile.TemporaryDirectory() as td:
+            charter = self._charter_with_section(
+                goals_section_body=(
+                    "We will add reminder scheduling in this release.\n"
+                ),
+                non_goals_section_body=(
+                    "We will not add reminder scheduling in this release.\n"
+                ),
+            )
+            ok = self._invoke_charter_check(td, ["reminders"], charter)
+            self.assertTrue(ok)
+            status, _, _, message = self._last_charter_result()
+            self.assertEqual(status, "PASS")
+            self.assertIn("product_scope allowed_capabilities", message)
+
+    def test_authorized_positive_persistence_claim_succeeds(self) -> None:
+        """When ``allowed_capabilities`` contains ``persistence`` and the
+        charter makes a positive (non-negated) claim about persistence,
+        the real ``check_charter_consistency`` must return ``True`` and
+        emit a single ``docs/charter-consistency`` PASS whose message
+        names the release-aware contract. The adjacent non-goals
+        section uses the same adjacent-section topology as the
+        unauthorized tests so the only difference is the
+        ``allowed_capabilities`` membership."""
+        with tempfile.TemporaryDirectory() as td:
+            charter = self._charter_with_section(
+                goals_section_body=(
+                    "We will add user data persistence in this release.\n"
+                ),
+                non_goals_section_body=(
+                    "We will not add user data persistence in this release.\n"
+                ),
+            )
+            ok = self._invoke_charter_check(td, ["persistence"], charter)
+            self.assertTrue(ok)
+            status, _, _, message = self._last_charter_result()
+            self.assertEqual(status, "PASS")
+            self.assertIn("product_scope allowed_capabilities", message)
+
+    def test_positive_unauthorized_voice_or_speech_claim_fails(self) -> None:
+        """When ``allowed_capabilities`` is empty and the charter makes
+        a positive claim about voice or speech, the real check must
+        return ``False`` and emit a FAIL whose message names the
+        ``voice-or-speech`` capability. The adjacent non-goals
+        section carries negation wording that the historical
+        cross-section 300-character window would have wrongly
+        absorbed into the goals-section claim; the corrected
+        section-bounded window keeps the goals claim positive and
+        fails the unauthorized scope check."""
+        with tempfile.TemporaryDirectory() as td:
+            charter = self._charter_with_section(
+                goals_section_body=(
+                    "We will add voice recording support in this release.\n"
+                ),
+                non_goals_section_body=(
+                    "We will not add voice recording in this release.\n"
+                ),
+            )
+            ok = self._invoke_charter_check(td, [], charter)
+            self.assertFalse(ok)
+            status, _, _, message = self._last_charter_result()
+            self.assertEqual(status, "FAIL")
+            self.assertIn("voice-or-speech", message)
+
+    def test_positive_unauthorized_notifications_claim_fails(self) -> None:
+        """When ``allowed_capabilities`` is empty and the charter makes
+        a positive claim about notifications, the real check must
+        return ``False`` and emit a FAIL whose message names the
+        ``notifications`` capability. The adjacent non-goals section
+        carries negation wording that the historical cross-section
+        300-character window would have wrongly absorbed into the
+        goals-section claim; the corrected section-bounded window
+        keeps the goals claim positive and fails the unauthorized
+        scope check."""
+        with tempfile.TemporaryDirectory() as td:
+            charter = self._charter_with_section(
+                goals_section_body=(
+                    "We will add notification channels in this release.\n"
+                ),
+                non_goals_section_body=(
+                    "We will not add notification channels in this release.\n"
+                ),
+            )
+            ok = self._invoke_charter_check(td, [], charter)
+            self.assertFalse(ok)
+            status, _, _, message = self._last_charter_result()
+            self.assertEqual(status, "FAIL")
+            self.assertIn("notifications", message)
+
+    def test_positive_unauthorized_location_or_geofencing_claim_fails(self) -> None:
+        """When ``allowed_capabilities`` is empty and the charter makes
+        a positive claim about location handling, the real check must
+        return ``False`` and emit a FAIL whose message names the
+        ``location-or-geofencing`` capability. The adjacent non-goals
+        section carries negation wording that the historical
+        cross-section 300-character window would have wrongly
+        absorbed into the goals-section claim; the corrected
+        section-bounded window keeps the goals claim positive and
+        fails the unauthorized scope check."""
+        with tempfile.TemporaryDirectory() as td:
+            charter = self._charter_with_section(
+                goals_section_body=(
+                    "We will add location tracking support in this release.\n"
+                ),
+                non_goals_section_body=(
+                    "We will not add location tracking in this release.\n"
+                ),
+            )
+            ok = self._invoke_charter_check(td, [], charter)
+            self.assertFalse(ok)
+            status, _, _, message = self._last_charter_result()
+            self.assertEqual(status, "FAIL")
+            self.assertIn("location-or-geofencing", message)
+
+    def test_positive_unauthorized_networking_claim_fails(self) -> None:
+        """When ``allowed_capabilities`` is empty and the charter makes
+        a positive claim about networking, the real check must return
+        ``False`` and emit a FAIL whose message names the
+        ``networking`` capability. The adjacent non-goals section
+        carries negation wording that the historical cross-section
+        300-character window would have wrongly absorbed into the
+        goals-section claim; the corrected section-bounded window
+        keeps the goals claim positive and fails the unauthorized
+        scope check."""
+        with tempfile.TemporaryDirectory() as td:
+            charter = self._charter_with_section(
+                goals_section_body=(
+                    "We will add application networking in this release.\n"
+                ),
+                non_goals_section_body=(
+                    "We will not add application networking in this release.\n"
+                ),
+            )
+            ok = self._invoke_charter_check(td, [], charter)
+            self.assertFalse(ok)
+            status, _, _, message = self._last_charter_result()
+            self.assertEqual(status, "FAIL")
+            self.assertIn("networking", message)
+
+    def test_positive_unauthorized_background_behavior_claim_fails(self) -> None:
+        """When ``allowed_capabilities`` is empty and the charter makes
+        a positive claim about background execution, the real check
+        must return ``False`` and emit a FAIL whose message names the
+        ``background-behavior`` capability. The adjacent non-goals
+        section carries negation wording that the historical
+        cross-section 300-character window would have wrongly
+        absorbed into the goals-section claim; the corrected
+        section-bounded window keeps the goals claim positive and
+        fails the unauthorized scope check."""
+        with tempfile.TemporaryDirectory() as td:
+            charter = self._charter_with_section(
+                goals_section_body=(
+                    "We will add background execution in this release.\n"
+                ),
+                non_goals_section_body=(
+                    "We will not add background execution in this release.\n"
+                ),
+            )
+            ok = self._invoke_charter_check(td, [], charter)
+            self.assertFalse(ok)
+            status, _, _, message = self._last_charter_result()
+            self.assertEqual(status, "FAIL")
+            self.assertIn("background-behavior", message)
+
+    def test_non_goal_negated_mentions_remain_accepted(self) -> None:
+        """When ``allowed_capabilities`` is empty and the charter's only
+        mention of a product capability is inside the explicit
+        non-goals section using negation wording, the real check must
+        return ``True`` and emit a single ``docs/charter-consistency``
+        PASS whose message preserves the legacy v0.1.1 wording."""
+        with tempfile.TemporaryDirectory() as td:
+            charter = self._negation_charter("reminder scheduling")
+            ok = self._invoke_charter_check(td, [], charter)
+            self.assertTrue(ok)
+            status, _, _, message = self._last_charter_result()
+            self.assertEqual(status, "PASS")
+            self.assertIn(
+                "charter consistent with absence of all product functionality categories",
+                message,
+            )
+
+    def test_absence_of_non_goals_section_still_fails(self) -> None:
+        """When ``allowed_capabilities`` contains ``reminders`` (so the
+        positive claim is authorized) but the charter lacks an explicit
+        non-goals section, the real ``check_charter_consistency`` must
+        return ``False`` and emit a single ``docs/charter-consistency``
+        FAIL whose message identifies the missing non-goals section.
+        Authorization permits positive scope but does not waive the
+        explicit non-goals section requirement. The
+        ``include_non_goals=False`` path omits the adjacency
+        structure entirely so the failure cannot be caused by
+        cross-section negation absorption."""
+        with tempfile.TemporaryDirectory() as td:
+            charter = self._charter_with_section(
+                goals_section_body=(
+                    "We will add reminder scheduling in this release.\n"
+                ),
+                include_non_goals=False,
+            )
+            ok = self._invoke_charter_check(td, ["reminders"], charter)
+            self.assertFalse(ok)
+            status, _, _, message = self._last_charter_result()
+            self.assertEqual(status, "FAIL")
+            self.assertIn("non-goals", message)
 
 
 if __name__ == "__main__":

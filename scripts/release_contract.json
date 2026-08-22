@@ -61,5 +61,8 @@
     "previous_release_version": "v0.1.0",
     "previous_release_docs_root": "docs/releases/v0.1.0",
     "previous_release_is_historical": true
+  },
+  "product_scope": {
+    "allowed_capabilities": []
   }
 }

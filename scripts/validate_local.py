@@ -584,6 +584,35 @@ def _load_release_contract() -> dict | None:
         _CONTRACT_ERROR = err
         return None
 
+    # Product scope (release-aware capability authorization)
+    ps = contract.get("product_scope")
+    if not isinstance(ps, dict):
+        _CONTRACT_ERROR = "product_scope must be a JSON object"
+        return None
+    ac = ps.get("allowed_capabilities")
+    if not isinstance(ac, list):
+        _CONTRACT_ERROR = "product_scope.allowed_capabilities must be a list"
+        return None
+    # The closed capability identifier vocabulary is derived from the
+    # existing NON_FUNCTIONALITY_CATEGORIES tuple rather than maintained
+    # as a duplicate hard-coded list. Every capability identifier must
+    # appear in the first element of one of the existing category tuples.
+    closed_capabilities = tuple(cat[0] for cat in NON_FUNCTIONALITY_CATEGORIES)
+    for i, item in enumerate(ac):
+        if not isinstance(item, str) or not item:
+            _CONTRACT_ERROR = (
+                f"product_scope.allowed_capabilities[{i}] must be a non-empty string"
+            )
+            return None
+        if item not in closed_capabilities:
+            _CONTRACT_ERROR = (
+                f"product_scope.allowed_capabilities[{i}] '{item}' is not a known capability"
+            )
+            return None
+    if len(set(ac)) != len(ac):
+        _CONTRACT_ERROR = "product_scope.allowed_capabilities contains duplicates"
+        return None
+
     _CONTRACT = contract
     _CONTRACT_ERROR = None
     return _CONTRACT
@@ -847,6 +876,174 @@ def resolve_md_link(target_raw: str) -> tuple[bool, bool, str]:
     if not first:
         return False, False, ""
     return True, is_root, first
+
+
+def check_charter_consistency(
+    contract: dict,
+    charter_path: Path,
+    fail_fast: bool,
+) -> bool:
+    """Release-aware charter-consistency check driven by the contract.
+
+    The closed capability vocabulary is derived from
+    ``NON_FUNCTIONALITY_CATEGORIES``. Each capability whose identifier
+    is absent from ``contract["product_scope"]["allowed_capabilities"]``
+    is treated as unauthorized: any non-negated textual pattern
+    matching one of its category patterns fails the check. Capabilities
+    whose identifiers are present in ``allowed_capabilities`` are
+    authorized: positive (non-negated) claims about those capabilities
+    are permitted. Negated, non-goal, and out-of-scope mentions of any
+    capability remain permitted regardless of authorization. The charter
+    must also contain an explicit non-goals or out-of-scope section in
+    every case.
+
+    A successful run with no allowed capabilities preserves the legacy
+    ``v0.1.1`` PASS message verbatim
+    (``"charter consistent with absence of all product functionality
+    categories"``). A successful run with one or more allowed
+    capabilities emits a release-aware PASS message that names the
+    closed-vocabulary contract. The check does not branch on the
+    release version literal; the contract data, not the release version
+    string, determines which product capabilities are permitted.
+    """
+    del fail_fast  # result emission is the only fail-fast surface
+    if not charter_path.is_file():
+        emit(
+            "FAIL",
+            "docs",
+            "charter-consistency",
+            f"charter file not found: {charter_path}",
+        )
+        return False
+
+    text = charter_path.read_text(encoding="utf-8")
+    lower = text.lower()
+    has_non_goals = bool(
+        re.search(
+            r"^##\s+explicit non-goals\b|^##\s+non-goals\b|^##\s+out of scope\b",
+            text,
+            flags=re.M | re.I,
+        )
+    )
+
+    heading_positions: list[tuple[int, str]] = []
+    for hm in re.finditer(r"^##\s+(.+)$", text, flags=re.M):
+        heading_positions.append((hm.start(), hm.group(1).strip()))
+
+    def nearest_heading(pos: int) -> str:
+        best = ""
+        for hpos, htext in heading_positions:
+            if hpos <= pos:
+                best = htext
+            else:
+                break
+        return best
+
+    def is_negation_context(pos: int) -> bool:
+        """Return True if the position is in a negation/non-goal context.
+
+        The inline-negation window is the intersection of two bounds:
+        the historical ``##`` heading that owns ``pos``, and the
+        historical 300-character before/after heuristic. The window
+        must not cross the current Markdown ``##`` section boundary
+        in either direction. Section-boundary insulation prevents a
+        positive claim under an ordinary heading (for example
+        ``## Goals``) from accidentally seeing negation text from an
+        immediately preceding ``## Explicit non-goals`` section whose
+        tail otherwise falls inside the old 300-character window.
+        Explicit non-goals / out-of-scope section headings still make
+        every capability occurrence inside that section negated
+        context, and the bounded inline window inside an ordinary
+        section preserves the legacy 300-character heuristic within
+        that section only.
+        """
+        # Determine the current `##` section bounds by walking the
+        # pre-computed heading-position list. ``section_start`` is the
+        # most recent heading at or before ``pos`` (or 0 if there is
+        # none); ``section_end`` is the next heading after ``pos`` (or
+        # the document end if there is none).
+        section_start = 0
+        current_heading = ""
+        for hpos, htext in heading_positions:
+            if hpos <= pos:
+                section_start = hpos
+                current_heading = htext
+            else:
+                break
+        section_end = len(text)
+        for hpos, _htext in heading_positions:
+            if hpos > pos:
+                section_end = hpos
+                break
+        heading = current_heading.lower()
+        if any(kw in heading for kw in ("non-goal", "out of scope", "explicit non-goal")):
+            return True
+        # Inline negation check is bounded by BOTH the current `##`
+        # section AND the historical 300-character before/after
+        # heuristic window. The 300-character heuristic window must
+        # not cross the current `##` section boundary in either
+        # direction. A positive claim under an ordinary heading (for
+        # example ``## Goals``) therefore cannot see negation text
+        # from an immediately preceding ``## Explicit non-goals``
+        # section whose tail otherwise falls inside the old window.
+        window_start = max(section_start, pos - 300)
+        window_end = min(section_end, pos + 300)
+        ctx_before = lower[window_start:pos]
+        ctx_after = lower[pos:window_end]
+        combined = ctx_before + " " + ctx_after
+        if re.search(
+            r"(no |not |without |excludes? |lacks? |absence of |must not add|does not add|does not implement|does not introduce|contains no|out of scope|explicitly out|non-goal)",
+            combined,
+        ):
+            return True
+        return False
+
+    allowed_capabilities = set(
+        contract.get("product_scope", {}).get("allowed_capabilities", [])
+    )
+
+    category_failures: list[str] = []
+    for cat_name, cat_patterns in NON_FUNCTIONALITY_CATEGORIES:
+        if cat_name in allowed_capabilities:
+            continue
+        for pat in cat_patterns:
+            if pat in lower:
+                for m in re.finditer(re.escape(pat), lower):
+                    if not is_negation_context(m.start()):
+                        category_failures.append(cat_name)
+                        break
+
+    if not has_non_goals:
+        emit(
+            "FAIL",
+            "docs",
+            "charter-consistency",
+            "charter lacks non-goals section",
+        )
+        return False
+    if category_failures:
+        emit(
+            "FAIL",
+            "docs",
+            "charter-consistency",
+            f"charter claims to add: {category_failures}",
+        )
+        return False
+    if allowed_capabilities:
+        emit(
+            "PASS",
+            "docs",
+            "charter-consistency",
+            "charter consistent with product_scope allowed_capabilities",
+        )
+    else:
+        emit(
+            "PASS",
+            "docs",
+            "charter-consistency",
+            "charter consistent with absence of all product functionality categories",
+        )
+    return True
 
 
 def check_repository_consistency(args: argparse.Namespace, fail_fast: bool) -> bool:
@@ -1537,67 +1734,9 @@ def check_docs(args: argparse.Namespace, fail_fast: bool) -> bool:
     # Active charter wiring (contract-driven)
     charter_rel = contract["release_documents"]["charter"]
     charter = REPO / charter_rel
-    if charter.is_file():
-        text = charter.read_text(encoding="utf-8")
-        lower = text.lower()
-        has_non_goals = bool(
-            re.search(r"^##\s+explicit non-goals\b|^##\s+non-goals\b|^##\s+out of scope\b", text, flags=re.M | re.I)
-        )
-        # Find the character offset of each section heading
-        heading_positions: list[tuple[int, str]] = []
-        for hm in re.finditer(r"^##\s+(.+)$", text, flags=re.M):
-            heading_positions.append((hm.start(), hm.group(1).strip()))
-
-        def nearest_heading(pos: int) -> str:
-            best = ""
-            for hpos, htext in heading_positions:
-                if hpos <= pos:
-                    best = htext
-                else:
-                    break
-            return best
-
-        def is_negation_context(pos: int) -> bool:
-            """Return True if the position is in a negation/non-goal context."""
-            heading = nearest_heading(pos).lower()
-            if any(kw in heading for kw in ("non-goal", "out of scope", "explicit non-goal")):
-                return True
-            # Also check inline negation in the 300 chars before and after
-            start = max(0, pos - 300)
-            ctx_before = lower[start:pos]
-            ctx_after = lower[pos:pos + 300]
-            combined = ctx_before + " " + ctx_after
-            if re.search(
-                r"(no |not |without |excludes? |lacks? |absence of |must not add|does not add|does not implement|does not introduce|contains no|out of scope|explicitly out|non-goal)",
-                combined,
-            ):
-                return True
-            return False
-
-        category_failures: list[str] = []
-        for cat_name, cat_patterns in NON_FUNCTIONALITY_CATEGORIES:
-            for pat in cat_patterns:
-                if pat in lower:
-                    for m in re.finditer(re.escape(pat), lower):
-                        if not is_negation_context(m.start()):
-                            category_failures.append(cat_name)
-                            break
-        if not has_non_goals:
-            emit("FAIL", "docs", "charter-consistency", "charter lacks non-goals section")
-            ok = False
-            if fail_fast: return False
-        elif category_failures:
-            emit("FAIL", "docs", "charter-consistency", f"charter claims to add: {category_failures}")
-            ok = False
-            if fail_fast: return False
-        else:
-            emit("PASS", "docs", "charter-consistency", "charter consistent with absence of all product functionality categories")
-    else:
-        emit("FAIL", "docs", "charter-consistency", f"charter file not found: {charter_rel}")
+    if not check_charter_consistency(contract, charter, fail_fast):
         ok = False
         if fail_fast: return False
-
-    if not ok and fail_fast: return False
 
     if not check_repository_consistency(args, fail_fast):
         ok = False
