@@ -1,6 +1,6 @@
 # Phase List — NudgeWhen v0.1.2
 
-**Document status:** Candidate — Phase 0 current; Phases 0 through 7 Planned.
+**Document status:** Accepted — Phases 0 through 0 complete; Phase 1 current; Phases 1 through 7 Planned.
 **Active release branch:** release/v0.1.2
 **Active release charter:** docs/releases/v0.1.2/release-charter.md
 
@@ -33,11 +33,15 @@ Establish the v0.1.2 release definition and active-release synchronization witho
 - Cumulative Candidate B experiment evidence under `EXP-0035`.
 - Repository-consistency evidence sufficient to terminate the temporary v0.1.2 bootstrap exception.
 
-Candidate A is already complete. Candidate B is still in progress. `EXP-0035` does not yet exist and is not claimed as existing.
+Candidate A is already complete. Candidate B synchronization is accepted,
+its repository boundary is closed, cumulative `EXP-0035` evidence exists,
+and the temporary v0.1.2 bootstrap exception is `TERMINATED`. Phase 0
+remains formally `Planned` pending the separately authorized formal closure
+transition.
 
 ### Exact or bounded path scope
 
-Phase 0 consists of the already accepted Candidate A work plus the current
+Phase 0 consists of the already accepted Candidate A work plus the accepted
 Candidate B active-release synchronization. Candidate A remains separately
 accepted and is not reopened by this phase-list declaration.
 
@@ -93,12 +97,12 @@ of all earlier Phase 0 work and does not itself authorize any modification.
 
 ### Status
 
-Planned
+Complete
 
 ### Validation checklist
 
-- [-] NOT APPLICABLE — Phase execution and completion evidence have not yet been performed; phase status remains `Planned`.
-- [-] NOT APPLICABLE — Candidate B synchronization and bootstrap-exception termination are not yet complete.
+- [x] PASS — The maintainer-authorized formal Phase 0 closure transition is applied after accepted Candidate B synchronization, repository-consistency evidence, cumulative `EXP-0035` evidence, and bootstrap-exception termination; Phase 0 status is `Complete`.
+- [x] PASS — Accepted Candidate B synchronization and repository-consistency evidence terminated the temporary v0.1.2 bootstrap exception, and cumulative `EXP-0035` evidence exists.
 
 ## Phase 1 — Reminder Architecture Contract
 

@@ -1,6 +1,6 @@
 # Release Charter — NudgeWhen v0.1.2
 
-**Document status:** Candidate — Phase 0 current; Phases 0 through 7 Planned.
+**Document status:** Accepted — Phases 0 through 0 complete; Phase 1 current; Phases 1 through 7 Planned.
 **Release name:** NudgeWhen v0.1.2 — Local Reminder Foundation.
 **Version:** `v0.1.2`.
 **Current Android artifact identity:** `versionCode = 2`, `versionName = "0.1.1"`. This is the v0.1.1 identity still recorded in `app/build.gradle.kts`; v0.1.2 does not yet deliver the target metadata.
@@ -15,41 +15,39 @@ v0.1.2 builds. The release-neutral `product_scope` extension was introduced
 later by v0.1.2 Candidate A and must not be attributed to historical v0.1.1
 work.
 
-v0.1.2 is the first release intended to authorize reminder and persistence
-capabilities through the release-neutral product-scope contract once
-Candidate B synchronization makes the v0.1.2 contract active. It must add the smallest
-possible footprint that delivers a complete local reminder lifecycle while
-preserving the single-activity, no-new-permission Android boundary and the
-agentic-development contracts established by v0.1.1.
+v0.1.2 is the first release to authorize reminder and persistence
+capabilities through the active release-neutral product-scope contract.
+Candidate B synchronization made the v0.1.2 contract active. It must add the
+smallest possible footprint that delivers a complete local reminder lifecycle
+while preserving the single-activity, no-new-permission Android boundary and
+the agentic-development contracts established by v0.1.1.
 
 ## Phase 0 status
 
 Phase 0 — Release Definition and Bootstrap — is the **current** lifecycle
 phase for v0.1.2 at the time this charter is first created.
 
-- Formal phase-list and contract status for Phases 0 through 7 remain
-  `Planned` until accepted Phase 0 closure evidence exists.
+- The formal phase-list and release contract record Phase 0 as `Complete`;
+  Phases 1 through 7 remain `Planned`, with Phase 1 — Reminder Architecture
+  Contract — the current lifecycle phase.
 - **Candidate A** is `Complete, Committed, Pushed, Exact-head CI Pass`.
   Candidate A established the release-neutral product-scope validator
   architecture and the supporting experiment evidence.
-- **Candidate B** performs active-release synchronization: synchronized
-  `AGENTS.md`, `README.md`, `scripts/release_contract.json`, the v0.1.2
-  release charter, and the v0.1.2 phase list.
+- Candidate B completed active-release synchronization across `AGENTS.md`,
+  `README.md`, `scripts/release_contract.json`, the v0.1.2 release charter,
+  the v0.1.2 phase list, and cumulative `EXP-0035` evidence.
 - This charter is the first Candidate B artifact. Candidate B is **not yet
   committed** when this charter is first created.
-- The temporary **v0.1.2 bootstrap exception** remains **Active** until
-  accepted repository-consistency evidence establishes that the
-  `AGENTS.md` current-release context, the active `scripts/release_contract.json`,
-  `README.md`, the v0.1.2 release charter, and the v0.1.2 phase list are
-  synchronized and mutually consistent.
-
-Candidate B planning, Build, corrective, validation, and repository-action
-evidence will be recorded in its cumulative experiment record under the
-repository experiment protocol. Candidate A remains separately recorded in
-`EXP-0034`. Later phase tasks receive their own experiment evidence under the
-same protocol. This charter does **not** claim that the Candidate B evidence
-record exists yet, and does **not** pre-certify Candidate B validation,
-commit, push, CI, or Phase 0 completion.
+- The temporary v0.1.2 bootstrap exception is `TERMINATED` after accepted
+  repository-consistency evidence established that the synchronized
+  current-release surfaces are mutually consistent.
+- Candidate-B planning, Build, corrective, validation, evidence,
+  commit/push, and exact-head CI chronology is recorded in `EXP-0035`.
+- Candidate A remains separately recorded in `EXP-0034`.
+- Phase 0 is formally `Complete` in the closure candidate. Phase 1 remains
+  formally `Planned`, its implementation has not started, and full Phase 0
+  closure remains pending synchronization of the remaining current-facing
+  and evidence surfaces plus accepted integrated validation.
 
 ## Release identity
 
@@ -57,7 +55,7 @@ commit, push, CI, or Phase 0 completion.
 - **Release title:** NudgeWhen v0.1.2 — Local Reminder Foundation.
 - **Active release branch:** `release/v0.1.2`.
 - **Authorized product-scope capabilities for v0.1.2** (the active
-  contract, when synchronized, will authorize exactly these):
+  synchronized contract authorizes exactly these):
   - `reminders`
   - `persistence`
 
@@ -241,12 +239,10 @@ will be defined under its own release charter and its own
 
 ## Cross-references
 
-- `AGENTS.md` will identify the active v0.1.2 lifecycle after Candidate B
-  synchronization.
-- `scripts/release_contract.json` will become the active v0.1.2 contract after
-  Candidate B synchronization and will authorize reminders and persistence.
-- `README.md` — repository entry point; reflects the v0.1.2 release state
-  once synchronized by Candidate B.
+- `AGENTS.md` identifies the active v0.1.2 lifecycle.
+- `scripts/release_contract.json` is the active v0.1.2 contract and
+  authorizes reminders and persistence.
+- `README.md` reflects the active v0.1.2 release state.
 - `docs/agentic-development/opencode-governance.md` — companion governance
   document.
 - `docs/agentic-development/experiment-protocol.md` — authoritative
@@ -259,6 +255,5 @@ will be defined under its own release charter and its own
   charter; reference only, not normative for v0.1.2.
 - `docs/releases/v0.1.1/phase-list.md` — historical v0.1.1 phase list;
   reference only, not normative for v0.1.2.
-- `docs/releases/v0.1.2/phase-list.md` — the v0.1.2 phase list, to be
-  created by a later Candidate-B slice and updated as each phase produces
-  accepted evidence.
+- `docs/releases/v0.1.2/phase-list.md` — the active v0.1.2 phase list,
+  updated as phases produce accepted evidence.

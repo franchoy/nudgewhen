@@ -14,7 +14,7 @@
   },
   "phase_model": {
     "expected_statuses": {
-      "Phase 0": "Planned",
+      "Phase 0": "Complete",
       "Phase 1": "Planned",
       "Phase 2": "Planned",
       "Phase 3": "Planned",
