@@ -4,7 +4,7 @@ NudgeWhen is an early-stage experimental open-source project exploring a voice-f
 
 ## Project status
 
-NudgeWhen is currently in the `v0.1.1` release train, a documentation, governance, validation, CI, supply-chain, workspace-hygiene, and release metadata hardening patch release on the single branch `release/v0.1.1`. The previous `v0.1.0` release is complete and historical; its branch `release/v0.1.0` is no longer the active branch.
+NudgeWhen is currently in the `v0.1.2` release train, **Local Reminder Foundation**, on the single branch `release/v0.1.2`. Phase 0 — Release Definition & Bootstrap — is the current lifecycle phase with formal status `Planned`. The previous `v0.1.1` release is complete and historical.
 
 ## What exists now
 
@@ -24,7 +24,7 @@ NudgeWhen is currently in the `v0.1.1` release train, a documentation, governanc
 
 ## What still does not exist
 
-The following are explicitly out of scope at this stage:
+The following functionality does not yet exist in the current repository state:
 
 - Reminder, scheduling, contextual-list, or checklist functionality.
 - Notification functionality.
@@ -37,7 +37,7 @@ The following are explicitly out of scope at this stage:
 - Analytics or telemetry.
 - A production-readiness, stability, security, or compatibility guarantee.
 
-`v0.1.1` is a documentation, governance, validation, CI, supply-chain, workspace-hygiene, and release metadata hardening patch release. It does not add reminder functionality, voice, speech, location, geofencing, persistence, contextual triggers, background behavior, application networking, analytics, telemetry, or any production-readiness guarantee.
+`v0.1.2` — **Local Reminder Foundation** — authorizes reminder and local-persistence functionality for this release, but neither is implemented yet at Phase 0. Voice or speech, notifications, time scheduling or alarms, location or geofencing, contextual or device-state triggers, background execution, application networking or sync, analytics or telemetry, additional Android activities/services/receivers/providers, new Android permissions, and production-readiness guarantees remain explicit release non-goals.
 
 ## Long-term design intentions
 
@@ -55,7 +55,7 @@ This repository is also used to evaluate OpenCode and MiniMax M3 (3x usage) as p
 
 ## Current release train
 
-The project follows a phased release train on the single branch `release/vX.Y.Z`. The current active branch is `release/v0.1.1`. The previous `v0.1.0` release train on `release/v0.1.0` is complete and historical.
+The project follows a phased release train on the single branch `release/vX.Y.Z`. The current active branch is `release/v0.1.2`. The previous `v0.1.1` release is complete and historical; `v0.1.0` remains historical evidence.
 
 `v0.1.0` phases (historical, complete):
 
@@ -68,7 +68,9 @@ The project follows a phased release train on the single branch `release/vX.Y.Z`
 - Phase 6 — Agent evaluation evidence: complete.
 - Phase 7 — Final pre-release gate: complete.
 
-`v0.1.1` is a documentation, governance, validation, CI, supply-chain, workspace-hygiene, and release metadata hardening patch release following the v0.1.0 baseline.
+Historical `v0.1.1` was the documentation, governance, validation, CI, supply-chain, workspace-hygiene, and release-metadata hardening release that followed the v0.1.0 baseline.
+
+The active `v0.1.2` release is **Local Reminder Foundation**. Phase 0 — Release Definition & Bootstrap — is current with formal status `Planned`; product implementation has not started.
 
 No delivery dates or completion promises are made.
 
@@ -161,8 +163,10 @@ This project is licensed under the Apache License 2.0. See [LICENSE](LICENSE) fo
 
 ## Related documents
 
-- [Release charter — v0.1.1 (active)](docs/releases/v0.1.1/release-charter.md)
-- [Phase list — v0.1.1 (active)](docs/releases/v0.1.1/phase-list.md)
+- [Release charter — v0.1.2 (active)](docs/releases/v0.1.2/release-charter.md)
+- [Phase list — v0.1.2 (active)](docs/releases/v0.1.2/phase-list.md)
+- [Release charter — v0.1.1 (historical)](docs/releases/v0.1.1/release-charter.md)
+- [Phase list — v0.1.1 (historical)](docs/releases/v0.1.1/phase-list.md)
 - [Release charter — v0.1.0 (historical)](docs/releases/v0.1.0/release-charter.md)
 - [Phase list — v0.1.0 (historical)](docs/releases/v0.1.0/phase-list.md)
 - [Experiment protocol](docs/agentic-development/experiment-protocol.md)

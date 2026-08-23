@@ -1,6 +1,6 @@
 # AGENTS.md
 
-**Document status:** Accepted — Phase 0 governance baseline; Phases 0 through 7 complete; v0.1.1 release in progress
+**Document status:** Accepted — stable governance; v0.1.2 Phase 0 current; Phases 0 through 7 Planned
 
 ## Purpose and scope
 
@@ -25,10 +25,10 @@ Stable cross-references:
 
 Current release context cross-references:
 
-- [Active release charter](docs/releases/v0.1.1/release-charter.md)
-- [Active phase list](docs/releases/v0.1.1/phase-list.md)
+- [Active release charter](docs/releases/v0.1.2/release-charter.md)
+- [Active phase list](docs/releases/v0.1.2/phase-list.md)
 
-Historical v0.1.0 documents remain in `docs/releases/v0.1.0/` for traceability and are not normative for future work.
+Historical v0.1.0 and v0.1.1 release documents remain under `docs/releases/` for traceability and are not normative for active v0.1.2 work.
 
 ## Precedence model
 
@@ -256,13 +256,14 @@ Category D items cannot be authorized by a normal maintainer turn. A change to C
 
 ## Current release context
 
-- **Active release:** `v0.1.1`
-- **Release title:** `NudgeWhen v0.1.1 — Post-Release Closure and Reusable Validation Baseline`
-- **Active branch:** `release/v0.1.1`
-- **Active release charter:** `docs/releases/v0.1.1/release-charter.md`
-- **Active phase list:** `docs/releases/v0.1.1/phase-list.md`
-- **Current phase:** None — Phases 0 through 7 are Complete; release-PR opening is the next separately authorized repository action
+- **Active release:** `v0.1.2`
+- **Release title:** `NudgeWhen v0.1.2 — Local Reminder Foundation`
+- **Active branch:** `release/v0.1.2`
+- **Active release charter:** `docs/releases/v0.1.2/release-charter.md`
+- **Active phase list:** `docs/releases/v0.1.2/phase-list.md`
+- **Current phase:** Phase 0 — Release Definition & Bootstrap (current lifecycle phase; formal status `Planned`)
 - **Current OpenCode model/provider:** MiniMax M3 via the official MiniMax provider (`minimax/MiniMax-M3`), temporarily replacing OpenCode Go after the changed OpenCode Go recurring charge was blocked as anomalous during renewal. This is an operational provider migration, not a model-policy change. OpenCode Go may be reevaluated later under explicit maintainer authorization when its billing path is reliable and its economics remain acceptable.
+- **Bootstrap exception (v0.1.2, terminated):** Candidate B is performing the bounded active-release synchronization from the inherited v0.1.1 current-release pointers to v0.1.2. The maintainer-authorized Phase 0 bootstrap exception permits work on the actual branch `release/v0.1.2` while current-facing synchronization is incomplete. It terminates only after `AGENTS.md`, `README.md`, `scripts/release_contract.json`, `docs/releases/v0.1.2/release-charter.md`, and `docs/releases/v0.1.2/phase-list.md` are synchronized and repository-consistency validation accepts that state. The exception does not waive exact-path authorization, exact starting-HEAD verification, exact working-tree baselines, hard-stop behavior, private-working-material rules, network restrictions, or separate staging/commit/push/repository-action authorization.
 - **Bootstrap exception (historical, terminated):** The tracked `AGENTS.md` baseline clause historically required a specific completed release branch; that historical coupling required a narrow bootstrap exception for Phase 0 to proceed on the released `main` baseline before the new `AGENTS.md` was written. Branch creation alone did not terminate the exception. Phase 0D directly confirmed the four termination conditions: (a) this `AGENTS.md` recognizes `v0.1.1` and `release/v0.1.1`; (b) stable repository governance is separated from current-release context; (c) no normative dependence on any completed release branch remains; (d) the updated governance documents are mutually consistent. The maintainer accepted the Phase 0D evidence. The exception is now terminated. Ordinary baseline rules apply to later tasks.
 - **Phase 0 closure record:** Phase 0 is `Complete`. The observed two-commit history on `release/v0.1.1` is the initial Phase 0 content commit `c2011b10c10fbd04b9911876bcf3d71f8c317d48` (subject `v0.1.1 continuation`, parent `2a092ed013d21f49044142395a8fedd24f9432b5`), which directly modified the seven authorized Phase 0 paths (4 modifications of existing governance files and 3 additions of the release-definition and experiment files), followed by the Phase 0 closure-synchronization commit `aa5fc6e42a85ecd00aaec4e86ed5d75c06bb4b1a` (subject `v0.1.1`, parent `c2011b10…`), which directly modified the four closure-overlay paths. The complete range from `2a092ed0…` through `aa5fc6e…` contains exactly seven distinct Phase 0 paths. Four paths were modified in both commits. The semantic descriptions "initial Phase 0 content commit" and "closure-synchronization commit" are strongly supported inferences based on path sets and chronology, not direct observations. The retained `Phase 0 staged-index validation` evidence records the cached name-status set, the cached whitespace-check output, the absence of an unstaged tracked diff, and seven stage-zero index records for the seven-path pre-closure candidate; numeric exit statuses were not surfaced and remain `Not available`; chronology strongly supports that this retained validation preceded `c2011b10…` and that relationship is labelled as inference. No retained direct evidence establishes a cached/index validation of the four-path closure overlay immediately before `aa5fc6e…`; the later two-commit-range `git diff --check` result is post-commit whitespace evidence and is not a substitute for the unavailable pre-commit cached validation. At that historical point, Phases 1 through 4 were also `Complete` and Phase 5 was the current phase. Ordinary baseline rules continued to apply.
 - **Phase 3 closure record:** Phase 3 is `Complete`. The accepted implementation outcome is `Successful with correction`. The accepted experiment evidence is `EXP-0027`. The Phase 3 implementation and evidence commit is `cad89bfe241e10d6661a7746058721e22a5b9880` (subject `refactor: complete phase 3 local validator architecture`, branch `release/v0.1.1`), which directly modified the three authorized Phase 3 paths (`docs/agentic-development/experiments/EXP-0027.md` added; `docs/local-validation.md` and `scripts/validate_local.py` modified). That commit was successfully pushed to `origin/release/v0.1.1`; the local HEAD and the remote-tracking hash were established as identical. The exact-head CI run is `30949699383` (workflow `CI`, event `push`, branch `release/v0.1.1`, head SHA `cad89bfe241e10d6661a7746058721e22a5b9880`, conclusion `success`). No product functionality, Android behavior, or Android permission was added or changed by the Phase 3 implementation. Historical attempt deviations recorded in `EXP-0027.md` remain historical evidence and are not erased. At that later historical point, Phase 5 was the current phase. Consequential repository actions for Phase 5 work, including any new commit, push, branch, tag, release, or pull-request operation, require a separate explicit maintainer authorization in the current task.

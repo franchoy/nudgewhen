@@ -1,27 +1,27 @@
 {
   "schema_version": 1,
   "release": {
-    "active_branch": "release/v0.1.1",
-    "title": "NudgeWhen v0.1.1 — Post-Release Closure and Reusable Validation Baseline",
-    "version": "v0.1.1",
-    "version_code": 2,
-    "version_name": "0.1.1"
+    "active_branch": "release/v0.1.2",
+    "title": "NudgeWhen v0.1.2 — Local Reminder Foundation",
+    "version": "v0.1.2",
+    "version_code": 3,
+    "version_name": "0.1.2"
   },
   "release_documents": {
-    "charter": "docs/releases/v0.1.1/release-charter.md",
+    "charter": "docs/releases/v0.1.2/release-charter.md",
     "local_validation": "docs/local-validation.md",
-    "phase_list": "docs/releases/v0.1.1/phase-list.md"
+    "phase_list": "docs/releases/v0.1.2/phase-list.md"
   },
   "phase_model": {
     "expected_statuses": {
-      "Phase 0": "Complete",
-      "Phase 1": "Complete",
-      "Phase 2": "Complete",
-      "Phase 3": "Complete",
-      "Phase 4": "Complete",
-      "Phase 5": "Complete",
-      "Phase 6": "Complete",
-      "Phase 7": "Complete"
+      "Phase 0": "Planned",
+      "Phase 1": "Planned",
+      "Phase 2": "Planned",
+      "Phase 3": "Planned",
+      "Phase 4": "Planned",
+      "Phase 5": "Planned",
+      "Phase 6": "Planned",
+      "Phase 7": "Planned"
     },
     "first_phase": 0,
     "last_phase": 7
@@ -35,8 +35,8 @@
     "target_sdk": 36,
     "current_version_code": 2,
     "current_version_name": "0.1.1",
-    "target_version_code": 2,
-    "target_version_name": "0.1.1",
+    "target_version_code": 3,
+    "target_version_name": "0.1.2",
     "launcher_activity_source": ".MainActivity",
     "launcher_activity_merged": "io.github.franchoy.nudgewhen.MainActivity"
   },
@@ -58,11 +58,14 @@
     "no_dependency_installation": true
   },
   "historical": {
-    "previous_release_version": "v0.1.0",
-    "previous_release_docs_root": "docs/releases/v0.1.0",
+    "previous_release_version": "v0.1.1",
+    "previous_release_docs_root": "docs/releases/v0.1.1",
     "previous_release_is_historical": true
   },
   "product_scope": {
-    "allowed_capabilities": []
+    "allowed_capabilities": [
+      "reminders",
+      "persistence"
+    ]
   }
 }
