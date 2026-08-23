@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import contextlib
 import io
+import json
 import os
 import shutil
 import subprocess
@@ -189,15 +190,20 @@ def create_consistency_fixture(
     ``docs/repository-consistency`` check.
 
     Copies the real release contract from the live repository into the
-    fixture so the contract-driven check sees a valid contract, writes
-    the provided README, phase-list, and release-charter text into the
-    fixture's REPO-relative paths, creates the contract-required
-    ``docs/local-validation.md`` file with minimal deterministic
-    content, creates the historical release-doc root
-    ``docs/releases/v0.1.0`` as an empty directory, and constructs
-    minimal but contract-satisfying ``app/build.gradle.kts`` and
-    ``app/src/main/AndroidManifest.xml`` files so the contract
-    loader's Android cross-checks succeed.
+    fixture so the contract-driven check sees a valid contract, parses
+    the copied fixture contract with the standard-library ``json``
+    module, and resolves every required current-release path, the
+    historical release-doc root, and the Android fixture values from
+    the exact contract fields. No Git, HEAD, index, or untracked-file
+    state is inspected.
+
+    The active-release charter, phase-list, and local-validation paths
+    come from ``release_documents``; the historical directory comes
+    from ``historical.previous_release_docs_root``; and the Android
+    fixture values (namespace, application id, SDK levels, current
+    version code/name, and launcher activity) come from the
+    ``android`` section. No release version literal is hard-coded in
+    this helper.
 
     No live governance file is mutated. No real Android or Gradle file
     is read for analysis. The temporary directory is the caller's
@@ -212,39 +218,57 @@ def create_consistency_fixture(
     contract_path = contract_dir / "release_contract.json"
     shutil.copy(str(real_contract), str(contract_path))
 
+    with contract_path.open("r", encoding="utf-8") as fh:
+        contract = json.load(fh)
+
+    release_documents = contract["release_documents"]
+    historical_cfg = contract["historical"]
+    android_cfg = contract["android"]
+
     (repo / "README.md").write_text(readme_text, encoding="utf-8")
 
     # Contract-required local-validation file. Minimal deterministic
     # content; the contract loader only requires this path to exist as
     # a file.
-    local_validation = repo / "docs" / "local-validation.md"
-    local_validation.parent.mkdir(parents=True, exist_ok=True)
-    local_validation.write_text("# Local validation fixture\n", encoding="utf-8")
+    local_validation_path = repo / release_documents["local_validation"]
+    local_validation_path.parent.mkdir(parents=True, exist_ok=True)
+    local_validation_path.write_text("# Local validation fixture\n", encoding="utf-8")
+
+    # Contract-required current-release charter and phase list.
+    charter_path = repo / release_documents["charter"]
+    charter_path.parent.mkdir(parents=True, exist_ok=True)
+    charter_path.write_text(charter_text, encoding="utf-8")
+
+    phase_list_path = repo / release_documents["phase_list"]
+    phase_list_path.parent.mkdir(parents=True, exist_ok=True)
+    phase_list_path.write_text(phase_list_text, encoding="utf-8")
 
     # Historical release-doc root. The real contract requires the path
     # to exist as a directory; no historical charter or phase list is
     # needed for this test.
-    (repo / "docs" / "releases" / "v0.1.0").mkdir(
-        parents=True,
-        exist_ok=True,
-    )
-
-    docs_dir = repo / "docs/releases/v0.1.1"
-    docs_dir.mkdir(parents=True, exist_ok=True)
-    (docs_dir / "phase-list.md").write_text(phase_list_text, encoding="utf-8")
-    (docs_dir / "release-charter.md").write_text(charter_text, encoding="utf-8")
+    previous_release_docs_root = repo / historical_cfg["previous_release_docs_root"]
+    previous_release_docs_root.mkdir(parents=True, exist_ok=True)
 
     # Minimal app/build.gradle.kts satisfying the contract cross-check.
+    android_namespace = android_cfg["namespace"]
+    android_application_id = android_cfg["application_id"]
+    android_compile_sdk = android_cfg["compile_sdk"]
+    android_min_sdk = android_cfg["min_sdk"]
+    android_target_sdk = android_cfg["target_sdk"]
+    android_version_code = android_cfg["current_version_code"]
+    android_version_name = android_cfg["current_version_name"]
+    android_launcher_activity_source = android_cfg["launcher_activity_source"]
+
     app_gradle = repo / "app" / "build.gradle.kts"
     app_gradle.parent.mkdir(parents=True, exist_ok=True)
     app_gradle.write_text(
-        'namespace = "io.github.franchoy.nudgewhen"\n'
-        'applicationId = "io.github.franchoy.nudgewhen"\n'
-        "compileSdk = 36\n"
-        "minSdk = 26\n"
-        "targetSdk = 36\n"
-        "versionCode = 2\n"
-        'versionName = "0.1.1"\n',
+        f'namespace = "{android_namespace}"\n'
+        f'applicationId = "{android_application_id}"\n'
+        f"compileSdk = {android_compile_sdk}\n"
+        f"minSdk = {android_min_sdk}\n"
+        f"targetSdk = {android_target_sdk}\n"
+        f"versionCode = {android_version_code}\n"
+        f'versionName = "{android_version_name}"\n',
         encoding="utf-8",
     )
 
@@ -256,7 +280,7 @@ def create_consistency_fixture(
         '<?xml version="1.0" encoding="utf-8"?>\n'
         '<manifest xmlns:android="http://schemas.android.com/apk/res/android">\n'
         "    <application>\n"
-        '        <activity android:name=".MainActivity" />\n'
+        f'        <activity android:name="{android_launcher_activity_source}" />\n'
         "    </application>\n"
         "</manifest>\n",
         encoding="utf-8",

@@ -1195,10 +1195,15 @@ def check_repository_consistency(args: argparse.Namespace, fail_fast: bool) -> b
         else:
             break
     if last_complete >= first_phase:
+        expected_completed_claim: tuple[int, int] | None = (
+            first_phase,
+            last_complete,
+        )
         expected_completed_phrase = (
             f"Phases {first_phase} through {last_complete} complete"
         )
     else:
+        expected_completed_claim = None
         expected_completed_phrase = "(no phases complete)"
 
     def _check_doc_status_summary(rel_path: str, text: str) -> None:
@@ -1220,13 +1225,18 @@ def check_repository_consistency(args: argparse.Namespace, fail_fast: bool) -> b
             summary_text,
         )
         if claim_match is None:
+            observed_completed_claim: tuple[int, int] | None = None
             observed_claim = "(no completed-range claim)"
         else:
+            observed_completed_claim = (
+                int(claim_match.group(1)),
+                int(claim_match.group(2)),
+            )
             observed_claim = (
                 f"Phases {claim_match.group(1)} through "
                 f"{claim_match.group(2)} complete"
             )
-        if observed_claim != expected_completed_phrase:
+        if observed_completed_claim != expected_completed_claim:
             failures.append(
                 f"{rel_path} document-status summary is "
                 f"'{summary_text}'; observed completed-range claim is "

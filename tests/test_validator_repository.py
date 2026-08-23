@@ -169,6 +169,120 @@ class InvalidReleaseContractStructureTests(unittest.TestCase):
                 self.assertIn("schema_version must equal 1", err or "")
 
 
+_FIXTURE_CONTRACT = json.loads(
+    validate_local.RELEASE_CONTRACT_PATH.read_text(encoding="utf-8")
+)
+
+_FIXTURE_ACTIVE_VERSION = _FIXTURE_CONTRACT["release"]["version"]
+
+_FIXTURE_ACTIVE_BRANCH = _FIXTURE_CONTRACT["release"]["active_branch"]
+
+_FIXTURE_RELEASE_TITLE = _FIXTURE_CONTRACT["release"]["title"]
+
+_FIXTURE_HISTORICAL_VERSION = _FIXTURE_CONTRACT["historical"]["previous_release_version"]
+
+_FIXTURE_HISTORICAL_BRANCH = "release/" + _FIXTURE_HISTORICAL_VERSION
+
+_FIXTURE_CHARTER_REL = _FIXTURE_CONTRACT["release_documents"]["charter"]
+
+_FIXTURE_PHASE_LIST_REL = _FIXTURE_CONTRACT["release_documents"]["phase_list"]
+
+_FIXTURE_FIRST_PHASE = _FIXTURE_CONTRACT["phase_model"]["first_phase"]
+
+_FIXTURE_LAST_PHASE = _FIXTURE_CONTRACT["phase_model"]["last_phase"]
+
+
+def _fixture_completed_claim(contract: dict) -> tuple[int, int] | None:
+    first = contract["phase_model"]["first_phase"]
+    last = contract["phase_model"]["last_phase"]
+    expected_statuses = contract["phase_model"]["expected_statuses"]
+    last_complete = None
+    for phase in range(first, last + 1):
+        status = expected_statuses[f"Phase {phase}"]
+        if status == "Complete":
+            last_complete = phase
+        else:
+            break
+    if last_complete is None:
+        return None
+    return (first, last_complete)
+
+
+def _fixture_completed_phrase(claim: tuple[int, int] | None, *, absent: str) -> str:
+    if claim is None:
+        return absent
+    return f"Phases {claim[0]} through {claim[1]} complete"
+
+
+def _fixture_document_status_line(contract: dict) -> str:
+    claim = _fixture_completed_claim(contract)
+    first = contract["phase_model"]["first_phase"]
+    last = contract["phase_model"]["last_phase"]
+    if claim is None:
+        progress = f"Phases {first} through {last} Planned"
+    elif claim[1] == last:
+        progress = f"Phases {first} through {last} complete"
+    else:
+        progress = (
+            f"Phases {first} through {claim[1]} complete; "
+            f"Phases {claim[1] + 1} through {last} Planned"
+        )
+    return (
+        f"**Document status:** Accepted \u2014 {progress}; "
+        f"{contract['release']['version']} release in progress"
+    )
+
+
+_FIXTURE_DOCUMENT_STATUS = _fixture_document_status_line(_FIXTURE_CONTRACT)
+
+_FIXTURE_EXPECTED_COMPLETED_CLAIM = _fixture_completed_claim(_FIXTURE_CONTRACT)
+
+_FIXTURE_EXPECTED_COMPLETED_PHRASE = _fixture_completed_phrase(
+    _FIXTURE_EXPECTED_COMPLETED_CLAIM,
+    absent="(no phases complete)",
+)
+
+
+def _fixture_wrong_completed_claim(contract: dict) -> tuple[int, int] | None:
+    expected = _fixture_completed_claim(contract)
+    first = contract["phase_model"]["first_phase"]
+    last = contract["phase_model"]["last_phase"]
+    if expected is None:
+        return (first, first)
+    if expected[1] < last:
+        return (first, expected[1] + 1)
+    if expected[1] > first:
+        return (first, expected[1] - 1)
+    return None
+
+
+_FIXTURE_WRONG_COMPLETED_CLAIM = _fixture_wrong_completed_claim(_FIXTURE_CONTRACT)
+
+_FIXTURE_WRONG_COMPLETED_PHRASE = _fixture_completed_phrase(
+    _FIXTURE_WRONG_COMPLETED_CLAIM,
+    absent="(no completed-range claim)",
+)
+
+
+def _fixture_wrong_document_status_line(contract: dict) -> str:
+    wrong = _fixture_wrong_completed_claim(contract)
+    first = contract["phase_model"]["first_phase"]
+    last = contract["phase_model"]["last_phase"]
+    if wrong is None:
+        progress = f"Phases {first} through {last} Planned"
+    else:
+        progress = _fixture_completed_phrase(
+            wrong, absent="(no completed-range claim)"
+        )
+    return (
+        f"**Document status:** Accepted \u2014 {progress}; "
+        f"{contract['release']['version']} release in progress"
+    )
+
+
+_FIXTURE_WRONG_DOCUMENT_STATUS = _fixture_wrong_document_status_line(_FIXTURE_CONTRACT)
+
+
 class RepositoryConsistencyTests(unittest.TestCase):
     """Tests for the new ``docs/repository-consistency`` active-release
     identity check. The check uses the real loaded contract and operates
@@ -176,39 +290,49 @@ class RepositoryConsistencyTests(unittest.TestCase):
     synthetic fixtures; no live governance file is mutated.
     """
 
+    ACTIVE_VERSION = _FIXTURE_ACTIVE_VERSION
+    ACTIVE_BRANCH = _FIXTURE_ACTIVE_BRANCH
+    RELEASE_TITLE = _FIXTURE_RELEASE_TITLE
+    HISTORICAL_VERSION = _FIXTURE_HISTORICAL_VERSION
+    HISTORICAL_BRANCH = _FIXTURE_HISTORICAL_BRANCH
+    DOCUMENT_STATUS = _FIXTURE_DOCUMENT_STATUS
+    EXPECTED_COMPLETED_PHRASE = _FIXTURE_EXPECTED_COMPLETED_PHRASE
+    WRONG_COMPLETED_PHRASE = _FIXTURE_WRONG_COMPLETED_PHRASE
+    WRONG_DOCUMENT_STATUS = _FIXTURE_WRONG_DOCUMENT_STATUS
+
     GOOD_README = (
         "# NudgeWhen\n"
         "\n"
-        "NudgeWhen is currently in the `v0.1.1` release train, "
-        "a documentation release on the single branch `release/v0.1.1`. "
-        "The previous `v0.1.0` release is complete and historical; "
-        "its branch `release/v0.1.0` is no longer the active branch.\n"
+        f"NudgeWhen is currently in the `{ACTIVE_VERSION}` release train, "
+        f"a documentation release on the single branch `{ACTIVE_BRANCH}`. "
+        f"The previous `{HISTORICAL_VERSION}` release is complete and historical; "
+        f"its branch `{HISTORICAL_BRANCH}` is no longer the active branch.\n"
         "\n"
         "## Current release train\n"
         "\n"
-        "The current active branch is `release/v0.1.1`. "
-        "The previous `v0.1.0` release train on `release/v0.1.0` is "
-        "complete and historical.\n"
+        f"The current active branch is `{ACTIVE_BRANCH}`. "
+        f"The previous `{HISTORICAL_VERSION}` release train on "
+        f"`{HISTORICAL_BRANCH}` is complete and historical.\n"
         "\n"
-        "v0.1.0 phases (historical, complete):\n"
+        f"{HISTORICAL_VERSION} phases (historical, complete):\n"
         "\n"
         "- Phase 0 — Test\n"
     )
 
     GOOD_PHASE_LIST = (
-        "# Phase List — NudgeWhen v0.1.1\n"
+        f"# Phase List — NudgeWhen {ACTIVE_VERSION}\n"
         "\n"
-        "**Document status:** Accepted — Phases 0 through 7 complete; v0.1.1 release in progress\n"
+        f"{DOCUMENT_STATUS}\n"
         "\n"
-        "## Phase 0 — Test\n"
+        f"## Phase {_FIXTURE_FIRST_PHASE} — Test\n"
         "### Status\n"
-        "Planned\n"
+        f"{_FIXTURE_CONTRACT['phase_model']['expected_statuses'][f'Phase {_FIXTURE_FIRST_PHASE}']}\n"
     )
 
     GOOD_CHARTER = (
-        "# Release Charter — NudgeWhen v0.1.1\n"
+        f"# Release Charter — NudgeWhen {ACTIVE_VERSION}\n"
         "\n"
-        "**Document status:** Accepted — Phases 0 through 7 complete; v0.1.1 release in progress\n"
+        f"{DOCUMENT_STATUS}\n"
         "\n"
         "## Explicit non-goals\n"
         "\n"
@@ -218,19 +342,19 @@ class RepositoryConsistencyTests(unittest.TestCase):
     HISTORICAL_SAFE_README = (
         "# NudgeWhen\n"
         "\n"
-        "NudgeWhen is currently in the `v0.1.1` release train, "
+        f"NudgeWhen is currently in the `{ACTIVE_VERSION}` release train, "
         "a documentation release.\n"
         "\n"
         "## Current release train\n"
         "\n"
-        "The current active branch is `release/v0.1.1`.\n"
+        f"The current active branch is `{ACTIVE_BRANCH}`.\n"
         "\n"
         "## Historical references\n"
         "\n"
-        "The previous v0.1.0 release is complete and historical.\n"
-        "v0.1.0 phases (historical, complete):\n"
-        "- Release charter — v0.1.0 (historical)\n"
-        "- Phase list — v0.1.0 (historical)\n"
+        f"The previous {HISTORICAL_VERSION} release is complete and historical.\n"
+        f"{HISTORICAL_VERSION} phases (historical, complete):\n"
+        f"- Release charter — {HISTORICAL_VERSION} (historical)\n"
+        f"- Phase list — {HISTORICAL_VERSION} (historical)\n"
     )
 
     GOOD_CI_WORKFLOW = (
@@ -268,13 +392,15 @@ class RepositoryConsistencyTests(unittest.TestCase):
         "\n"
         "## Current release context\n"
         "\n"
-        "- **Active release:** `v0.1.1`\n"
-        "- **Release title:** `NudgeWhen v0.1.1 — Post-Release Closure and Reusable Validation Baseline`\n"
-        "- **Active branch:** `release/v0.1.1`\n"
-        "- **Active release charter:** `docs/releases/v0.1.1/release-charter.md`\n"
-        "- **Active phase list:** `docs/releases/v0.1.1/phase-list.md`\n"
-        "- **Current phase:** Phase 6 — Integrated Evidence and Agent Evaluation\n"
-        "- **Bootstrap exception (historical, terminated):** The previous `v0.1.0` release and `release/v0.1.0` branch are historical and not active.\n"
+        f"- **Active release:** `{ACTIVE_VERSION}`\n"
+        f"- **Release title:** `{RELEASE_TITLE}`\n"
+        f"- **Active branch:** `{ACTIVE_BRANCH}`\n"
+        f"- **Active release charter:** `{_FIXTURE_CHARTER_REL}`\n"
+        f"- **Active phase list:** `{_FIXTURE_PHASE_LIST_REL}`\n"
+        "- **Current phase:** Test fixture\n"
+        f"- **Bootstrap exception (historical, terminated):** "
+        f"The previous `{HISTORICAL_VERSION}` release and "
+        f"`{HISTORICAL_BRANCH}` branch are historical and not active.\n"
     )
 
     def _make_args(self) -> argparse.Namespace:
@@ -316,13 +442,13 @@ class RepositoryConsistencyTests(unittest.TestCase):
                 self.assertEqual(status, "PASS")
                 self.assertEqual(group, "docs")
                 self.assertEqual(check, "repository-consistency")
-                self.assertIn("v0.1.1", message)
-                self.assertIn("release/v0.1.1", message)
+                self.assertIn(self.ACTIVE_VERSION, message)
+                self.assertIn(self.ACTIVE_BRANCH, message)
 
     def test_stale_readme_active_version_fails(self) -> None:
         stale_readme = self.GOOD_README.replace(
-            "is currently in the `v0.1.1` release train",
-            "is currently in the `v0.1.0` release train",
+            f"is currently in the `{self.ACTIVE_VERSION}` release train",
+            f"is currently in the `{self.HISTORICAL_VERSION}` release train",
         )
         with tempfile.TemporaryDirectory() as td:
             repo = Path(td)
@@ -341,13 +467,13 @@ class RepositoryConsistencyTests(unittest.TestCase):
                 self.assertEqual(group, "docs")
                 self.assertEqual(check, "repository-consistency")
                 self.assertIn("active version declaration", message)
-                self.assertIn("v0.1.0", message)
-                self.assertIn("v0.1.1", message)
+                self.assertIn(self.HISTORICAL_VERSION, message)
+                self.assertIn(self.ACTIVE_VERSION, message)
 
     def test_stale_readme_active_branch_fails(self) -> None:
         stale_readme = self.GOOD_README.replace(
-            "The current active branch is `release/v0.1.1`",
-            "The current active branch is `release/v0.1.0`",
+            f"The current active branch is `{self.ACTIVE_BRANCH}`",
+            f"The current active branch is `{self.HISTORICAL_BRANCH}`",
         )
         with tempfile.TemporaryDirectory() as td:
             repo = Path(td)
@@ -366,8 +492,8 @@ class RepositoryConsistencyTests(unittest.TestCase):
                 self.assertEqual(group, "docs")
                 self.assertEqual(check, "repository-consistency")
                 self.assertIn("active branch declaration", message)
-                self.assertIn("release/v0.1.0", message)
-                self.assertIn("release/v0.1.1", message)
+                self.assertIn(self.HISTORICAL_BRANCH, message)
+                self.assertIn(self.ACTIVE_BRANCH, message)
 
     def test_historical_references_alone_do_not_fail(self) -> None:
         with tempfile.TemporaryDirectory() as td:
@@ -390,9 +516,9 @@ class RepositoryConsistencyTests(unittest.TestCase):
 
     def test_phase_list_title_mismatch_fails(self) -> None:
         wrong_phase_list = (
-            "# Phase List — NudgeWhen v0.1.0\n"
+            f"# Phase List — NudgeWhen {self.HISTORICAL_VERSION}\n"
             "\n"
-            "**Document status:** Accepted — Phases 0 through 7 complete; v0.1.1 release in progress\n"
+            f"{self.DOCUMENT_STATUS}\n"
         )
         with tempfile.TemporaryDirectory() as td:
             repo = Path(td)
@@ -411,14 +537,14 @@ class RepositoryConsistencyTests(unittest.TestCase):
                 self.assertEqual(group, "docs")
                 self.assertEqual(check, "repository-consistency")
                 self.assertIn("phase-list", message)
-                self.assertIn("v0.1.0", message)
-                self.assertIn("v0.1.1", message)
+                self.assertIn(self.HISTORICAL_VERSION, message)
+                self.assertIn(self.ACTIVE_VERSION, message)
 
     def test_charter_presenting_historical_as_active_fails(self) -> None:
         wrong_charter = (
-            "# Release Charter — NudgeWhen v0.1.0\n"
+            f"# Release Charter — NudgeWhen {self.HISTORICAL_VERSION}\n"
             "\n"
-            "**Document status:** Accepted — Phases 0 through 7 complete; v0.1.1 release in progress\n"
+            f"{self.DOCUMENT_STATUS}\n"
         )
         with tempfile.TemporaryDirectory() as td:
             repo = Path(td)
@@ -437,8 +563,8 @@ class RepositoryConsistencyTests(unittest.TestCase):
                 self.assertEqual(group, "docs")
                 self.assertEqual(check, "repository-consistency")
                 self.assertIn("charter", message)
-                self.assertIn("v0.1.0", message)
-                self.assertIn("v0.1.1", message)
+                self.assertIn(self.HISTORICAL_VERSION, message)
+                self.assertIn(self.ACTIVE_VERSION, message)
 
     def test_phase_list_document_status_summary_mismatch_fails(self) -> None:
         """B5A: when the phase-list document-status line claims an
@@ -450,13 +576,13 @@ class RepositoryConsistencyTests(unittest.TestCase):
         All other active identity fields remain valid.
         """
         stale_phase_list = (
-            "# Phase List — NudgeWhen v0.1.1\n"
+            f"# Phase List — NudgeWhen {self.ACTIVE_VERSION}\n"
             "\n"
-            "**Document status:** Accepted — Phases 0 through 3 complete; v0.1.1 release in progress\n"
+            f"{self.WRONG_DOCUMENT_STATUS}\n"
             "\n"
-            "## Phase 0 — Test\n"
+            f"## Phase {_FIXTURE_FIRST_PHASE} — Test\n"
             "### Status\n"
-            "Planned\n"
+            f"{_FIXTURE_CONTRACT['phase_model']['expected_statuses'][f'Phase {_FIXTURE_FIRST_PHASE}']}\n"
         )
         with tempfile.TemporaryDirectory() as td:
             repo = Path(td)
@@ -475,8 +601,8 @@ class RepositoryConsistencyTests(unittest.TestCase):
                 self.assertEqual(group, "docs")
                 self.assertEqual(check, "repository-consistency")
                 self.assertIn("phase-list", message)
-                self.assertIn("Phases 0 through 3 complete", message)
-                self.assertIn("Phases 0 through 7 complete", message)
+                self.assertIn(self.WRONG_COMPLETED_PHRASE, message)
+                self.assertIn(self.EXPECTED_COMPLETED_PHRASE, message)
 
     def test_charter_document_status_summary_mismatch_fails(self) -> None:
         """B5A: when the release-charter document-status line claims an
@@ -488,9 +614,9 @@ class RepositoryConsistencyTests(unittest.TestCase):
         completed range. All other active identity fields remain valid.
         """
         stale_charter = (
-            "# Release Charter — NudgeWhen v0.1.1\n"
+            f"# Release Charter — NudgeWhen {self.ACTIVE_VERSION}\n"
             "\n"
-            "**Document status:** Accepted — Phases 0 through 3 complete; v0.1.1 release in progress\n"
+            f"{self.WRONG_DOCUMENT_STATUS}\n"
             "\n"
             "## Explicit non-goals\n"
             "\n"
@@ -513,8 +639,8 @@ class RepositoryConsistencyTests(unittest.TestCase):
                 self.assertEqual(group, "docs")
                 self.assertEqual(check, "repository-consistency")
                 self.assertIn("charter", message)
-                self.assertIn("Phases 0 through 3 complete", message)
-                self.assertIn("Phases 0 through 7 complete", message)
+                self.assertIn(self.WRONG_COMPLETED_PHRASE, message)
+                self.assertIn(self.EXPECTED_COMPLETED_PHRASE, message)
 
     def test_ci_missing_release_push_fails(self) -> None:
         """B5B: when the persistent CI workflow omits ``release/**`` from
@@ -821,8 +947,8 @@ class RepositoryConsistencyTests(unittest.TestCase):
         contract-required active release. The message must not report
         an AGENTS active-branch mismatch."""
         bad_agents = self.GOOD_AGENTS.replace(
-            "- **Active release:** `v0.1.1`",
-            "- **Active release:** `v0.1.0`",
+            f"- **Active release:** `{self.ACTIVE_VERSION}`",
+            f"- **Active release:** `{self.HISTORICAL_VERSION}`",
             1,
         )
         with tempfile.TemporaryDirectory() as td:
@@ -842,11 +968,14 @@ class RepositoryConsistencyTests(unittest.TestCase):
                 self.assertEqual(group, "docs")
                 self.assertEqual(check, "repository-consistency")
                 self.assertIn(
-                    "AGENTS current release context identifies historical "
-                    "release 'v0.1.0' as active",
+                    f"AGENTS current release context identifies historical "
+                    f"release '{self.HISTORICAL_VERSION}' as active",
                     message,
                 )
-                self.assertIn("contract requires 'v0.1.1'", message)
+                self.assertIn(
+                    f"contract requires '{self.ACTIVE_VERSION}'",
+                    message,
+                )
                 self.assertNotIn(
                     "AGENTS current release context active branch is",
                     message,
@@ -871,8 +1000,8 @@ class RepositoryConsistencyTests(unittest.TestCase):
         contract-required active branch. The message must not report
         an AGENTS active-release mismatch."""
         bad_agents = self.GOOD_AGENTS.replace(
-            "- **Active branch:** `release/v0.1.1`",
-            "- **Active branch:** `release/v0.1.0`",
+            f"- **Active branch:** `{self.ACTIVE_BRANCH}`",
+            f"- **Active branch:** `{self.HISTORICAL_BRANCH}`",
             1,
         )
         with tempfile.TemporaryDirectory() as td:
@@ -892,11 +1021,14 @@ class RepositoryConsistencyTests(unittest.TestCase):
                 self.assertEqual(group, "docs")
                 self.assertEqual(check, "repository-consistency")
                 self.assertIn(
-                    "AGENTS current release context identifies historical "
-                    "branch 'release/v0.1.0' as active",
+                    f"AGENTS current release context identifies historical "
+                    f"branch '{self.HISTORICAL_BRANCH}' as active",
                     message,
                 )
-                self.assertIn("contract requires 'release/v0.1.1'", message)
+                self.assertIn(
+                    f"contract requires '{self.ACTIVE_BRANCH}'",
+                    message,
+                )
                 self.assertNotIn(
                     "AGENTS current release context active release is",
                     message,
@@ -1412,10 +1544,9 @@ class ProductScopeCharterTests(unittest.TestCase):
     """
 
     CHARTER_HEADER = (
-        "# Release Charter — NudgeWhen v0.1.1\n"
+        f"# Release Charter — NudgeWhen {_FIXTURE_ACTIVE_VERSION}\n"
         "\n"
-        "**Document status:** Accepted — Phases 0 through 7 complete; "
-        "v0.1.1 release in progress\n"
+        f"{_FIXTURE_DOCUMENT_STATUS}\n"
     )
 
     def _charter_with_section(
@@ -1513,7 +1644,7 @@ class ProductScopeCharterTests(unittest.TestCase):
         with _helpers.patched_repo_and_contract(repo, contract_path):
             contract = validate_local._load_release_contract()
             self.assertIsNotNone(contract)
-            charter = repo / "docs/releases/v0.1.1/release-charter.md"
+            charter = repo / contract["release_documents"]["charter"]
             ok = validate_local.check_charter_consistency(
                 contract, charter, False,
             )
