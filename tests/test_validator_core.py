@@ -1155,5 +1155,165 @@ class DependabotYamlTests(unittest.TestCase):
                 self.assertIn(f"forbidden key: {key}", failures)
 
 
+class AndroidJvmTestsIntegrationTests(unittest.TestCase):
+    """Phase 2C: the new ``android/jvm-tests`` check must emit success
+    in order between ``android/gradle-projects`` and
+    ``android/gradle-build``, and must short-circuit the entire
+    ``check_android_content`` invocation on JVM failure.
+
+    Both tests use an isolated ``TemporaryDirectory`` containing a
+    fake ``gradlew`` stub whose ``:app:testDebugUnitTest`` exit code
+    is controlled by the test, plus a minimal ``AndroidManifest.xml``
+    that satisfies the source-manifest check. The release contract is
+    pre-loaded before patching ``REPO`` so that the cached contract
+    drives the source-manifest activity expectation against the
+    patched REPO. No real Gradle is invoked, no product code is
+    mutated, and only the validator's ``REPO``, ``emit`` and
+    ``check_android_content`` symbols are exercised."""
+
+    def setUp(self) -> None:
+        self._saved = _helpers.save_validator_state()
+        _helpers.reset_validator_state()
+
+    def tearDown(self) -> None:
+        _helpers.restore_validator_state(self._saved)
+
+    @staticmethod
+    def _make_fake_gradlew(td: Path, jvm_returncode: int) -> Path:
+        """Write a tiny bash ``gradlew`` stub inside ``td``.
+
+        Behavior:
+          * ``projects`` -> emits stdout containing ``:app``, exits 0
+          * ``:app:testDebugUnitTest`` -> exits ``jvm_returncode``
+          * ``:app:assembleDebug`` / ``:app:lintDebug`` -> exits 0
+          * any other first argument -> exits 0
+        """
+        gradlew = td / "gradlew"
+        gradlew.write_text(
+            "#!/bin/bash\n"
+            f"JVM_RC={jvm_returncode}\n"
+            'case "$1" in\n'
+            '  projects) echo "Root project"; echo "---"; echo ":app"; exit 0 ;;\n'
+            '  ":app:testDebugUnitTest") exit $JVM_RC ;;\n'
+            '  ":app:assembleDebug") exit 0 ;;\n'
+            '  ":app:lintDebug") exit 0 ;;\n'
+            "esac\n"
+            "exit 0\n",
+            encoding="utf-8",
+        )
+        gradlew.chmod(0o755)
+        return gradlew
+
+    @staticmethod
+    def _make_source_manifest(td: Path, activity_name: str) -> Path:
+        """Write a minimal valid ``AndroidManifest.xml`` under ``td``
+        that satisfies the real ``android/source-manifest`` invariant:
+        one ``<application>``, one ``<activity>`` with the contract's
+        launcher activity name and ``exported=true``, one
+        ``<intent-filter>`` with one ``<action android:name=
+        "android.intent.action.MAIN">`` and one ``<category
+        android:name="android.intent.category.LAUNCHER">`` and no
+        ``<data>`` children."""
+        manifest = td / "app/src/main/AndroidManifest.xml"
+        manifest.parent.mkdir(parents=True, exist_ok=True)
+        manifest.write_text(
+            '<?xml version="1.0" encoding="utf-8"?>\n'
+            '<manifest xmlns:android="http://schemas.android.com/apk/res/android">\n'
+            "    <application>\n"
+            f'        <activity android:name="{activity_name}" android:exported="true">\n'
+            "            <intent-filter>\n"
+            '                <action android:name="android.intent.action.MAIN"/>\n'
+            '                <category android:name="android.intent.category.LAUNCHER"/>\n'
+            "            </intent-filter>\n"
+            "        </activity>\n"
+            "    </application>\n"
+            "</manifest>\n",
+            encoding="utf-8",
+        )
+        return manifest
+
+    def test_android_jvm_tests_success_emits_pass_in_order(self) -> None:
+        """Success path: the real ``check_android_content`` must run
+        ``projects``, then ``:app:testDebugUnitTest``, then
+        ``:app:assembleDebug :app:lintDebug`` as three separate Gradle
+        subprocesses, and must emit their PASS results in that exact
+        order. The new ``android/jvm-tests`` PASS line must appear
+        exactly once."""
+        # Pre-load the real release contract before patching REPO so the
+        # cached contract drives the source-manifest activity expectation
+        # against the patched REPO tree.
+        real_contract = validate_local.get_release_contract()
+        self.assertIsNotNone(real_contract)
+        activity_name = real_contract["android"]["launcher_activity_source"]
+
+        with tempfile.TemporaryDirectory() as td_str:
+            td = Path(td_str)
+            self._make_fake_gradlew(td, 0)
+            self._make_source_manifest(td, activity_name)
+            sdk = td / "sdk"
+            args = _make_args(fail_fast=False, require_clean=False)
+            with _helpers.patched_module_attribute(
+                "REPO", td
+            ), _helpers.capture_stdout_stderr() as (out, _):
+                validate_local.check_android_content(args, sdk)
+        rendered = out.getvalue()
+        idx_projects = rendered.find("PASS android/gradle-projects")
+        idx_jvm = rendered.find("PASS android/jvm-tests")
+        idx_build = rendered.find("PASS android/gradle-build")
+        self.assertNotEqual(idx_projects, -1)
+        self.assertNotEqual(idx_jvm, -1)
+        self.assertNotEqual(idx_build, -1)
+        # Required ordering: gradle-projects -> jvm-tests -> gradle-build
+        self.assertLess(idx_projects, idx_jvm)
+        self.assertLess(idx_jvm, idx_build)
+        # The JVM PASS must be emitted exactly once.
+        self.assertEqual(rendered.count("PASS android/jvm-tests"), 1)
+        self.assertEqual(rendered.count("FAIL android/jvm-tests"), 0)
+
+    def test_android_jvm_tests_failure_emits_fail_and_aborts(self) -> None:
+        """Failure path: a deterministic nonzero ``testDebugUnitTest``
+        exit code must cause ``check_android_content`` to return
+        ``False`` and emit exactly one ``FAIL android/jvm-tests``
+        line. The existing assembleDebug+lintDebug Gradle invocation
+        must NOT execute, and no result may appear for
+        ``android/gradle-build``, ``android/apk-exists``,
+        ``android/apk-metadata`` or ``android/merged-manifest``."""
+        real_contract = validate_local.get_release_contract()
+        self.assertIsNotNone(real_contract)
+        activity_name = real_contract["android"]["launcher_activity_source"]
+
+        with tempfile.TemporaryDirectory() as td_str:
+            td = Path(td_str)
+            self._make_fake_gradlew(td, 7)
+            self._make_source_manifest(td, activity_name)
+            sdk = td / "sdk"
+            args = _make_args(fail_fast=False, require_clean=False)
+            with _helpers.patched_module_attribute(
+                "REPO", td
+            ), _helpers.capture_stdout_stderr() as (out, _):
+                result = validate_local.check_android_content(args, sdk)
+        self.assertFalse(result)
+        rendered = out.getvalue()
+        fail_lines = [
+            line for line in rendered.splitlines()
+            if line.startswith("FAIL android/jvm-tests")
+        ]
+        self.assertEqual(len(fail_lines), 1)
+        self.assertIn("FAIL android/jvm-tests \u2014 exit 7", rendered)
+        # The gradle-projects PASS must precede the JVM FAIL.
+        idx_projects = rendered.find("PASS android/gradle-projects")
+        idx_jvm_fail = rendered.find("FAIL android/jvm-tests")
+        self.assertNotEqual(idx_projects, -1)
+        self.assertNotEqual(idx_jvm_fail, -1)
+        self.assertLess(idx_projects, idx_jvm_fail)
+        # assembleDebug+lintDebug Gradle invocation must NOT execute.
+        self.assertNotIn("PASS android/gradle-build", rendered)
+        self.assertNotIn("FAIL android/gradle-build", rendered)
+        # No downstream result may appear.
+        self.assertNotIn("android/apk-exists", rendered)
+        self.assertNotIn("android/apk-metadata", rendered)
+        self.assertNotIn("android/merged-manifest", rendered)
+
+
 if __name__ == "__main__":
     unittest.main()

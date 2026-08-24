@@ -2194,6 +2194,25 @@ def check_android_content(args: argparse.Namespace, sdk: Path) -> bool:
         return False
     emit("PASS", "android", "gradle-projects", "project discovery includes :app")
 
+    # Phase 2C — separate adjacent JVM test invocation. The new
+    # ``:app:testDebugUnitTest`` task runs as its own Gradle
+    # subprocess so the existing projects and assemble/lint
+    # invocations above and below remain unchanged. ``--offline`` is
+    # propagated through the shared ``gradle_common`` list. On
+    # nonzero return the validator aborts immediately: gradle-build,
+    # apk-exists, apk-metadata and merged-manifest are not executed.
+    r = subprocess.run(
+        [str(gradle), ":app:testDebugUnitTest", *gradle_common],
+        cwd=REPO,
+        env=env,
+        capture_output=True,
+        text=True,
+    )
+    if r.returncode != 0:
+        emit("FAIL", "android", "jvm-tests", f"exit {r.returncode}")
+        return False
+    emit("PASS", "android", "jvm-tests", "testDebugUnitTest succeeded")
+
     r = subprocess.run([str(gradle), ":app:assembleDebug", ":app:lintDebug", *gradle_common], cwd=REPO, env=env, capture_output=True, text=True)
     if r.returncode != 0:
         emit("FAIL", "android", "gradle-build", f"exit {r.returncode}")
