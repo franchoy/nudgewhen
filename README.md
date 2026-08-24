@@ -4,7 +4,7 @@ NudgeWhen is an early-stage experimental open-source project exploring a voice-f
 
 ## Project status
 
-NudgeWhen is currently in the `v0.1.2` release train, **Local Reminder Foundation**, on the single branch `release/v0.1.2`. Phase 0 — Release Definition & Bootstrap — is `Complete`. Phase 1 — Reminder Architecture Contract — is the current lifecycle phase with formal status `Planned`; its implementation has not started. The previous `v0.1.1` release is complete and historical.
+NudgeWhen is currently in the `v0.1.2` release train, **Local Reminder Foundation**, on the single branch `release/v0.1.2`. Phase 0 — Release Definition & Bootstrap — is `Complete`. Phase 1 — Reminder Architecture Contract — is `Complete`; its architecture repository boundary is closed. Phase 2 — Reminder Domain Core — is the current lifecycle phase with formal status `Planned`; its implementation has not started. The previous `v0.1.1` release is complete and historical.
 
 ## What exists now
 
@@ -37,7 +37,7 @@ The following functionality does not yet exist in the current repository state:
 - Analytics or telemetry.
 - A production-readiness, stability, security, or compatibility guarantee.
 
-`v0.1.2` — **Local Reminder Foundation** — authorizes reminder and local-persistence functionality for this release, but neither is implemented yet at Phase 0. Voice or speech, notifications, time scheduling or alarms, location or geofencing, contextual or device-state triggers, background execution, application networking or sync, analytics or telemetry, additional Android activities/services/receivers/providers, new Android permissions, and production-readiness guarantees remain explicit release non-goals.
+`v0.1.2` — **Local Reminder Foundation** — authorizes reminder and local-persistence functionality for this release, but neither is implemented yet in the current repository state. Voice or speech, notifications, time scheduling or alarms, location or geofencing, contextual or device-state triggers, background execution, application networking or sync, analytics or telemetry, additional Android activities/services/receivers/providers, new Android permissions, and production-readiness guarantees remain explicit release non-goals.
 
 ## Long-term design intentions
 
@@ -70,7 +70,7 @@ The project follows a phased release train on the single branch `release/vX.Y.Z`
 
 Historical `v0.1.1` was the documentation, governance, validation, CI, supply-chain, workspace-hygiene, and release-metadata hardening release that followed the v0.1.0 baseline.
 
-The active `v0.1.2` release is **Local Reminder Foundation**. Phase 0 — Release Definition & Bootstrap — is `Complete`. Phase 1 — Reminder Architecture Contract — is current with formal status `Planned`; product implementation has not started.
+The active `v0.1.2` release is **Local Reminder Foundation**. Phase 0 — Release Definition & Bootstrap — is `Complete`. Phase 1 — Reminder Architecture Contract — is `Complete`; its architecture repository boundary is closed. Phase 2 — Reminder Domain Core — is the current lifecycle phase with formal status `Planned`; product implementation has not started.
 
 No delivery dates or completion promises are made.
 

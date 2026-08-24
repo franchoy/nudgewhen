@@ -1,6 +1,6 @@
 # NudgeWhen v0.1.2 — Reminder Architecture Contract
 
-**Document status:** Candidate — Phase 1 architecture contract pending validation and maintainer closure.
+**Document status:** Accepted — Phase 1 Reminder Architecture Contract; architecture repository boundary closed.
 
 ## Authority and scope
 
@@ -537,9 +537,9 @@ these is implemented, scheduled, or in scope for v0.1.2.
 
 The reminder work for v0.1.2 is split across phases as follows.
 
-- Phase 1 — Reminder Architecture Contract (current; `Planned`):
+- Phase 1 — Reminder Architecture Contract (`Complete`):
   this document is the deliverable. No product code is produced.
-- Phase 2 — Domain and controller implementation and deterministic tests:
+- Phase 2 — Reminder Domain Core (current; `Planned`):
   implements `Reminder`, `ReminderController`, and the Phase 2 test set
   using the test-library dependency selected and authorized in Phase 2.
 - Phase 3 — Persistence implementation and round-trip tests:
@@ -567,16 +567,43 @@ and is owned by a later, separately authorized phase.
 
 ## Acceptance conditions
 
-This candidate is accepted as the Phase 1 architecture contract when the
-maintainer explicitly accepts it after Phase 1B staged validation.
+The Phase 1 architecture candidate has been accepted. The architecture
+document is now recorded as Accepted; its architecture repository
+boundary is closed.
 
-This architecture document remains a Candidate during Phase 1B. After
-accepted staged validation, the maintainer may accept the architecture
-candidate. Phase 1 remains formally `Planned` until a separately
-authorized release state synchronization updates the phase model and the
-current-facing documents. Only after that synchronization is validated
-and accepted does Phase 1 become `Complete` and Phase 2 become current.
-No Phase 2 implementation has started as of this candidate.
+Established facts:
+
+- The architecture candidate was accepted after Phase 1B staged
+  validation.
+- The architecture commit is `ca322ac75ff66fe545d3d0ca1709d2fa1b0f6648`.
+- The architecture commit parent is
+  `d61e41caed1b558688b9fd48ad3ca43ffacf97ca`.
+- The architecture push was accepted to `origin/release/v0.1.2`; the
+  remote release branch is established at the architecture commit full SHA
+  `ca322ac75ff66fe545d3d0ca1709d2fa1b0f6648`.
+- The exact-head architecture CI run is `32665472700` (workflow `CI`,
+  event `push`, branch `release/v0.1.2`, head SHA
+  `ca322ac75ff66fe545d3d0ca1709d2fa1b0f6648`, conclusion `success`,
+  required `validate` job `success`).
+- The formal Phase 1 closure synchronization is now applied; Phase 1 is
+  marked `Complete` across the active release documents
+  (`scripts/release_contract.json`, the active phase list, the active
+  release charter, `AGENTS.md`, `README.md`, this architecture document,
+  and `EXP-0036`).
+- Phase 2 — Reminder Domain Core — becomes the current lifecycle phase
+  and remains `Planned`.
+- Phase 2 implementation remains `NOT_STARTED`.
+
+This section records the now-established Phase 1 architecture repository
+boundary and the semantic state represented by the formal closure
+synchronization candidate. It does NOT claim:
+
+- a future Phase 1 closure-synchronization commit SHA;
+- a future push of that closure synchronization;
+- a future exact-head CI for that closure synchronization.
+
+Those future repository actions require separate maintainer authorization
+and are not recursively required inside this architecture document.
 
 Acceptance conditions for Phase 1 architecture closure:
 

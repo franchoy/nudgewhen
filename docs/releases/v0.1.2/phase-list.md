@@ -1,6 +1,6 @@
 # Phase List — NudgeWhen v0.1.2
 
-**Document status:** Accepted — Phases 0 through 0 complete; Phase 1 current; Phases 1 through 7 Planned.
+**Document status:** Accepted — Phases 0 through 1 complete; Phase 2 current; Phases 2 through 7 Planned.
 **Active release branch:** release/v0.1.2
 **Active release charter:** docs/releases/v0.1.2/release-charter.md
 
@@ -165,11 +165,15 @@ Phase 1 path scope is not pre-authorized here. Concrete Phase 1 paths will be en
 
 ### Status
 
-Planned
+Complete
 
 ### Validation checklist
 
-- [-] NOT APPLICABLE — Phase execution and completion evidence have not yet been performed; phase status remains `Planned`.
+- [x] PASS — The Phase 1 architecture contract at `docs/releases/v0.1.2/reminder-architecture.md` and the Phase 1 experiment evidence `EXP-0036` were accepted.
+- [x] PASS — The Phase 1 architecture candidate passed staged validation (98 tests / OK; required group 11/0/0; docs group 11/0/0; skip-Android integrated 22/0/0).
+- [x] PASS — Architecture commit `ca322ac75ff66fe545d3d0ca1709d2fa1b0f6648` was pushed to `origin/release/v0.1.2`.
+- [x] PASS — Exact-head architecture CI run `32665472700` (workflow `CI`, event `push`, branch `release/v0.1.2`, head SHA `ca322ac75ff66fe545d3d0ca1709d2fa1b0f6648`, conclusion `success`, validate job `success`) completed successfully.
+- [x] PASS — The formal Phase 1 closure synchronization marks Phase 1 `Complete`; Phase 2 is now the current lifecycle phase and remains `Planned`.
 
 ## Phase 2 — Reminder Domain Core
 

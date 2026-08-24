@@ -1,6 +1,6 @@
 # AGENTS.md
 
-**Document status:** Accepted — stable governance; v0.1.2 Phase 0 Complete; Phase 1 current; Phases 1 through 7 Planned
+**Document status:** Accepted — stable governance; v0.1.2 Phases 0 through 1 Complete; Phase 2 current; Phases 2 through 7 Planned
 
 ## Purpose and scope
 
@@ -261,7 +261,7 @@ Category D items cannot be authorized by a normal maintainer turn. A change to C
 - **Active branch:** `release/v0.1.2`
 - **Active release charter:** `docs/releases/v0.1.2/release-charter.md`
 - **Active phase list:** `docs/releases/v0.1.2/phase-list.md`
-- **Current phase:** Phase 1 — Reminder Architecture Contract (current lifecycle phase; formal status `Planned`; implementation not started)
+- **Current phase:** Phase 2 — Reminder Domain Core (current lifecycle phase; formal status `Planned`; implementation not started)
 - **Current OpenCode model/provider:** MiniMax M3 via the official MiniMax provider (`minimax/MiniMax-M3`), temporarily replacing OpenCode Go after the changed OpenCode Go recurring charge was blocked as anomalous during renewal. This is an operational provider migration, not a model-policy change. OpenCode Go may be reevaluated later under explicit maintainer authorization when its billing path is reliable and its economics remain acceptable.
 - **Bootstrap exception (v0.1.2, terminated):** Candidate B performed the bounded active-release synchronization from the inherited v0.1.1 current-release pointers to v0.1.2. The maintainer-authorized Phase 0 bootstrap exception permitted work on the actual branch `release/v0.1.2` while current-facing synchronization was incomplete. It terminated after `AGENTS.md`, `README.md`, `scripts/release_contract.json`, `docs/releases/v0.1.2/release-charter.md`, and `docs/releases/v0.1.2/phase-list.md` were synchronized and repository-consistency validation accepted that state. The exception did not waive exact-path authorization, exact starting-HEAD verification, exact working-tree baselines, hard-stop behavior, private-working-material rules, network restrictions, or separate staging/commit/push/repository-action authorization.
 - **Bootstrap exception (historical, terminated):** The tracked `AGENTS.md` baseline clause historically required a specific completed release branch; that historical coupling required a narrow bootstrap exception for Phase 0 to proceed on the released `main` baseline before the new `AGENTS.md` was written. Branch creation alone did not terminate the exception. Phase 0D directly confirmed the four termination conditions: (a) this `AGENTS.md` recognizes `v0.1.1` and `release/v0.1.1`; (b) stable repository governance is separated from current-release context; (c) no normative dependence on any completed release branch remains; (d) the updated governance documents are mutually consistent. The maintainer accepted the Phase 0D evidence. The exception is now terminated. Ordinary baseline rules apply to later tasks.
