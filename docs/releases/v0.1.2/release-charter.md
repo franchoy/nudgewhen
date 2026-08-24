@@ -3,9 +3,19 @@
 **Document status:** Accepted — Phases 0 through 4 complete; Phase 5 current; Phases 5 through 7 Planned.
 **Release name:** NudgeWhen v0.1.2 — Local Reminder Foundation.
 **Version:** `v0.1.2`.
-**Current Android artifact identity:** `versionCode = 2`, `versionName = "0.1.1"`. This is the v0.1.1 identity still recorded in `app/build.gradle.kts`; v0.1.2 does not yet deliver the target metadata.
-**Target Android artifact identity:** `versionCode = 3`, `versionName = "0.1.2"`. The target metadata is **not yet delivered** to `app/build.gradle.kts` at Phase 0.
+**Current Android artifact identity:** `versionCode = 3`, `versionName = "0.1.2"`. The uncommitted Phase 5B candidate delivers this identity in `app/build.gradle.kts` and in `scripts/release_contract.json` (`android.current_version_code`, `android.current_version_name`). At Phase 0 and through earlier completed phases, the committed identity remained `versionCode = 2`, `versionName = "0.1.1"`; that historical Phase 0 statement is preserved below as historical evidence.
+**Target Android artifact identity:** `versionCode = 3`, `versionName = "0.1.2"`. The target identity is delivered by the uncommitted Phase 5B candidate rather than still undelivered. Historical Phase 0 statement (preserved): at Phase 0, the target metadata was **not yet delivered** to `app/build.gradle.kts`.
 **Active release branch:** `release/v0.1.2`.
+
+## Current Phase 5B candidate (Android artifact identity alignment)
+
+The uncommitted Phase 5B candidate delivers Android artifact identity alignment in source only. This is a maintainer-selected phase sequencing decision: deliver the target identity before Phase 5 device evidence, not a release-document mandate.
+
+- `app/build.gradle.kts`: `versionCode = 3`, `versionName = "0.1.2"`.
+- `scripts/release_contract.json`: `android.current_version_code = 3`, `android.current_version_name = "0.1.2"`. Target identity (`target_version_code = 3`, `target_version_name = "0.1.2"`) is unchanged and is now identical to the current identity.
+- Phase 5 — Integration & Device Validation — remains the current lifecycle phase and remains `Planned`.
+- Phase 5 device evidence is `NOT_YET_PERFORMED`.
+- No Phase 5B commit, push, exact-head CI run, or staging action is claimed here. Phase 5 is **not** marked `Complete` by this candidate.
 
 ## Background
 
@@ -72,9 +82,10 @@ phase for v0.1.2 at the time this charter is first created.
   `NOT_SATISFIED`. Accepted chronology: Phase 4A accepted with
   maintainer refinements; Phase 4B ReminderScreen accepted; Phase 4C
   MainActivity integration accepted; Phase 4D integration audit
-  accepted with blocking defects `NONE`. Phase 5 — Integration & Device
-  Validation — is now the current lifecycle phase, remains `Planned`,
-  and its implementation has not started.
+   accepted with blocking defects `NONE`. At the Phase 4 closure
+   boundary, Phase 5 — Integration & Device Validation — was the
+   current lifecycle phase, remained `Planned`, and its
+   implementation had not started.
 
 Persistence technology is not yet frozen at Phase 0. Its selection requires
 later architecture evidence and must remain within the no-new-component /

@@ -1261,20 +1261,20 @@ class AndroidContractNegativeTests(unittest.TestCase):
                 )
 
     def test_current_app_version_name_mismatch_fails_release_contract(self) -> None:
-        """B5F2 row 19: when the temporary fixture's
-        ``app/build.gradle.kts`` is intentionally overwritten so that
-        the current ``versionName`` line changes from ``"0.1.1"`` to
-        the premature future ``"0.1.2"`` while every other Gradle
-        contract-derived field remains valid, the real
+        """B5F2 row 19 (release-neutral): the negative test must
+        exercise a versionName mismatch without assuming any specific
+        ``versionName`` value as the permanent repository baseline.
+        The test reads the temporary fixture's current valid
+        ``versionName`` line from the fixture itself and replaces it
+        with a clearly different mismatch value while every other
+        Gradle contract-derived field remains valid. The real
         ``_load_release_contract`` must return ``None`` and set
         ``_CONTRACT_ERROR`` to the exact concise production reason
-        ``app/build.gradle.kts does not match contract: ['versionName']``.
-        The test asserts the message identifies ``versionName`` and
-        does NOT identify ``versionCode``, isolating the row 19
-        contradiction to the current versionName. The temporary
-        ``"0.1.2"`` value is used only as invalid Phase 5D boundary
-        test input; the real ``app/build.gradle.kts`` is not modified.
-        No production code is changed."""
+        identifying ``versionName``. The test asserts the message
+        identifies ``versionName`` and does NOT identify
+        ``versionCode``, isolating the row 19 contradiction to the
+        current versionName. The real ``app/build.gradle.kts`` is not
+        modified. No production code is changed."""
         with tempfile.TemporaryDirectory() as td:
             repo = Path(td)
             contract_path = _helpers.create_consistency_fixture(
@@ -1285,11 +1285,22 @@ class AndroidContractNegativeTests(unittest.TestCase):
             )
             gradle = repo / "app" / "build.gradle.kts"
             gradle_text = gradle.read_text(encoding="utf-8")
-            self.assertIn('versionName = "0.1.1"', gradle_text)
-            bad_gradle = gradle_text.replace(
-                'versionName = "0.1.1"',
-                'versionName = "0.1.2"',
-                1,
+            prefix = 'versionName = "'
+            start = gradle_text.find(prefix)
+            self.assertNotEqual(
+                start, -1,
+                "fixture should contain a versionName declaration",
+            )
+            value_start = start + len(prefix)
+            end = gradle_text.find('"', value_start)
+            self.assertNotEqual(
+                end, -1,
+                "fixture versionName should be a quoted value",
+            )
+            bad_gradle = (
+                gradle_text[:value_start]
+                + "INVALID-MISMATCH"
+                + gradle_text[end:]
             )
             gradle.write_text(bad_gradle, encoding="utf-8")
             with _helpers.patched_repo_and_contract(repo, contract_path):
