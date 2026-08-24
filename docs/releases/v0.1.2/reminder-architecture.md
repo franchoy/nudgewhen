@@ -9,7 +9,9 @@ for NudgeWhen v0.1.2 by the maintainer.
 
 Scope:
 
-- This document records architecture decisions only.
+- The original Phase 1 contract content in this document records
+  architecture decisions only; later completion overlays record accepted
+  implementation outcomes from subsequent phases.
 - It is frozen at the conclusion of Phase 1 audit (1A, 1A-R1, 1A-R2) and Phase 1B
   candidate authoring.
 - It does not implement reminder functionality.
@@ -18,8 +20,11 @@ Scope:
 - Implementation of the architecture described here belongs to Phase 2 and
   later phases and is not part of this candidate.
 
-Every claim in this document is an architecture decision. No product
-functionality is described as already implemented.
+The frozen Phase 1 contract itself consists of architecture decisions and
+does not describe product functionality as already implemented. Later
+completion overlays in this document explicitly record accepted Phase 2,
+Phase 3, and Phase 4 implementation outcomes without rewriting the
+historical Phase 1 starting state.
 
 ## Existing architecture evidence
 
@@ -546,12 +551,10 @@ The reminder work for v0.1.2 is split across phases as follows.
   `Complete`. Implements `FileReminderStore` and the Phase 3 test set
   using temporary files.
 - Phase 4 — UI implementation and Compose integration:
-  current / `Planned`. Implements `ReminderScreen` and integrates with
-  `MainActivity`. This remains future Phase 4 ownership, not a claim
-  that it already exists.
-- Phase 5 — Integration & Device Validation: integrates the Phase 2
-  through Phase 4 deliverables and performs device validation work as
-  defined by the active phase list.
+  `Complete`. Implements `ReminderScreen` and integrates `MainActivity`.
+- Phase 5 — Integration & Device Validation:
+  current / `Planned`; implementation not started; owns integrated
+  / device validation as defined by the active phase list.
 - Phase 6 — Integrated Audit & Agent Evaluation: performs the integrated
   audit and agent evaluation work as defined by the active phase list.
 - Phase 7 — Full Pre-Release Gate: executes the full pre-release gate as
@@ -662,6 +665,83 @@ Those future repository actions require separate explicit maintainer
 authorization and are not recursively required inside this architecture
 document.
 
+## Phase 4 completion overlay
+
+This overlay records the later Phase 4 result and does not rewrite the
+historical Phase 1 state or the Phase 2/3 completion overlays above.
+
+Recorded Phase 4 facts:
+
+- Phase 4 minimal UI implementation completed.
+- MainActivity modified at:
+  `app/src/main/kotlin/io/github/franchoy/nudgewhen/MainActivity.kt`.
+- ReminderScreen added at:
+  `app/src/main/kotlin/io/github/franchoy/nudgewhen/ui/ReminderScreen.kt`.
+- ReminderScreen owns Compose presentation state.
+- MainActivity owns no `MutableState`.
+- MainActivity uses app-private `filesDir`.
+- Production persistence filename remains `reminders-v1.txt`.
+- MainActivity constructs `FileReminderStore`.
+- MainActivity constructs `ReminderController` with
+  `UUID.randomUUID().toString()`.
+- `ReminderController` constructor owns synchronous store restoration.
+- MainActivity does not duplicate `store.load()`.
+- ReminderScreen implements text input, create action, persisted-order
+  reminder list, and permanent remove action.
+- List order remains controller / persisted order, oldest first.
+- Empty / whitespace create does not clear input.
+- Successful create clears input only after actual controller-state
+  change.
+- Create / remove UI refresh occurs after successful controller
+  operation.
+- No `ViewModel`.
+- No `Flow`.
+- No coroutines.
+- No DI.
+- No navigation framework.
+- No new Android `Activity` / `Service` / `Receiver` / `Provider`.
+- No new Android permission.
+- No new Gradle dependency.
+- No new test dependency.
+- No validator-architecture change.
+
+Implementation commit: `05503d58416e287afd96cc1fc7c6f78df8fd2784`.
+Parent: `1e612d5c43c740f5aabfc4825992fce8ae8c7e9e`.
+Subject: `feat: add minimal reminder UI`.
+
+Exact-head implementation CI: `32739280349`, conclusion `success`.
+
+Retained Android validation: `17 / 0 / 0`.
+
+Phase 4: `Complete`.
+Phase 5: current / `Planned`.
+Phase 5 implementation: not started.
+release gate: `NOT_SATISFIED`.
+
+SOURCE-LEVEL APPLICATION INTEGRATION: `IMPLEMENTED`.
+PHASE 5 DEVICE / END-TO-END EVIDENCE: `NOT_YET_PERFORMED`.
+
+Source-level consequences:
+
+- Missing file: empty state.
+- Valid file: persisted reminders initialize controller / UI state.
+- Malformed file: persistence exception propagates during controller
+  construction.
+
+Physical-device / end-to-end restart validation remains Phase 5
+ownership. This overlay does not claim that the source-level cases
+have been physically verified through an application restart on a
+device.
+
+This overlay does not claim:
+
+- a future Phase 4 closure-synchronization commit SHA;
+- a future Phase 4 closure push;
+- a future Phase 4 closure exact-head CI.
+
+Those future repository actions require separate explicit maintainer
+authorization.
+
 ## Acceptance conditions
 
 The Phase 1 architecture candidate has been accepted. The architecture
@@ -707,7 +787,9 @@ Acceptance conditions for Phase 1 architecture closure:
 - This document exists in tracked form at the Phase 1 closure commit.
 - The frozen decisions in this document match the architecture freeze
   authorized in the Phase 1B Build task.
-- No product functionality is described as already implemented.
+- The Phase 1B architecture candidate content does not describe product
+  functionality as already implemented; later completion overlays are
+  separate subsequent-phase evidence.
 - No path outside the two authorized Phase 1B paths
   (`docs/releases/v0.1.2/reminder-architecture.md` and
   `docs/agentic-development/experiments/EXP-0036.md`) was modified by

@@ -1,6 +1,6 @@
 # Release Charter — NudgeWhen v0.1.2
 
-**Document status:** Accepted — Phases 0 through 3 complete; Phase 4 current; Phases 4 through 7 Planned.
+**Document status:** Accepted — Phases 0 through 4 Complete; Phase 5 current; Phases 5 through 7 Planned.
 **Release name:** NudgeWhen v0.1.2 — Local Reminder Foundation.
 **Version:** `v0.1.2`.
 **Current Android artifact identity:** `versionCode = 2`, `versionName = "0.1.1"`. This is the v0.1.1 identity still recorded in `app/build.gradle.kts`; v0.1.2 does not yet deliver the target metadata.
@@ -27,9 +27,9 @@ the agentic-development contracts established by v0.1.1.
 Phase 0 — Release Definition and Bootstrap — is the **current** lifecycle
 phase for v0.1.2 at the time this charter is first created.
 
-- The formal phase-list and release contract record Phases 0 through 3 as
-  `Complete`; Phases 4 through 7 remain `Planned`; Phase 4 — Minimal
-  Android Reminder UI — is the current lifecycle phase.
+- The formal phase-list and release contract record Phases 0 through 4 as
+  `Complete`; Phases 5 through 7 remain `Planned`; Phase 5 — Integration
+  & Device Validation — is the current lifecycle phase.
 - **Candidate A** is `Complete, Committed, Pushed, Exact-head CI Pass`.
   Candidate A established the release-neutral product-scope validator
   architecture and the supporting experiment evidence.
@@ -60,8 +60,21 @@ phase for v0.1.2 at the time this charter is first created.
   `c3eb1b580b744111ed3024cfbd58a8ce3113ad35`. Subject: `feat: add local reminder persistence`. Implementation exact-head CI: `32720528488`,
   conclusion `success`. Cumulative Phase 3 closure evidence: `EXP-0038`.
   JVM evidence: 56 tests, 0 failures, 0 errors, 0 skipped. Phase 4 —
-  Minimal Android Reminder UI — is the current lifecycle phase, remains
-  `Planned`, and its implementation has not started.
+  Minimal Android Reminder UI — is `Complete`. Implementation commit:
+  `05503d58416e287afd96cc1fc7c6f78df8fd2784` (parent
+  `1e612d5c43c740f5aabfc4825992fce8ae8c7e9e`, subject
+  `feat: add minimal reminder UI`). Implementation exact-head CI run:
+  `32739280349`, conclusion `success`. Exact implementation paths:
+  `app/src/main/kotlin/io/github/franchoy/nudgewhen/MainActivity.kt`
+  and
+  `app/src/main/kotlin/io/github/franchoy/nudgewhen/ui/ReminderScreen.kt`.
+  Retained Android validation: `17 / 0 / 0`; release gate remains
+  `NOT_SATISFIED`. Accepted chronology: Phase 4A accepted with
+  maintainer refinements; Phase 4B ReminderScreen accepted; Phase 4C
+  MainActivity integration accepted; Phase 4D integration audit
+  accepted with blocking defects `NONE`. Phase 5 — Integration & Device
+  Validation — is now the current lifecycle phase, remains `Planned`,
+  and its implementation has not started.
 
 Persistence technology is not yet frozen at Phase 0. Its selection requires
 later architecture evidence and must remain within the no-new-component /

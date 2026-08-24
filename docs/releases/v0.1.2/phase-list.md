@@ -1,6 +1,6 @@
 # Phase List — NudgeWhen v0.1.2
 
-**Document status:** Accepted — Phases 0 through 3 complete; Phase 4 current; Phases 4 through 7 Planned.
+**Document status:** Accepted — Phases 0 through 4 Complete; Phase 5 current; Phases 5 through 7 Planned.
 **Active release branch:** release/v0.1.2
 **Active release charter:** docs/releases/v0.1.2/release-charter.md
 
@@ -303,7 +303,7 @@ Integrate the accepted reminder domain and persistence behavior into the existin
 - Create-textual-reminder user flow.
 - Display-existing-reminders user flow.
 - Selected minimal lifecycle-ending user action.
-- Restored reminders appearing after application restart as defined by the accepted architecture.
+- Source-level startup-restoration integration from `MainActivity` through `FileReminderStore` / `ReminderController` to the visible reminder state; physical-device/end-to-end restart proof remains Phase 5 ownership.
 
 ### Exact or bounded path scope
 
@@ -331,8 +331,10 @@ Phase 4 path scope is not pre-authorized here. Concrete Phase 4 paths will be en
 
 ### Required validation
 
-- UI integration exercises create, display, and lifecycle-ending behavior.
-- Restored reminders appear after application restart as defined by the accepted architecture.
+- Source-level UI integration establishes the textual create, display/list, and permanent-remove flows against the accepted domain and persistence contracts.
+- Source-level startup-restoration integration is established through `MainActivity -> filesDir -> FileReminderStore -> ReminderController -> ReminderScreen`.
+- Android build/lint/source/merged-manifest validation remains accepted for the Phase 4 structural integration boundary.
+- Physical-device/end-to-end create/list/remove and restart-restoration evidence is explicitly deferred to Phase 5.
 - Manifest, component, and permission boundary remains satisfied.
 - Frozen release non-goals remain excluded.
 
@@ -345,13 +347,24 @@ Phase 4 path scope is not pre-authorized here. Concrete Phase 4 paths will be en
 
 ### Status
 
-Planned
+Complete
 
 ### Validation checklist
 
-- [-] NOT APPLICABLE — Phase 4 is the current lifecycle phase after the Phase 3 closure candidate; Phase 4 execution has not started and its formal status remains `Planned`.
+- [x] PASS — Phase 4A planning/audit accepted with maintainer refinements; no repository mutation was performed by the audit.
+- [x] PASS — Phase 4B `ReminderScreen` implementation accepted; Android validation `17 / 0 / 0`; `release_gate=NOT_SATISFIED`.
+- [x] PASS — Phase 4C `MainActivity` integration accepted; Android validation `17 / 0 / 0`; tracked `git diff --check` `PASS`.
+- [x] PASS — Phase 4D integration audit accepted with `BLOCKING_DEFECTS: NONE` and candidate `VALIDATED_FOR_STAGING`.
+- [x] PASS — Maintainer staged exactly the two implementation paths; `git diff --cached --check` produced no output; staged proof is `M app/src/main/kotlin/io/github/franchoy/nudgewhen/MainActivity.kt` and `A app/src/main/kotlin/io/github/franchoy/nudgewhen/ui/ReminderScreen.kt`.
+- [x] PASS — Phase 4 implementation commit `05503d58416e287afd96cc1fc7c6f78df8fd2784`, parent `1e612d5c43c740f5aabfc4825992fce8ae8c7e9e`, subject `feat: add minimal reminder UI` on `release/v0.1.2`.
+- [x] PASS — Exact-head implementation CI run `32739280349` (workflow `CI`, event `push`, branch `release/v0.1.2`, head `05503d58416e287afd96cc1fc7c6f78df8fd2784`, conclusion `success`, required `validate` job `success`) completed successfully.
+- [x] PASS — This formal closure candidate marks Phase 4 `Complete` and advances Phase 5 — Integration & Device Validation — to the current lifecycle phase while Phase 5 remains `Planned` and implementation `NOT_STARTED`.
+- [x] PASS — Physical-device/end-to-end restart evidence is NOT claimed here and remains Phase 5 ownership.
 
 ## Phase 5 — Integration & Device Validation
+
+Phase 5 is the current lifecycle phase after the Phase 4 closure candidate;
+formal status remains `Planned` and implementation has not started.
 
 ### Objective
 
