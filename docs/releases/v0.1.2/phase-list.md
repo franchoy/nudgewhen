@@ -364,10 +364,9 @@ Complete
 ## Phase 5 — Integration & Device Validation
 
 Phase 5 is the current lifecycle phase. Formal status remains `Planned`.
-Phase 5 planning is accepted. The Phase 5B Android artifact identity
-alignment is materialized as an uncommitted candidate. Integrated local and
-device validation is not yet complete. Device and runtime evidence remains
-`NOT_YET_PERFORMED`.
+Phase 5 planning is accepted. Phase 5B Android artifact identity alignment is
+landed. Integrated local and device validation is not yet complete. Device
+and runtime evidence remains `NOT_YET_PERFORMED`.
 
 ### Objective
 
@@ -391,7 +390,7 @@ Phase 5 path scope is not pre-authorized here. Concrete Phase 5 paths will be en
 
 - Run the full local validation surface and the full Android validation surface.
 - Prove the integrated local reminder lifecycle end-to-end on the accepted device or Android evidence channel.
-- Surface the eventual v0.1.2 artifact target identity `versionCode = 3`, `versionName = "0.1.2"`. The uncommitted Phase 5B candidate delivers this identity: `app/build.gradle.kts` records `versionCode = 3`, `versionName = "0.1.2"`, and `scripts/release_contract.json` records `android.current_version_code = 3`, `android.current_version_name = "0.1.2"`. Historical Phase 0 statement (preserved): at Phase 0, the current Android artifact identity was `versionCode = 2`, `versionName = "0.1.1"`, and the target identity was not yet delivered.
+- Surface the eventual v0.1.2 artifact target identity `versionCode = 3`, `versionName = "0.1.2"`. The landed Phase 5B commit `6b16a294b3d13151baf23a239e4cf0d330a27d3e` (subject `chore: align v0.1.2 artifact identity`) delivers this identity: `app/build.gradle.kts` records `versionCode = 3`, `versionName = "0.1.2"`, and `scripts/release_contract.json` records `android.current_version_code = 3`, `android.current_version_name = "0.1.2"`. Historical Phase 0 statement (preserved): at Phase 0, the current Android artifact identity was `versionCode = 2`, `versionName = "0.1.1"`, and the target identity was not yet delivered.
 
 ### Boundaries and exclusions
 
@@ -420,18 +419,32 @@ Phase 5 path scope is not pre-authorized here. Concrete Phase 5 paths will be en
 
 Planned
 
-### Current Phase 5B candidate (Android artifact identity alignment)
+### Phase 5B — Android artifact identity alignment (landed)
 
-The uncommitted Phase 5B candidate delivers Android artifact identity alignment in source only. This is a maintainer-selected phase sequencing decision: deliver the target identity before Phase 5 device evidence, not a release-document mandate.
+PHASE_5B_ANDROID_IDENTITY_ALIGNMENT:
+LANDED
 
+The Phase 5B Android artifact identity alignment is landed in source. This is a maintainer-selected phase sequencing decision: deliver the target identity before Phase 5 device evidence, not a release-document mandate.
+
+- Commit: `6b16a294b3d13151baf23a239e4cf0d330a27d3e`.
+- Parent: `ed9ad96bebca79bf0f361ce165c133bde490a61b`.
+- Subject: `chore: align v0.1.2 artifact identity`.
+- Commit path set: exactly six paths — `app/build.gradle.kts`, `docs/agentic-development/experiments/EXP-0040.md`, `docs/releases/v0.1.2/phase-list.md`, `docs/releases/v0.1.2/release-charter.md`, `scripts/release_contract.json`, `tests/test_validator_repository.py`.
+- Push: `PASS`.
+- Remote exact SHA: `6b16a294b3d13151baf23a239e4cf0d330a27d3e`.
+- Exact-head CI run: `32756426800` (workflow `CI`, event `push`, branch `release/v0.1.2`, head `6b16a294b3d13151baf23a239e4cf0d330a27d3e`, conclusion `success`, required `validate` job `success`).
+- Debug APK: produced.
+- Android identity delivered: `versionCode = 3`, `versionName = "0.1.2"` (identity `3 / 0.1.2`).
 - `app/build.gradle.kts`: `versionCode = 3`, `versionName = "0.1.2"`.
 - `scripts/release_contract.json`: `android.current_version_code = 3`, `android.current_version_name = "0.1.2"`. Target identity (`target_version_code = 3`, `target_version_name = "0.1.2"`) is unchanged and is now identical to the current identity.
 - Phase 5 remains the current lifecycle phase and remains `Planned`.
+- Integrated Phase 5 validation and device validation are not yet complete.
 - Phase 5 device/runtime evidence has not yet occurred (`NOT_YET_PERFORMED`).
 - Phase 6 — Integrated Audit & Agent Evaluation — remains `Planned`.
 - Phase 7 — Full Pre-Release Gate — remains `Planned`.
-- No Phase 5B commit, push, exact-head CI run, or staging action is claimed here.
-- Phase 5 is **not** marked `Complete` by this candidate.
+- Phase 5 Required validation remains future work.
+- Phase 5 validation checklist remains NOT APPLICABLE for formal Phase 5 completion.
+- Phase 5 is **not** marked `Complete` by this landing.
 
 The active document-status completed range remains `Phases 0 through 4 complete`; Phase 5 is still `Planned`.
 
