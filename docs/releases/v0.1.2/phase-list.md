@@ -1,6 +1,6 @@
 # Phase List — NudgeWhen v0.1.2
 
-**Document status:** Accepted — Phases 0 through 2 complete; Phase 3 current; Phases 3 through 7 Planned.
+**Document status:** Accepted — Phases 0 through 3 complete; Phase 4 current; Phases 4 through 7 Planned.
 **Active release branch:** release/v0.1.2
 **Active release charter:** docs/releases/v0.1.2/release-charter.md
 
@@ -281,11 +281,16 @@ Phase 3 path scope is not pre-authorized here. Concrete Phase 3 paths will be en
 
 ### Status
 
-Planned
+Complete
 
 ### Validation checklist
 
-- [-] NOT APPLICABLE — Phase execution and completion evidence have not yet been performed; phase status remains `Planned`. Phase 3 is the current lifecycle phase after Phase 2 closure, but execution has not started.
+- [x] PASS — Phase 3 implementation commit `c3eb1b580b744111ed3024cfbd58a8ce3113ad35`, parent `31f9e255b0b3be56c08fb6c4bd4bf13271463d2b`, subject `feat: add local reminder persistence`, delivered exactly `FileReminderStore.kt` and `FileReminderStoreTest.kt`.
+- [x] PASS — The Phase 3 persistence implementation delivers the frozen FileReminderStore contract and 29 deterministic persistence tests `P3_01` through `P3_29`; combined JVM evidence is `56 tests / 0 failures / 0 errors / 0 skipped`.
+- [x] PASS — Accepted retained validation is Python validator `100 tests / OK`, required `11/0/0`, docs `11/0/0`, android offline `17/0/0`, and `release_gate=NOT_SATISFIED`.
+- [x] PASS — Exact-head implementation CI run `32720528488` on `release/v0.1.2` at `c3eb1b580b744111ed3024cfbd58a8ce3113ad35` completed successfully.
+- [x] PASS — Phase 3B-R1 corrected only the false CR/UTF-8 source comment; executable persistence semantics and tests were unchanged.
+- [x] PASS — This formal closure candidate marks Phase 3 `Complete` and advances Phase 4 — Minimal Android Reminder UI — to the current lifecycle phase while Phase 4 remains `Planned`; Phase 4 implementation has not started.
 
 ## Phase 4 — Minimal Android Reminder UI
 
@@ -344,7 +349,7 @@ Planned
 
 ### Validation checklist
 
-- [-] NOT APPLICABLE — Phase execution and completion evidence have not yet been performed; phase status remains `Planned`.
+- [-] NOT APPLICABLE — Phase 4 is the current lifecycle phase after the Phase 3 closure candidate; Phase 4 execution has not started and its formal status remains `Planned`.
 
 ## Phase 5 — Integration & Device Validation
 

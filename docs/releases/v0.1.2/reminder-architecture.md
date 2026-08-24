@@ -542,11 +542,13 @@ The reminder work for v0.1.2 is split across phases as follows.
 - Phase 2 — Reminder Domain Core (`Complete`):
   implements `Reminder`, `ReminderController`, and the Phase 2 test set
   using the test-library dependency selected and authorized in Phase 2.
-- Phase 3 — Local Persistence implementation and round-trip tests (current; `Planned`):
-  implements `FileReminderStore` and the Phase 3 test set using temporary
-  files.
+- Phase 3 — Local Persistence implementation and round-trip tests:
+  `Complete`. Implements `FileReminderStore` and the Phase 3 test set
+  using temporary files.
 - Phase 4 — UI implementation and Compose integration:
-  implements `ReminderScreen` and integrates with `MainActivity`.
+  current / `Planned`. Implements `ReminderScreen` and integrates with
+  `MainActivity`. This remains future Phase 4 ownership, not a claim
+  that it already exists.
 - Phase 5 — Integration & Device Validation: integrates the Phase 2
   through Phase 4 deliverables and performs device validation work as
   defined by the active phase list.
@@ -598,6 +600,67 @@ Recorded Phase 2 outcome:
 - This overlay does not claim the future Phase 2 closure-synchronization
   commit SHA, push, or exact-head CI; those future repository actions
   require separate maintainer authorization.
+
+## Phase 3 completion overlay
+
+This overlay records the later Phase 3 implementation result and does not
+rewrite the historical Phase 1 starting state or the Phase 2 completion
+overlay above.
+
+Recorded Phase 3 facts:
+
+- Phase 3 persistence implementation completed.
+- Production path:
+  `app/src/main/kotlin/io/github/franchoy/nudgewhen/data/FileReminderStore.kt`.
+- Persistence test path:
+  `app/src/test/kotlin/io/github/franchoy/nudgewhen/data/FileReminderStoreTest.kt`.
+- `FileReminderStore` implements `ReminderStore`.
+- Constructor receives `java.io.File`.
+- Domain/controller/store remain Android-framework independent.
+- Standard Java/Kotlin runtime file APIs only.
+- No production persistence dependency.
+- Persistence format: file `reminders-v1.txt`; UTF-8; exact marker `NWR1`;
+  Base64URL reminder text.
+- Persisted reminder order preserved.
+- 29 new persistence tests: `P3_01` through `P3_29`.
+- Combined JVM evidence: 56 tests / 0 failures / 0 errors / 0 skipped.
+- Implementation commit:
+  `c3eb1b580b744111ed3024cfbd58a8ce3113ad35`.
+- Parent: `31f9e255b0b3be56c08fb6c4bd4bf13271463d2b`.
+- Subject: `feat: add local reminder persistence`.
+- Exact-head implementation CI: `32720528488`, conclusion `success`.
+- Phase 3B-R1: comment-only source-truth correction; executable persistence
+  semantics unchanged; tests unchanged.
+- Phase 3: `Complete`.
+- Phase 4: current / `Planned`.
+- Phase 4 implementation: not started.
+- release gate: `NOT_SATISFIED`.
+
+The JVM evidence above proves:
+
+- persistence round-trip;
+- persisted ordering;
+- removal persistence at the store/domain boundary;
+- restoration through a newly constructed `FileReminderStore` and
+  controller.
+
+This JVM-level proof is distinct from application integration. The overlay
+explicitly does NOT claim:
+
+- `MainActivity` wiring to `FileReminderStore`;
+- application-startup restore through `MainActivity`;
+- `ReminderScreen` implementation;
+- complete user-facing reminder lifecycle.
+
+The overlay also does NOT claim:
+
+- the future Phase 3 closure-synchronization commit SHA;
+- a future Phase 3 closure push;
+- a future Phase 3 closure exact-head CI.
+
+Those future repository actions require separate explicit maintainer
+authorization and are not recursively required inside this architecture
+document.
 
 ## Acceptance conditions
 

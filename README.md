@@ -4,7 +4,7 @@ NudgeWhen is an early-stage experimental open-source project exploring a voice-f
 
 ## Project status
 
-NudgeWhen is currently in the `v0.1.2` release train, **Local Reminder Foundation**, on the single branch `release/v0.1.2`. Phase 0 — Release Definition & Bootstrap — is `Complete`. Phase 1 — Reminder Architecture Contract — is `Complete`; its architecture repository boundary is closed. Phase 2 — Reminder Domain Core — is `Complete`. Phase 3 — Local Persistence — is the current lifecycle phase with formal status `Planned`; its implementation has not started. The previous `v0.1.1` release is complete and historical.
+NudgeWhen is currently in the `v0.1.2` release train, **Local Reminder Foundation**, on the single branch `release/v0.1.2`. Phase 0 — Release Definition & Bootstrap — is `Complete`. Phase 1 — Reminder Architecture Contract — is `Complete`. Phase 2 — Reminder Domain Core — is `Complete`. Phase 3 — Local Persistence — is `Complete`. Phase 4 — Minimal Android Reminder UI — is the current lifecycle phase with formal status `Planned`; its implementation has not started. The previous `v0.1.1` release is complete and historical.
 
 ## What exists now
 
@@ -22,14 +22,16 @@ NudgeWhen is currently in the `v0.1.2` release train, **Local Reminder Foundatio
 - Historical `v0.1.0` release evidence, including the published GitHub `v0.1.0` release and the v0.1.0 release documentation under `docs/releases/v0.1.0/`.
 - A locally generated debug APK at `app/build/outputs/apk/debug/app-debug.apk` (ignored and not committed).
 - The accepted Phase 2 reminder domain core: a deterministic `Reminder` model, a `ReminderStore` interface, a `ReminderController`, and deterministic JVM tests for the domain core under `app/src/test/kotlin/...`. JUnit 4.13.2 is the Phase 2 test-only dependency. The existing `android` validation group now runs `:app:testDebugUnitTest`; no new validation group was added.
+- The accepted Phase 3 local persistence layer: a `FileReminderStore` production implementation belonging to the local persistence layer; deterministic persistence JVM tests; persistence round-trip proven; persisted ordering proven; removal persistence proven at the store/domain boundary; restoration proven using a newly constructed `FileReminderStore`/`ReminderController` in JVM evidence; combined JVM total of 56 tests, 0 failures, 0 errors, and 0 skipped.
 
 ## What still does not exist
 
 The following functionality does not yet exist in the current repository state:
 
-- FileReminderStore / local persistence implementation and the related restore-after-restart behavior.
-- The Compose reminder UI surface (`ReminderScreen`) and its integration with `MainActivity`.
-- A complete user-facing reminder lifecycle wired through the application.
+- The Compose reminder UI surface (`ReminderScreen`).
+- `MainActivity` wiring to `FileReminderStore`.
+- Application-startup restoration of reminders through `MainActivity`.
+- A complete user-facing reminder lifecycle.
 - Scheduling, contextual-list, or checklist functionality.
 - Notification functionality.
 - Voice or speech functionality.
@@ -40,7 +42,7 @@ The following functionality does not yet exist in the current repository state:
 - Analytics or telemetry.
 - A production-readiness, stability, security, or compatibility guarantee.
 
-`v0.1.2` — **Local Reminder Foundation** — authorizes reminder and local-persistence functionality for this release. The Phase 2 reminder domain core is implemented; local persistence, restore-after-restart behavior, the Compose reminder UI, and a complete user-facing reminder lifecycle remain unimplemented. Voice or speech, notifications, time scheduling or alarms, location or geofencing, contextual or device-state triggers, background execution, application networking or sync, analytics or telemetry, additional Android activities/services/receivers/providers, new Android permissions, and production-readiness guarantees remain explicit release non-goals.
+`v0.1.2` — **Local Reminder Foundation** — authorizes reminder and local-persistence functionality for this release. The Phase 2 reminder domain core is implemented; the Phase 3 local persistence layer is implemented; restore is proven at the store/domain JVM boundary. The Compose `ReminderScreen`, `MainActivity` wiring to `FileReminderStore`, application-startup restoration of reminders through `MainActivity`, and the complete user-facing reminder lifecycle remain unimplemented. Voice or speech, notifications, time scheduling or alarms, location or geofencing, contextual or device-state triggers, background execution, application networking or sync, analytics or telemetry, additional Android activities/services/receivers/providers, new Android permissions, and production-readiness guarantees remain explicit release non-goals.
 
 ## Long-term design intentions
 
@@ -50,7 +52,7 @@ The long-term design intentions for NudgeWhen, presented as goals rather than im
 - **Local-first.** Work offline by default. User data stays on the device unless the user explicitly opts into a sync mechanism.
 - **Contextual reminders.** Let reminders be triggered by context (time, location, device state, or other signals) rather than by manual checks.
 
-These are long-term goals. None of them is implemented in the current state of the repository.
+These are long-term goals. Voice-first capture and contextual-reminder behavior remain future goals. Local-first behavior is now partially implemented through the local `FileReminderStore` and deterministic persistence evidence, but the complete user-facing local reminder lifecycle is not yet implemented.
 
 ## Agentic-development experiment
 
@@ -73,7 +75,7 @@ The project follows a phased release train on the single branch `release/vX.Y.Z`
 
 Historical `v0.1.1` was the documentation, governance, validation, CI, supply-chain, workspace-hygiene, and release-metadata hardening release that followed the v0.1.0 baseline.
 
-The active `v0.1.2` release is **Local Reminder Foundation**. Phase 0 — Release Definition & Bootstrap — is `Complete`. Phase 1 — Reminder Architecture Contract — is `Complete`; its architecture repository boundary is closed. Phase 2 — Reminder Domain Core — is `Complete`. Phase 3 — Local Persistence — is the current lifecycle phase with formal status `Planned`; its implementation has not started.
+The active `v0.1.2` release is **Local Reminder Foundation**. Phase 0 — Release Definition & Bootstrap — is `Complete`. Phase 1 — Reminder Architecture Contract — is `Complete`. Phase 2 — Reminder Domain Core — is `Complete`. Phase 3 — Local Persistence — is `Complete`. Phase 4 — Minimal Android Reminder UI — is the current lifecycle phase with formal status `Planned`; its implementation has not started.
 
 No delivery dates or completion promises are made.
 
