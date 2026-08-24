@@ -1,6 +1,6 @@
 # Release Charter — NudgeWhen v0.1.2
 
-**Document status:** Accepted — Phases 0 through 4 Complete; Phase 5 current; Phases 5 through 7 Planned.
+**Document status:** Accepted — Phases 0 through 4 complete; Phase 5 current; Phases 5 through 7 Planned.
 **Release name:** NudgeWhen v0.1.2 — Local Reminder Foundation.
 **Version:** `v0.1.2`.
 **Current Android artifact identity:** `versionCode = 2`, `versionName = "0.1.1"`. This is the v0.1.1 identity still recorded in `app/build.gradle.kts`; v0.1.2 does not yet deliver the target metadata.
