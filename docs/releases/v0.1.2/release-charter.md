@@ -1,6 +1,6 @@
 # Release Charter — NudgeWhen v0.1.2
 
-**Document status:** Accepted — Phases 0 through 1 complete; Phase 2 current; Phases 2 through 7 Planned.
+**Document status:** Accepted — Phases 0 through 2 complete; Phase 3 current; Phases 3 through 7 Planned.
 **Release name:** NudgeWhen v0.1.2 — Local Reminder Foundation.
 **Version:** `v0.1.2`.
 **Current Android artifact identity:** `versionCode = 2`, `versionName = "0.1.1"`. This is the v0.1.1 identity still recorded in `app/build.gradle.kts`; v0.1.2 does not yet deliver the target metadata.
@@ -27,9 +27,9 @@ the agentic-development contracts established by v0.1.1.
 Phase 0 — Release Definition and Bootstrap — is the **current** lifecycle
 phase for v0.1.2 at the time this charter is first created.
 
-- The formal phase-list and release contract record Phase 0 and Phase 1 as
-  `Complete`; Phases 2 through 7 remain `Planned`, with Phase 2 — Reminder
-  Domain Core — the current lifecycle phase.
+- The formal phase-list and release contract record Phases 0 through 2 as
+  `Complete`; Phases 3 through 7 remain `Planned`; Phase 3 — Local
+  Persistence — is the current lifecycle phase.
 - **Candidate A** is `Complete, Committed, Pushed, Exact-head CI Pass`.
   Candidate A established the release-neutral product-scope validator
   architecture and the supporting experiment evidence.
@@ -48,8 +48,16 @@ phase for v0.1.2 at the time this charter is first created.
   is formally `Complete` in this charter after acceptance of the Phase 1
   architecture contract, the architecture commit push, and the exact-head
   CI evidence; the formal Phase 1 closure synchronization now marks
-  Phase 1 `Complete`. Phase 2 — Reminder Domain Core — is the current
-  lifecycle phase, remains `Planned`, and its implementation has not started.
+  Phase 1 `Complete`. Phase 2 — Reminder Domain Core — is `Complete`
+  after acceptance of the Phase 2 domain-core commit
+  `6781bccacb5324dde854a5001a939754bb309165` (`feat: add reminder domain core`,
+  exact-head CI run `32708073861`, conclusion `success`), the Phase 2
+  validator-integration commit
+  `ba6a581f00ad2d5d4f550f95e6ccfa5da716825f` (`test: integrate reminder JVM
+  tests into validator`, exact-head CI run `32711898852`, conclusion
+  `success`), and the cumulative `EXP-0037` evidence. Phase 3 — Local
+  Persistence — is the current lifecycle phase, remains `Planned`, and
+  its implementation has not started.
 
 Persistence technology is not yet frozen at Phase 0. Its selection requires
 later architecture evidence and must remain within the no-new-component /
@@ -103,9 +111,9 @@ phase model, experiment-protocol evidence discipline, the
 validator — to deliver the v0.1.2 product scope. No new Android permissions or additional Android components are introduced
 by the frozen release boundary. Phase 1 has frozen v0.1.2 persistence
 technology as a single app-private file using standard Java/Kotlin
-runtime file APIs with no production persistence dependency. The exact
-Kotlin/JVM test-library dependency remains unselected and is owned by
-Phase 2. Any new helper, plugin, runtime guard, or other agentic-development
+runtime file APIs with no production persistence dependency. Phase 2
+selected JUnit 4.13.2 as the test-only JVM test dependency. Any new
+helper, plugin, runtime guard, or other agentic-development
 mechanism requires independent evidence and explicit scope.
 
 ## In-scope deliverables
@@ -126,8 +134,8 @@ v0.1.2 may add, in the order addressed by the phase list:
 Phase 1 has frozen v0.1.2 persistence technology as a single app-private
 file using standard Java/Kotlin runtime file APIs, with no production
 persistence dependency. This frozen persistence technology remains within
-the no-new-component / no-new-permission boundary. The exact Kotlin/JVM
-test-library dependency is owned by Phase 2 and is not selected here.
+the no-new-component / no-new-permission boundary. Phase 2 selected
+JUnit 4.13.2 as the test-only JVM test dependency.
 
 ## Explicit non-goals
 

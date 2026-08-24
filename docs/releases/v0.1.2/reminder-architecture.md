@@ -539,10 +539,10 @@ The reminder work for v0.1.2 is split across phases as follows.
 
 - Phase 1 — Reminder Architecture Contract (`Complete`):
   this document is the deliverable. No product code is produced.
-- Phase 2 — Reminder Domain Core (current; `Planned`):
+- Phase 2 — Reminder Domain Core (`Complete`):
   implements `Reminder`, `ReminderController`, and the Phase 2 test set
   using the test-library dependency selected and authorized in Phase 2.
-- Phase 3 — Persistence implementation and round-trip tests:
+- Phase 3 — Local Persistence implementation and round-trip tests (current; `Planned`):
   implements `FileReminderStore` and the Phase 3 test set using temporary
   files.
 - Phase 4 — UI implementation and Compose integration:
@@ -564,6 +564,40 @@ itself is not described as release publication.
 Phase ownership of validator evolution is recorded under the validator and
 CI follow-up boundary above. The validator change is not part of Phase 1B
 and is owned by a later, separately authorized phase.
+
+## Phase 2 completion overlay
+
+This overlay distinguishes the later Phase 2 result from the historical
+Phase 1 starting state recorded earlier in this document. The earlier
+"Existing architecture evidence" section continues to describe the
+historical Phase 1B starting HEAD and is preserved unchanged.
+
+Recorded Phase 2 outcome:
+
+- Phase 2 domain implementation completed.
+- JUnit 4.13.2 was selected as the Phase 2 test-only JVM test
+  dependency; no production persistence dependency was added.
+- Ordinary JVM tests now exist under `app/src/test/kotlin/...`.
+- The required validator follow-up that Phase 1 designated as a later,
+  separately authorized action has occurred: the existing `android`
+  validation now executes `:app:testDebugUnitTest`.
+- No new validation group was added.
+- Domain-core commit: `6781bccacb5324dde854a5001a939754bb309165`
+  (subject `feat: add reminder domain core`, parent
+  `c1dc3a5c94cf4116cf81d4b404694e3e4bf28a7a`).
+- Validator-integration commit:
+  `ba6a581f00ad2d5d4f550f95e6ccfa5da716825f`
+  (subject `test: integrate reminder JVM tests into validator`, parent
+  `6781bccacb5324dde854a5001a939754bb309165`).
+- Domain-core exact-head CI run: `32708073861` (conclusion `success`).
+- Validator exact-head CI run: `32711898852` (conclusion `success`).
+- Phase 2 is `Complete`.
+- Phase 3 is current / `Planned`.
+- Phase 3 implementation has not started.
+- The release gate remains `NOT_SATISFIED`.
+- This overlay does not claim the future Phase 2 closure-synchronization
+  commit SHA, push, or exact-head CI; those future repository actions
+  require separate maintainer authorization.
 
 ## Acceptance conditions
 

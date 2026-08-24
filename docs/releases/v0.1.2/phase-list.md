@@ -1,6 +1,6 @@
 # Phase List — NudgeWhen v0.1.2
 
-**Document status:** Accepted — Phases 0 through 1 complete; Phase 2 current; Phases 2 through 7 Planned.
+**Document status:** Accepted — Phases 0 through 2 complete; Phase 3 current; Phases 3 through 7 Planned.
 **Active release branch:** release/v0.1.2
 **Active release charter:** docs/releases/v0.1.2/release-charter.md
 
@@ -220,11 +220,17 @@ Phase 2 path scope is not pre-authorized here. Concrete Phase 2 paths will be en
 
 ### Status
 
-Planned
+Complete
 
 ### Validation checklist
 
-- [-] NOT APPLICABLE — Phase execution and completion evidence have not yet been performed; phase status remains `Planned`.
+- [x] PASS — Accepted Phase 2 domain core: commit `6781bccacb5324dde854a5001a939754bb309165`, parent `c1dc3a5c94cf4116cf81d4b404694e3e4bf28a7a`, subject `feat: add reminder domain core` directly modified the Phase 2 reminder-domain paths on `release/v0.1.2`.
+- [x] PASS — Accepted Phase 2 domain-core evidence: `Reminder`, `ReminderStore`, `ReminderController`; JUnit 4.13.2 selected as the Phase 2 test-only dependency; 2 `Reminder` tests; 25 `ReminderController` tests; 27 JVM tests total; 0 skipped; 0 failures; 0 errors.
+- [x] PASS — Domain-core exact-head CI run `32708073861` (workflow `CI`, event `push`, branch `release/v0.1.2`, head SHA `6781bccacb5324dde854a5001a939754bb309165`, conclusion `success`) completed successfully.
+- [x] PASS — Accepted validator integration: commit `ba6a581f00ad2d5d4f550f95e6ccfa5da716825f`, parent `6781bccacb5324dde854a5001a939754bb309165`, subject `test: integrate reminder JVM tests into validator`. The existing `android` validation group was retained; no new validation group was added; the `android/jvm-tests` check executes the separate Gradle task `:app:testDebugUnitTest` in the order `gradle-projects -> jvm-tests -> gradle-build`; a JVM failure short-circuits the later build/APK/manifest checks.
+- [x] PASS — Validator exact-head CI run `32711898852` (workflow `CI`, event `push`, branch `release/v0.1.2`, head SHA `ba6a581f00ad2d5d4f550f95e6ccfa5da716825f`, conclusion `success`) completed successfully.
+- [x] PASS — Accepted validator evidence: Python validator regression `100 tests / OK`; required group `11/0/0`; docs group `11/0/0`; android offline group `17/0/0`; `release_gate=NOT_SATISFIED`.
+- [x] PASS — Formal Phase 2 closure synchronization: Phase 2 is `Complete`; Phase 3 — Local Persistence — is the current lifecycle phase and remains `Planned`; Phase 3 implementation has not started.
 
 ## Phase 3 — Local Persistence
 
@@ -279,7 +285,7 @@ Planned
 
 ### Validation checklist
 
-- [-] NOT APPLICABLE — Phase execution and completion evidence have not yet been performed; phase status remains `Planned`.
+- [-] NOT APPLICABLE — Phase execution and completion evidence have not yet been performed; phase status remains `Planned`. Phase 3 is the current lifecycle phase after Phase 2 closure, but execution has not started.
 
 ## Phase 4 — Minimal Android Reminder UI
 
