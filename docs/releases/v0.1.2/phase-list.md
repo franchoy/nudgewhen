@@ -1,6 +1,6 @@
 # Phase List — NudgeWhen v0.1.2
 
-**Document status:** Accepted — Phases 0 through 4 complete; Phase 5 current; Phases 5 through 7 Planned.
+**Document status:** Accepted — Phases 0 through 5 complete; Phase 6 current; Phases 6 through 7 Planned.
 **Active release branch:** release/v0.1.2
 **Active release charter:** docs/releases/v0.1.2/release-charter.md
 
@@ -363,10 +363,10 @@ Complete
 
 ## Phase 5 — Integration & Device Validation
 
-Phase 5 is the current lifecycle phase. Formal status remains `Planned`.
-Phase 5 planning is accepted. Phase 5B Android artifact identity alignment is
-landed. Integrated local and device validation is not yet complete. Device
-and runtime evidence remains `NOT_YET_PERFORMED`.
+Phase 5 is `Complete`. Phase 5B Android artifact identity alignment is
+landed (historical). Phase 5C exact-head integrated local validation is
+accepted. Phase 5D-R8 one-device runtime acceptance is accepted on one
+physical `PA2310GBB` running Android 13 (`ONE_PHYSICAL_DEVICE_ONLY`).
 
 ### Objective
 
@@ -417,14 +417,14 @@ Phase 5 path scope is not pre-authorized here. Concrete Phase 5 paths will be en
 
 ### Status
 
-Planned
+Complete
 
-### Phase 5B — Android artifact identity alignment (landed)
+### Phase 5B — Android artifact identity alignment (landed — historical)
 
 PHASE_5B_ANDROID_IDENTITY_ALIGNMENT:
 LANDED
 
-The Phase 5B Android artifact identity alignment is landed in source. This is a maintainer-selected phase sequencing decision: deliver the target identity before Phase 5 device evidence, not a release-document mandate.
+The Phase 5B Android artifact identity alignment is landed in source. This is a maintainer-selected phase sequencing decision: deliver the target identity before Phase 5 device evidence, not a release-document mandate. This is recorded here as historical Phase 5B landing evidence; the current Phase 5 completion state is recorded above.
 
 - Commit: `6b16a294b3d13151baf23a239e4cf0d330a27d3e`.
 - Parent: `ed9ad96bebca79bf0f361ce165c133bde490a61b`.
@@ -437,22 +437,66 @@ The Phase 5B Android artifact identity alignment is landed in source. This is a 
 - Android identity delivered: `versionCode = 3`, `versionName = "0.1.2"` (identity `3 / 0.1.2`).
 - `app/build.gradle.kts`: `versionCode = 3`, `versionName = "0.1.2"`.
 - `scripts/release_contract.json`: `android.current_version_code = 3`, `android.current_version_name = "0.1.2"`. Target identity (`target_version_code = 3`, `target_version_name = "0.1.2"`) is unchanged and is now identical to the current identity.
-- Phase 5 remains the current lifecycle phase and remains `Planned`.
-- Integrated Phase 5 validation and device validation are not yet complete.
-- Phase 5 device/runtime evidence has not yet occurred (`NOT_YET_PERFORMED`).
-- Phase 6 — Integrated Audit & Agent Evaluation — remains `Planned`.
-- Phase 7 — Full Pre-Release Gate — remains `Planned`.
-- Phase 5 Required validation remains future work.
-- Phase 5 validation checklist remains NOT APPLICABLE for formal Phase 5 completion.
-- Phase 5 is **not** marked `Complete` by this landing.
 
-The active document-status completed range remains `Phases 0 through 4 complete`; Phase 5 is still `Planned`.
+At the time of the Phase 5B landing, the following state applied and is preserved here as historical evidence:
+
+- Phase 5 was the current lifecycle phase and remained `Planned`.
+- Integrated Phase 5 validation and device validation were not yet complete.
+- Phase 5 device/runtime evidence had not yet occurred (`NOT_YET_PERFORMED`).
+- Phase 6 — Integrated Audit & Agent Evaluation — remained `Planned`.
+- Phase 7 — Full Pre-Release Gate — remained `Planned`.
+- Phase 5 was **not** marked `Complete` by the Phase 5B landing.
+
+The active document-status completed range at the time of the Phase 5B landing was `Phases 0 through 4 complete`; Phase 5 was still `Planned`.
+
+### Phase 5C — exact-head integrated local validation
+
+Phase 5C exact-head integrated local validation is accepted.
+
+- Validated HEAD: `e6a10bde87aa5841c5669d91512d7040089b100a`.
+- Branch: `release/v0.1.2`.
+- Android identity: `versionCode = 3`, `versionName = "0.1.2"`.
+- Python validator suites: `Ran 100 tests`, `OK`.
+- `required` group: `SUMMARY pass=11 fail=0 skip=0`.
+- `docs` group: `SUMMARY pass=11 fail=0 skip=0`.
+- Full offline: `SUMMARY pass=39 fail=0 skip=0`; `release_gate=SATISFIED`.
+- Final repository proof at Phase 5C acceptance: HEAD `e6a10bde87aa5841c5669d91512d7040089b100a`; worktree clean; index empty; tracked `git diff --check` produced no output.
+- The OpenCode tool did not directly surface a numeric Python command exit status; the unittest `OK` output is the accepted success evidence.
+
+### Phase 5D — physical-device runtime acceptance
+
+Phase 5D one-device runtime acceptance is accepted as R8 on one physical device.
+
+- Accepted attempt: `Phase 5D-R8`.
+- Branch: `release/v0.1.2`.
+- HEAD: `e6a10bde87aa5841c5669d91512d7040089b100a`.
+- Device model: `PA2310GBB`.
+- Android version: `13`.
+- Evidence scope: `ONE_PHYSICAL_DEVICE_ONLY`.
+- Pre-reinstall installed identity: `versionCode=3`, `versionName=0.1.2`.
+- Installation method: `adb install -r app/build/outputs/apk/debug/app-debug.apk` → `Success`.
+- Post-reinstall installed identity: `versionCode=3`, `versionName=0.1.2`.
+- Clean-first-launch setup: `adb shell pm clear io.github.franchoy.nudgewhen` → `Success`.
+
+Runtime checkpoints P5-01 through P5-07: `PASS`.
+
+P5-08: `DEVICE_PROOF_NOT_REQUIRED`. Retained deterministic Phase 3 JVM persistence evidence already covers malformed-file rejection; device-side malformed persistence injection and detailed recovery UX are outside the v0.1.2 Phase 5 acceptance contract.
+
+The Phase 5D device evidence is scoped to `PA2310GBB / Android 13` and `ONE_PHYSICAL_DEVICE_ONLY`. It is **not** a general Android compatibility statement. It is **not** a production-readiness statement.
 
 ### Validation checklist
 
-- [-] NOT APPLICABLE — Phase execution and completion evidence have not yet been performed; phase status remains `Planned`.
+- [x] PASS — Phase 5B Android artifact identity alignment landed (commit `6b16a294b3d13151baf23a239e4cf0d330a27d3e`, exact-head CI `32756426800`, conclusion `success`); Android identity delivered as `versionCode = 3`, `versionName = "0.1.2"`.
+- [x] PASS — Phase 5C exact-head integrated local validation accepted at HEAD `e6a10bde87aa5841c5669d91512d7040089b100a` (Python validator `Ran 100 tests / OK`; required `11/0/0`; docs `11/0/0`; full offline `39/0/0`; `release_gate=SATISFIED`; tracked `git diff --check` produced no output; final repository proof clean at HEAD).
+- [x] PASS — Phase 5D-R8 one-device runtime acceptance accepted on one physical `PA2310GBB` running Android 13 (`ONE_PHYSICAL_DEVICE_ONLY`); runtime checkpoints P5-01 through P5-07 `PASS`; P5-08 `DEVICE_PROOF_NOT_REQUIRED`; Android identity `3 / 0.1.2` preserved pre- and post-reinstall.
+- [x] PASS — Cumulative Phase 5 experiment evidence recorded in `EXP-0040`; historical Phase 5 chronology preserved including Phase 5C blocked attempts and Phase 5D blocked attempts through R7 before the accepted R8 run.
+- [x] PASS — This formal Phase 5 closure candidate marks Phase 5 `Complete` and advances Phase 6 — Integrated Audit & Agent Evaluation — to the current lifecycle phase while Phase 6 remains `Planned`; Phase 6 implementation has not started.
+- [x] PASS — The v0.1.2 release is **not** claimed ready, merged, tagged, or published by this Phase 5 closure.
 
 ## Phase 6 — Integrated Audit & Agent Evaluation
+
+Phase 6 is the current lifecycle phase. Formal status remains `Planned`.
+Phase 6 implementation has not started.
 
 ### Objective
 

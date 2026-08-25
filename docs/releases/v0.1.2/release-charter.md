@@ -1,31 +1,72 @@
 # Release Charter — NudgeWhen v0.1.2
 
-**Document status:** Accepted — Phases 0 through 4 complete; Phase 5 current; Phases 5 through 7 Planned.
+**Document status:** Accepted — Phases 0 through 5 complete; Phase 6 current; Phases 6 through 7 Planned.
 **Release name:** NudgeWhen v0.1.2 — Local Reminder Foundation.
 **Version:** `v0.1.2`.
 **Current Android artifact identity:** `versionCode = 3`, `versionName = "0.1.2"`. The landed Phase 5B commit `6b16a294b3d13151baf23a239e4cf0d330a27d3e` (subject `chore: align v0.1.2 artifact identity`) delivers this identity in `app/build.gradle.kts` and in `scripts/release_contract.json` (`android.current_version_code`, `android.current_version_name`). The Phase 5B exact-head CI run `32756426800` concluded `success` with the required `validate` job `success` and produced the debug APK artifact. At Phase 0 and through earlier completed phases, the committed identity remained `versionCode = 2`, `versionName = "0.1.1"`; that historical Phase 0 statement is preserved below as historical evidence.
 **Target Android artifact identity:** `versionCode = 3`, `versionName = "0.1.2"`. The target identity is delivered by the landed Phase 5B commit `6b16a294b3d13151baf23a239e4cf0d330a27d3e` rather than still undelivered. Historical Phase 0 statement (preserved): at Phase 0, the target metadata was **not yet delivered** to `app/build.gradle.kts`.
 **Active release branch:** `release/v0.1.2`.
 
-## Phase 5B Android artifact identity alignment — landed
+## Phase 5B Android artifact identity alignment — landed (historical)
 
-Phase 5B Android artifact identity alignment is accepted and landed. This is a maintainer-selected phase sequencing decision: deliver the target identity before Phase 5 device evidence, not a release-document mandate.
+Phase 5B Android artifact identity alignment was accepted and landed before Phase 5 integrated validation and device evidence. This was a maintainer-selected phase sequencing decision: deliver the target identity before Phase 5 device evidence, not a release-document mandate. The Phase 5B landing is recorded here as historical evidence; it is not the current state of the release.
 
 - Commit: `6b16a294b3d13151baf23a239e4cf0d330a27d3e`.
 - Parent: `ed9ad96bebca79bf0f361ce165c133bde490a61b`.
 - Subject: `chore: align v0.1.2 artifact identity`.
-- Commit path set: exactly six paths — `app/build.gradle.kts`, `docs/agentic-development/experiments/EXP-0040.md`, `docs/releases/v0.1.2/phase-list.md`, `docs/releases/v0.1.2/release-charter.md`, `scripts/release_contract.json`, `tests/test_validator_repository.py`.
+- Commit path set: exactly six paths — `app/build.gradle.kts`, `docs/agentic-development/experiments/EXP-0040.md`, `docs/releases/v0.1.2/release-charter.md`, `docs/releases/v0.1.2/phase-list.md`, `scripts/release_contract.json`, `tests/test_validator_repository.py`.
 - Push: `PASS`.
 - Remote exact SHA: `6b16a294b3d13151baf23a239e4cf0d330a27d3e`.
 - Exact-head CI run: `32756426800` (workflow `CI`, event `push`, branch `release/v0.1.2`, head `6b16a294b3d13151baf23a239e4cf0d330a27d3e`, conclusion `success`, required `validate` job `success`).
 - Debug APK: produced.
-- Android identity: `versionCode = 3`, `versionName = "0.1.2"`. `app/build.gradle.kts` records `versionCode = 3`, `versionName = "0.1.2"`; `scripts/release_contract.json` records `android.current_version_code = 3`, `android.current_version_name = "0.1.2"`. Target identity (`target_version_code = 3`, `target_version_name = "0.1.2"`) is unchanged and is now identical to the current identity.
-- Phase 5 — Integration & Device Validation — remains the current lifecycle phase and remains `Planned`.
-- Phase 5 device evidence remains `NOT_YET_PERFORMED`.
-- Phase 5 is **not** marked `Complete` by this landing.
-- Phase 6 — Integrated Audit & Agent Evaluation — remains `Planned`.
-- Phase 7 — Full Pre-Release Gate — remains `Planned`.
-- Historical Phase 5B candidate descriptions from earlier uncommitted states are preserved in `EXP-0040.md` as historical evidence.
+- Android identity at Phase 5B landing: `versionCode = 3`, `versionName = "0.1.2"`. `app/build.gradle.kts` records `versionCode = 3`, `versionName = "0.1.2"`; `scripts/release_contract.json` records `android.current_version_code = 3`, `android.current_version_name = "0.1.2"`. Target identity (`target_version_code = 3`, `target_version_name = "0.1.2"`) is unchanged and is now identical to the current identity.
+
+At the time of the Phase 5B landing, the following state applied and is preserved here as historical evidence:
+
+- Phase 5 — Integration & Device Validation — was the current lifecycle phase and remained `Planned`.
+- Phase 5 device evidence remained `NOT_YET_PERFORMED`.
+- Phase 5 was **not** marked `Complete` by the Phase 5B landing.
+- Phase 6 — Integrated Audit & Agent Evaluation — remained `Planned`.
+- Phase 7 — Full Pre-Release Gate — remained `Planned`.
+
+Historical Phase 5B candidate descriptions from earlier uncommitted states are preserved in `EXP-0040.md` as historical evidence.
+
+## Phase 5 — Integration & Device Validation — completion
+
+Phase 5 is `Complete`. This section records the accepted Phase 5 completion evidence and supersedes the historical Phase 5B landing state above.
+
+- **Phase 5C exact-head integrated validation:** Accepted.
+  - Validated HEAD: `e6a10bde87aa5841c5669d91512d7040089b100a` on `release/v0.1.2`.
+  - Python validator suites: `Ran 100 tests`, `OK`.
+  - `required` group: `SUMMARY pass=11 fail=0 skip=0`.
+  - `docs` group: `SUMMARY pass=11 fail=0 skip=0`.
+  - Full offline: `SUMMARY pass=39 fail=0 skip=0`; `release_gate=SATISFIED`.
+  - Tracked `git diff --check`: no output.
+  - Final repository proof at Phase 5C acceptance: HEAD `e6a10bde87aa5841c5669d91512d7040089b100a`; worktree clean; index empty; tracked `git diff --check` produced no output.
+  - OpenCode did not directly surface a numeric Python command exit status; the unittest `OK` output is the accepted success evidence.
+
+- **Phase 5D-R8 one-device runtime acceptance:** Accepted.
+  - Device model: `PA2310GBB`.
+  - Android version: `13`.
+  - Evidence scope: `ONE_PHYSICAL_DEVICE_ONLY`.
+  - Pre-reinstall installed identity: `versionCode=3`, `versionName=0.1.2`.
+  - Installation method: `adb install -r app/build/outputs/apk/debug/app-debug.apk` → `Success`.
+  - Post-reinstall installed identity: `versionCode=3`, `versionName=0.1.2`.
+  - Clean-first-launch setup: `adb shell pm clear io.github.franchoy.nudgewhen` → `Success`.
+  - Runtime checkpoints P5-01 through P5-07: `PASS`.
+  - P5-08: `DEVICE_PROOF_NOT_REQUIRED`. Retained deterministic Phase 3 JVM persistence evidence already covers malformed-file rejection; device-side malformed persistence injection and detailed recovery UX are outside the v0.1.2 Phase 5 acceptance contract.
+
+- **Device evidence boundary:** This evidence is scoped to one physical `PA2310GBB` on Android 13 only. It is `ONE_PHYSICAL_DEVICE_ONLY` evidence. It is **not** a general Android compatibility statement. It is **not** a production-readiness statement.
+
+- **No new Android permission, component, or Gradle dependency** was introduced by Phase 5C or Phase 5D-R8.
+
+- **Android artifact identity** remains `versionCode = 3`, `versionName = "0.1.2"`.
+
+- **Phase 6 — Integrated Audit & Agent Evaluation — is now the current lifecycle phase and remains `Planned`.**
+
+- **Phase 7 — Full Pre-Release Gate — remains `Planned`.**
+
+- **v0.1.2 release is not claimed ready, merged, tagged, or published** by this Phase 5 closure.
 
 ## Background
 
@@ -44,12 +85,13 @@ the agentic-development contracts established by v0.1.1.
 
 ## Phase 0 status
 
-Phase 0 — Release Definition and Bootstrap — is the **current** lifecycle
-phase for v0.1.2 at the time this charter is first created.
+Phase 0 — Release Definition and Bootstrap — was the **current** lifecycle
+phase for v0.1.2 at the time this charter is first created (historical).
 
-- The formal phase-list and release contract record Phases 0 through 4 as
-  `Complete`; Phases 5 through 7 remain `Planned`; Phase 5 — Integration
-  & Device Validation — is the current lifecycle phase.
+- At the time this charter was first created, the formal phase-list and
+  release contract recorded Phases 0 through 4 as `Complete`; Phases 5
+  through 7 remained `Planned`; Phase 5 — Integration & Device Validation —
+  was the current lifecycle phase.
 - **Candidate A** is `Complete, Committed, Pushed, Exact-head CI Pass`.
   Candidate A established the release-neutral product-scope validator
   architecture and the supporting experiment evidence.
@@ -57,7 +99,7 @@ phase for v0.1.2 at the time this charter is first created.
   `README.md`, `scripts/release_contract.json`, the v0.1.2 release charter,
   the v0.1.2 phase list, and cumulative `EXP-0035` evidence.
 - This charter is the first Candidate B artifact. Candidate B is **not yet
-  committed** when this charter is first created.
+  committed** when this charter is first created (historical).
 - The temporary v0.1.2 bootstrap exception is `TERMINATED` after accepted
   repository-consistency evidence established that the synchronized
   current-release surfaces are mutually consistent.
@@ -88,18 +130,38 @@ phase for v0.1.2 at the time this charter is first created.
   `app/src/main/kotlin/io/github/franchoy/nudgewhen/MainActivity.kt`
   and
   `app/src/main/kotlin/io/github/franchoy/nudgewhen/ui/ReminderScreen.kt`.
-  Retained Android validation: `17 / 0 / 0`; release gate remains
-  `NOT_SATISFIED`. Accepted chronology: Phase 4A accepted with
+  Retained Android validation: `17 / 0 / 0`; release gate remained
+  `NOT_SATISFIED` at that boundary. Accepted chronology: Phase 4A accepted with
   maintainer refinements; Phase 4B ReminderScreen accepted; Phase 4C
   MainActivity integration accepted; Phase 4D integration audit
    accepted with blocking defects `NONE`. At the Phase 4 closure
    boundary, Phase 5 — Integration & Device Validation — was the
    current lifecycle phase, remained `Planned`, and its
-   implementation had not started.
+   implementation had not started (historical).
 
-Persistence technology is not yet frozen at Phase 0. Its selection requires
+Persistence technology is not yet frozen at Phase 0 (historical). Its selection requires
 later architecture evidence and must remain within the no-new-component /
 no-new-permission boundary unless separately justified.
+
+## Phase 5 closure summary
+
+Phase 5 — Integration & Device Validation — is `Complete`. The accepted
+Phase 5 completion evidence is:
+
+- Phase 5B Android artifact identity alignment: landed (historical
+  evidence preserved above).
+- Phase 5C exact-head integrated local validation: accepted at HEAD
+  `e6a10bde87aa5841c5669d91512d7040089b100a`.
+- Phase 5D-R8 one-device runtime acceptance: accepted on one physical
+  `PA2310GBB` running Android 13. Evidence scope is
+  `ONE_PHYSICAL_DEVICE_ONLY` and is **not** a general Android
+  compatibility or production-readiness statement.
+- Cumulative Phase 5 experiment evidence: `EXP-0040`.
+
+Phase 5 is `Complete`. Phase 6 — Integrated Audit & Agent Evaluation — is
+now the current lifecycle phase and remains `Planned`. Phase 7 — Full
+Pre-Release Gate — remains `Planned`. v0.1.2 release is **not** claimed
+ready, merged, tagged, or published by this Phase 5 closure.
 
 ## Release identity
 

@@ -553,12 +553,16 @@ The reminder work for v0.1.2 is split across phases as follows.
 - Phase 4 — UI implementation and Compose integration:
   `Complete`. Implements `ReminderScreen` and integrates `MainActivity`.
 - Phase 5 — Integration & Device Validation:
-  current / `Planned`; implementation not started; owns integrated
-  / device validation as defined by the active phase list.
-- Phase 6 — Integrated Audit & Agent Evaluation: performs the integrated
-  audit and agent evaluation work as defined by the active phase list.
-- Phase 7 — Full Pre-Release Gate: executes the full pre-release gate as
+  `Complete`. Phase 5B Android artifact identity alignment is landed;
+  Phase 5C exact-head integrated local validation is accepted;
+  Phase 5D-R8 one-device runtime acceptance is accepted on one physical
+  `PA2310GBB` running Android 13 (`ONE_PHYSICAL_DEVICE_ONLY`). Cumulative
+  Phase 5 evidence is `EXP-0040`.
+- Phase 6 — Integrated Audit & Agent Evaluation: current lifecycle phase;
+  `Planned`; performs the integrated audit and agent evaluation work as
   defined by the active phase list.
+- Phase 7 — Full Pre-Release Gate: `Planned`; executes the full
+  pre-release gate as defined by the active phase list.
 
 The release-bearing pull request, the merge of that pull request, the
 merged-`main` verification, the annotated tag, the GitHub release, and
@@ -738,6 +742,85 @@ This overlay does not claim:
 - a future Phase 4 closure-synchronization commit SHA;
 - a future Phase 4 closure push;
 - a future Phase 4 closure exact-head CI.
+
+Those future repository actions require separate explicit maintainer
+authorization.
+
+## Phase 5 completion overlay
+
+This overlay records the accepted Phase 5 result and does not rewrite the
+historical Phase 1 starting state or the Phase 2 / Phase 3 / Phase 4
+completion overlays above.
+
+Recorded Phase 5 facts:
+
+- Phase 5B Android artifact identity alignment is landed (historical
+  evidence preserved above in the Phase 5B landing section of the active
+  release charter and phase list).
+- Android identity: `versionCode = 3`, `versionName = "0.1.2"`. Production
+  identity is unchanged from the Phase 4 boundary.
+- Phase 5C exact-head integrated local validation is accepted.
+  - Validated HEAD: `e6a10bde87aa5841c5669d91512d7040089b100a`.
+  - Branch: `release/v0.1.2`.
+  - Python validator suites: `Ran 100 tests`, `OK`.
+  - `required` group: `SUMMARY pass=11 fail=0 skip=0`.
+  - `docs` group: `SUMMARY pass=11 fail=0 skip=0`.
+  - Full offline: `SUMMARY pass=39 fail=0 skip=0`; `release_gate=SATISFIED`.
+  - Tracked `git diff --check`: no output.
+  - Final repository proof: HEAD `e6a10bde87aa5841c5669d91512d7040089b100a`;
+    worktree clean; index empty.
+- Phase 5D-R8 one-device runtime acceptance is accepted.
+  - Device model: `PA2310GBB`.
+  - Android version: `13`.
+  - Evidence scope: `ONE_PHYSICAL_DEVICE_ONLY`.
+  - Runtime checkpoints P5-01 through P5-07: `PASS`.
+    - P5-01 (clean first launch): `PASS`. Empty state shown;
+      input and Add control usable.
+    - P5-02 (valid create): `PASS`. Alpha appears; input clears after
+      successful creation.
+    - P5-03 (whitespace-only create no-op): `PASS`. No additional
+      reminder was created after whitespace-only Add.
+    - P5-04 (oldest-first ordering): `PASS`. Visible reminders appear
+      as `Alpha`, `Bravo`, `Charlie` in that order.
+    - P5-05 (permanent remove): `PASS`. After removing Bravo, only
+      `Alpha` and `Charlie` remained visible.
+    - P5-06 (application/process restart restoration): `PASS`.
+      `adb shell am force-stop io.github.franchoy.nudgewhen` was
+      executed; after normal launcher relaunch, `Alpha` and `Charlie`
+      remained.
+    - P5-07 (removal persistence across restart): `PASS`. After removing
+      Alpha, only `Charlie` remained; the prescribed second
+      `adb shell am force-stop io.github.franchoy.nudgewhen` was
+      executed; after normal launcher relaunch, only `Charlie` remained.
+  - P5-08: `DEVICE_PROOF_NOT_REQUIRED`. Retained deterministic Phase 3
+    JVM persistence evidence already covers malformed-file rejection;
+    device-side malformed persistence injection and detailed recovery UX
+    are outside the v0.1.2 Phase 5 acceptance contract.
+
+Phase 5 device evidence is explicitly scoped to:
+
+`PA2310GBB / Android 13` and `ONE_PHYSICAL_DEVICE_ONLY`.
+
+It is **not** a general Android compatibility statement. It is **not** a
+production-readiness statement. The retained deterministic Phase 3 JVM
+persistence evidence (`FileReminderStore` 29 tests `P3_01` through
+`P3_29`) remains the source of truth for the persistence contract.
+
+No new Android permission, component, Gradle dependency, test dependency,
+or validator-architecture change was introduced by Phase 5.
+
+Phase 5: `Complete`.
+Phase 6: current / `Planned`.
+Phase 7: `Planned`.
+
+Cumulative Phase 5 experiment evidence: `EXP-0040`.
+
+This overlay does not claim:
+
+- a future Phase 5 closure-synchronization commit SHA;
+- a future Phase 5 closure push;
+- a future Phase 5 closure exact-head CI;
+- that the v0.1.2 release is ready, merged, tagged, or published.
 
 Those future repository actions require separate explicit maintainer
 authorization.
