@@ -1,6 +1,6 @@
 # Evaluation Template — Agent-Assisted Experiment Record
 
-**Document status:** Accepted — Phase 0 governance baseline; active v0.1.2 release; Phases 0 through 6 Complete; Phase 7 — Full Pre-Release Gate is the next lifecycle phase with formal status `Planned`; Phase 7 is not begun or authorized by this synchronization
+**Document status:** Accepted — stable governance; active v0.1.2 release; Phases 0 through 7 complete closure candidate (8 Complete / 0 Planned candidate); Phase 7 final maintainer acceptance is `pending final landing/exact-head CI`; the v0.1.2 release is **not** merged, **not** tagged, and **not** published by this closure candidate
 
 **Usage.** Copy this template, replace every field, and save as `docs/agentic-development/experiments/EXP-NNNN.md`. Every unknown value is written as `Not available`, `Not applicable`, or `Pending maintainer input` with an inline explanation. No value is guessed.
 

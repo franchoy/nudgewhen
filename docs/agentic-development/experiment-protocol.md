@@ -1,6 +1,6 @@
 # Experiment Protocol — Agent-Assisted Tasks
 
-**Document status:** Accepted — Phase 0 governance baseline; active v0.1.2 release; Phases 0 through 6 Complete; Phase 7 — Full Pre-Release Gate is the next lifecycle phase with formal status `Planned`; Phase 7 is not begun or authorized by this synchronization
+**Document status:** Accepted — stable governance; active v0.1.2 release; Phases 0 through 7 complete as the Phase 7 closure candidate (8 Complete / 0 Planned candidate); Phase 7 final maintainer acceptance is `pending closure-candidate landing and final exact-head CI`; the v0.1.2 release is **not** merged, **not** tagged, and **not** published by this closure candidate
 
 ## Purpose
 

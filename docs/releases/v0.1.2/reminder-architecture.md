@@ -559,8 +559,9 @@ The reminder work for v0.1.2 is split across phases as follows.
   `PA2310GBB` running Android 13 (`ONE_PHYSICAL_DEVICE_ONLY`). Cumulative
   Phase 5 evidence is `EXP-0040`.
 - Phase 6 — Integrated Audit & Agent Evaluation: `Complete`.
-- Phase 7 — Full Pre-Release Gate: next lifecycle phase; `Planned`; not
-  begun or authorized by this synchronization.
+- Phase 7 — Full Pre-Release Gate: `Complete` closure candidate
+  (8 Complete / 0 Planned candidate); Phase 7 final maintainer acceptance
+  is `pending closure-candidate landing and final exact-head CI`.
 
 The release-bearing pull request, the merge of that pull request, the
 merged-`main` verification, the annotated tag, the GitHub release, and
@@ -809,7 +810,7 @@ or validator-architecture change was introduced by Phase 5.
 
 Phase 5: `Complete`.
 Phase 6: `Complete`.
-Phase 7: next lifecycle phase / `Planned`; not begun or authorized by this synchronization.
+Phase 7: `Complete` closure candidate (8 Complete / 0 Planned candidate); Phase 7 final maintainer acceptance is `pending closure-candidate landing and final exact-head CI`.
 
 Cumulative Phase 5 experiment evidence: `EXP-0040`.
 

@@ -1,6 +1,6 @@
 # Phase List — NudgeWhen v0.1.2
 
-**Document status:** Accepted — Phases 0 through 6 complete; Phase 7 current; Phase 7 Planned.
+**Document status:** Accepted — Phases 0 through 7 complete (8 Complete / 0 Planned); Phase 7 closure candidate; Phase 7 pre-release clean local gate SATISFIED (Python `Ran 100 tests / OK`; clean validator `41 / 0 / 0`; `release_gate=SATISFIED`; `41 = 39 ordinary + 2 required/clean-state`); Android identity `versionCode = 3`, `versionName = "0.1.2"`; device boundary `ONE_PHYSICAL_DEVICE_ONLY` (`PA2310GBB` / `Android 13`); prepared release PR / tag / GitHub release proposals exist; release PR `NOT OPENED`, merge `NOT EXECUTED`, tag `NOT CREATED`, GitHub release `NOT PUBLISHED`, final Phase 7 closure-commit exact-head CI `PENDING`, v0.1.2 release `NOT COMPLETE`.
 **Active release branch:** release/v0.1.2
 **Active release charter:** docs/releases/v0.1.2/release-charter.md
 
@@ -636,11 +636,61 @@ Phase 7 path scope is not pre-authorized here. Concrete Phase 7 paths will be en
 
 ### Status
 
-Planned
+Complete
+
+### Closure-candidate evidence
+
+Phase 7A: `ACCEPTED_WITH_CORRECTION`; `COMPLETE`.
+Phase 7B: `ACCEPTED_WITH_CORRECTION`; `COMPLETE`.
+
+Phase 7B clean gate (retained direct evidence):
+
+- Python validator: `Ran 100 tests / OK`.
+- Clean validator: `./scripts/validate-local.sh --require-clean --offline` → `SUMMARY pass=41 fail=0 skip=0` and `release_gate=SATISFIED`.
+- Decomposition: `41 = 39 ordinary + 2 required/clean-state`.
+
+Starting release-branch CI (maintainer-supplied):
+
+- Run `32995713143`, head `ddeb51c4751781a3419be71c7747557df4da9de3`, conclusion `success`, `validate` job `success` (`STARTING_PHASE7_COMMIT_CI: PASS_MAINTAINER_SUPPLIED`).
+- `FINAL_PHASE7_EXACT_HEAD_CI: NOT_YET_EXECUTED`.
+
+Device boundary (retained direct evidence):
+
+- `PA2310GBB` / `Android 13` / `ONE_PHYSICAL_DEVICE_ONLY`.
+- Not a general Android compatibility statement; not a production-readiness statement.
+
+Prepared but not executed:
+
+- Release PR / tag / GitHub release proposals.
+- `RELEASE_BEARING_PR: NOT_OPENED`; `MERGE: NOT_EXECUTED`; `TAG: NOT_CREATED`; `GITHUB_RELEASE: NOT_PUBLISHED`.
+
+Still pending:
+
+- Phase 7 closure commit.
+- Push.
+- Remote SHA verification.
+- Final exact-head CI.
+- Final maintainer Phase 7 acceptance.
+
+`PHASE_7_CLOSURE_CANDIDATE`: `8_COMPLETE_0_PLANNED`. The phase's `### Status` line is `Complete` as the closure candidate that the final committed validation/CI will test.
 
 ### Validation checklist
 
-- [-] NOT APPLICABLE — Phase execution and completion evidence have not yet been performed; phase status remains `Planned`; Phase 7 is the `next lifecycle phase`; Phase 7 is `NOT started` and is `NOT authorized by this synchronization`.
+- [x] PASS — Phase 7A: `ACCEPTED_WITH_CORRECTION`; `COMPLETE`.
+- [x] PASS — Phase 7B: `ACCEPTED_WITH_CORRECTION`; `COMPLETE`.
+- [x] PASS — Phase 7B clean gate: Python `Ran 100 tests / OK`; clean validator `41 / 0 / 0`; `release_gate=SATISFIED`; `41 = 39 ordinary + 2 required/clean-state`.
+- [x] PASS — Starting release-branch CI: run `32995713143`, head `ddeb51c4751781a3419be71c7747557df4da9de3`, conclusion `success`, `validate` job `success` (`MAINTAINER-SUPPLIED DECISION/OBSERVATION`).
+- [x] PASS — Device boundary: `PA2310GBB` / `Android 13` / `ONE_PHYSICAL_DEVICE_ONLY` (retained direct evidence).
+- [x] PASS — Prepared release PR / tag / GitHub release proposals (not executed).
+- [ ] BLOCKED — Phase 7 closure commit: `NOT_YET_CREATED`.
+- [ ] BLOCKED — Phase 7 closure push: `NOT_EXECUTED`.
+- [ ] BLOCKED — Phase 7 remote SHA verification: `NOT_YET_VERIFIED`.
+- [ ] BLOCKED — Final Phase 7 exact-head CI: `NOT_YET_EXECUTED`.
+- [ ] BLOCKED — Final maintainer Phase 7 acceptance: `PENDING`.
+- [-] NOT APPLICABLE — Release-bearing PR: remains unopened until Phase 7 final acceptance and separate authorization.
+- [-] NOT APPLICABLE — Merge: post-Phase-7 separately authorized action.
+- [-] NOT APPLICABLE — Tag: post-merge separately authorized action.
+- [-] NOT APPLICABLE — GitHub release: post-tag separately authorized action.
 
 ## Cross-references
 
