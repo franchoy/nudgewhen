@@ -1,6 +1,6 @@
 # Release Charter — NudgeWhen v0.1.2
 
-**Document status:** Accepted — Phases 0 through 5 complete; Phase 6 current; Phases 6 through 7 Planned.
+**Document status:** Accepted — Phases 0 through 6 complete; Phase 7 current; Phase 7 Planned.
 **Release name:** NudgeWhen v0.1.2 — Local Reminder Foundation.
 **Version:** `v0.1.2`.
 **Current Android artifact identity:** `versionCode = 3`, `versionName = "0.1.2"`. The landed Phase 5B commit `6b16a294b3d13151baf23a239e4cf0d330a27d3e` (subject `chore: align v0.1.2 artifact identity`) delivers this identity in `app/build.gradle.kts` and in `scripts/release_contract.json` (`android.current_version_code`, `android.current_version_name`). The Phase 5B exact-head CI run `32756426800` concluded `success` with the required `validate` job `success` and produced the debug APK artifact. At Phase 0 and through earlier completed phases, the committed identity remained `versionCode = 2`, `versionName = "0.1.1"`; that historical Phase 0 statement is preserved below as historical evidence.
@@ -162,6 +162,19 @@ Phase 5 is `Complete`. Phase 6 — Integrated Audit & Agent Evaluation — is
 now the current lifecycle phase and remains `Planned`. Phase 7 — Full
 Pre-Release Gate — remains `Planned`. v0.1.2 release is **not** claimed
 ready, merged, tagged, or published by this Phase 5 closure.
+
+## Phase 6 closure summary
+
+Phase 6 is `Complete`. The accepted Phase 6 completion evidence is:
+
+- Phase 6F: `ACCEPTED_WITH_CORRECTION; COMPLETE`.
+- Phase 6G: `ACCEPTED_WITH_CORRECTION; COMPLETE`.
+- Phase 6H-A: `ACCEPTED_WITH_CORRECTION; COMPLETE`.
+- C3 retained integrated validation: Python validator `Ran 100 tests / OK`; `required` `SUMMARY pass=11 fail=0 skip=0`; `docs` `SUMMARY pass=11 fail=0 skip=0`; `android offline` `SUMMARY pass=17 fail=0 skip=0`; `full offline` `SUMMARY pass=39 fail=0 skip=0`; `release_gate=SATISFIED`.
+- Dependabot six pull requests #3, #4, #6, #7, #8, #9 are `CLOSED` and `UNMERGED`. Evidence class: `MAINTAINER-SUPPLIED DECISION/OBSERVATION`.
+- `SUBSTANTIVE_BLOCKER_COUNT`: `0`.
+
+Phase 7 is `Planned` and is the `next lifecycle phase`. Phase 7 is `not begun` and is `not authorized by this closure synchronization`. The v0.1.2 release is **not** claimed ready, merged, tagged, or published by this Phase 6 closure candidate.
 
 ## Release identity
 

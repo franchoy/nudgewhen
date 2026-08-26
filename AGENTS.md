@@ -1,6 +1,6 @@
 # AGENTS.md
 
-**Document status:** Accepted — stable governance; v0.1.2 Phases 0 through 5 Complete; Phase 6 current; Phases 6 through 7 Planned
+**Document status:** Accepted — stable governance; v0.1.2 Phases 0 through 6 Complete; Phase 7 current; Phase 7 Planned
 
 ## Purpose and scope
 
@@ -175,6 +175,21 @@ The final response of every phase, subphase, and Build-stage report must reprodu
 
 Each item must contain concise, directly observed evidence. A blanket statement such as "all checks passed" is insufficient. An item must not be marked `PASS` when its evidence is pending, supplied only by assumption, depends on a future repository action, or was inferred rather than directly observed. The final response must also continue to report the items listed in the validation and final-report expectations above.
 
+### Report-format contract and task-specific FORMAT overrides
+
+Substantive repository governance remains mandatory. The standard validation-checklist and report format described above is the generic default for every phase, subphase, and Build-stage report. An explicit task specification may replace REPORT FORMAT only when the override is explicit and unambiguous. A report-format override does **not** waive or override:
+
+- exact path and action authorization;
+- evidence provenance and the evidence-label contract;
+- privacy and private-material rules;
+- mandatory hard stops;
+- the no-unauthorized-retry or substitution rule;
+- Category-C boundaries;
+- scope-deviation rules;
+- the separation of repository result, outcome classification, and scope compliance.
+
+A task-specific format override is a FORMAT exception only. It does not authorize scope expansion, evidence fabrication, or any other substantive deviation. The complete four-category authorization matrix recorded in this file is not weakened by a format override. `AGENTS.md` and the experiment protocol remain authoritative over any task-specific format override, and a task instruction does not outrank this contract by implication.
+
 ## Hermes not integrated
 
 Hermes is not integrated. Any reference to Hermes in evidence is a future-boundary statement and does not authorize current action.
@@ -261,7 +276,7 @@ Category D items cannot be authorized by a normal maintainer turn. A change to C
 - **Active branch:** `release/v0.1.2`
 - **Active release charter:** `docs/releases/v0.1.2/release-charter.md`
 - **Active phase list:** `docs/releases/v0.1.2/phase-list.md`
-- **Current phase:** Phase 6 — Integrated Audit & Agent Evaluation (current lifecycle phase; formal status `Planned`; implementation not started)
+- **Current phase:** Phase 7 — Full Pre-Release Gate (next lifecycle phase; formal status `Planned`; not begun by this synchronization; not authorized by this synchronization)
 - **Current OpenCode model/provider:** MiniMax M3 via the official MiniMax provider (`minimax/MiniMax-M3`), temporarily replacing OpenCode Go after the changed OpenCode Go recurring charge was blocked as anomalous during renewal. This is an operational provider migration, not a model-policy change. OpenCode Go may be reevaluated later under explicit maintainer authorization when its billing path is reliable and its economics remain acceptable.
 - **Bootstrap exception (v0.1.2, terminated):** Candidate B performed the bounded active-release synchronization from the inherited v0.1.1 current-release pointers to v0.1.2. The maintainer-authorized Phase 0 bootstrap exception permitted work on the actual branch `release/v0.1.2` while current-facing synchronization was incomplete. It terminated after `AGENTS.md`, `README.md`, `scripts/release_contract.json`, `docs/releases/v0.1.2/release-charter.md`, and `docs/releases/v0.1.2/phase-list.md` were synchronized and repository-consistency validation accepted that state. The exception did not waive exact-path authorization, exact starting-HEAD verification, exact working-tree baselines, hard-stop behavior, private-working-material rules, network restrictions, or separate staging/commit/push/repository-action authorization.
 - **Bootstrap exception (historical, terminated):** The tracked `AGENTS.md` baseline clause historically required a specific completed release branch; that historical coupling required a narrow bootstrap exception for Phase 0 to proceed on the released `main` baseline before the new `AGENTS.md` was written. Branch creation alone did not terminate the exception. Phase 0D directly confirmed the four termination conditions: (a) this `AGENTS.md` recognizes `v0.1.1` and `release/v0.1.1`; (b) stable repository governance is separated from current-release context; (c) no normative dependence on any completed release branch remains; (d) the updated governance documents are mutually consistent. The maintainer accepted the Phase 0D evidence. The exception is now terminated. Ordinary baseline rules apply to later tasks.

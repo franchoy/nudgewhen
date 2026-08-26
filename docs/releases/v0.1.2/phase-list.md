@@ -1,6 +1,6 @@
 # Phase List — NudgeWhen v0.1.2
 
-**Document status:** Accepted — Phases 0 through 5 complete; Phase 6 current; Phases 6 through 7 Planned.
+**Document status:** Accepted — Phases 0 through 6 complete; Phase 7 current; Phase 7 Planned.
 **Active release branch:** release/v0.1.2
 **Active release charter:** docs/releases/v0.1.2/release-charter.md
 
@@ -495,8 +495,10 @@ The Phase 5D device evidence is scoped to `PA2310GBB / Android 13` and `ONE_PHYS
 
 ## Phase 6 — Integrated Audit & Agent Evaluation
 
-Phase 6 is the current lifecycle phase. Formal status remains `Planned`.
-Phase 6 implementation has not started.
+Phase 6 is `Complete`. Phase 6F, Phase 6G, and Phase 6H-A are each
+`ACCEPTED_WITH_CORRECTION; COMPLETE`. Phase 6H-B1 is the current
+core-tracked lifecycle-transition candidate; Phase 6H closure acceptance
+remains a later separately authorized operation.
 
 ### Objective
 
@@ -542,11 +544,28 @@ Phase 6 path scope is not pre-authorized here. Concrete Phase 6 paths will be en
 
 ### Status
 
-Planned
+Complete
+
+### Phase 6 closure summary
+
+Phase 6 is `Complete`. The accepted Phase 6 completion evidence is:
+
+- Phase 6F: `ACCEPTED_WITH_CORRECTION; COMPLETE`.
+- Phase 6G: `ACCEPTED_WITH_CORRECTION; COMPLETE`.
+- Phase 6H-A: `ACCEPTED_WITH_CORRECTION; COMPLETE`.
+- C3 retained integrated validation: Python validator `Ran 100 tests / OK`; `required` `SUMMARY pass=11 fail=0 skip=0`; `docs` `SUMMARY pass=11 fail=0 skip=0`; `android offline` `SUMMARY pass=17 fail=0 skip=0`; `full offline` `SUMMARY pass=39 fail=0 skip=0`; `release_gate=SATISFIED`.
+- Dependabot six pull requests #3, #4, #6, #7, #8, #9 are `CLOSED` and `UNMERGED`. Evidence class: `MAINTAINER-SUPPLIED DECISION/OBSERVATION`.
+- `SUBSTANTIVE_BLOCKER_COUNT`: `0`.
+
+Phase 7 is `Planned` and is the `next lifecycle phase`. Phase 7 is `NOT started` and is `NOT authorized by this synchronization`. The v0.1.2 release is **not** claimed ready, merged, tagged, or published by this Phase 6 closure candidate.
 
 ### Validation checklist
 
-- [-] NOT APPLICABLE — Phase execution and completion evidence have not yet been performed; phase status remains `Planned`.
+- [x] PASS — Phase 6F, Phase 6G, and Phase 6H-A are each `ACCEPTED_WITH_CORRECTION; COMPLETE`.
+- [x] PASS — C3 retained integrated validation: Python validator `Ran 100 tests / OK`; `required` `SUMMARY pass=11 fail=0 skip=0`; `docs` `SUMMARY pass=11 fail=0 skip=0`; `android offline` `SUMMARY pass=17 fail=0 skip=0`; `full offline` `SUMMARY pass=39 fail=0 skip=0`; `release_gate=SATISFIED`.
+- [x] PASS — Dependabot six pull requests #3, #4, #6, #7, #8, #9 are `CLOSED` and `UNMERGED`; classification `MAINTAINER-SUPPLIED DECISION/OBSERVATION`.
+- [x] PASS — `SUBSTANTIVE_BLOCKER_COUNT`: `0`; `README_CURRENT_STATE_BLOCKER` `CORRECTED`; `POST_6F_DEPENDABOT_GATE` `SATISFIED`.
+- [x] PASS — This Phase 6H-B1 candidate synchronizes only the core active/current-release surfaces to `Phase 6: Complete` / `Phase 7: Planned` (next lifecycle phase). Phase 6H completion acceptance and Phase 7 start/authorization remain separate later maintainer actions; the v0.1.2 release is **not** claimed ready, merged, tagged, or published.
 
 ## Phase 7 — Full Pre-Release Gate
 
@@ -621,7 +640,7 @@ Planned
 
 ### Validation checklist
 
-- [-] NOT APPLICABLE — Phase execution and completion evidence have not yet been performed; phase status remains `Planned`.
+- [-] NOT APPLICABLE — Phase execution and completion evidence have not yet been performed; phase status remains `Planned`; Phase 7 is the `next lifecycle phase`; Phase 7 is `NOT started` and is `NOT authorized by this synchronization`.
 
 ## Cross-references
 

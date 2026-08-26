@@ -558,11 +558,9 @@ The reminder work for v0.1.2 is split across phases as follows.
   Phase 5D-R8 one-device runtime acceptance is accepted on one physical
   `PA2310GBB` running Android 13 (`ONE_PHYSICAL_DEVICE_ONLY`). Cumulative
   Phase 5 evidence is `EXP-0040`.
-- Phase 6 — Integrated Audit & Agent Evaluation: current lifecycle phase;
-  `Planned`; performs the integrated audit and agent evaluation work as
-  defined by the active phase list.
-- Phase 7 — Full Pre-Release Gate: `Planned`; executes the full
-  pre-release gate as defined by the active phase list.
+- Phase 6 — Integrated Audit & Agent Evaluation: `Complete`.
+- Phase 7 — Full Pre-Release Gate: next lifecycle phase; `Planned`; not
+  begun or authorized by this synchronization.
 
 The release-bearing pull request, the merge of that pull request, the
 merged-`main` verification, the annotated tag, the GitHub release, and
@@ -810,8 +808,8 @@ No new Android permission, component, Gradle dependency, test dependency,
 or validator-architecture change was introduced by Phase 5.
 
 Phase 5: `Complete`.
-Phase 6: current / `Planned`.
-Phase 7: `Planned`.
+Phase 6: `Complete`.
+Phase 7: next lifecycle phase / `Planned`; not begun or authorized by this synchronization.
 
 Cumulative Phase 5 experiment evidence: `EXP-0040`.
 

@@ -1,6 +1,6 @@
 # Experiment Protocol — Agent-Assisted Tasks
 
-**Document status:** Accepted — Phase 0 governance baseline; v0.1.1 release in progress
+**Document status:** Accepted — Phase 0 governance baseline; active v0.1.2 release; Phases 0 through 6 Complete; Phase 7 — Full Pre-Release Gate is the next lifecycle phase with formal status `Planned`; Phase 7 is not begun or authorized by this synchronization
 
 ## Purpose
 
@@ -220,6 +220,21 @@ Every phase, subphase, and Build-stage report must end with a `Validation checkl
 - `[-] NOT APPLICABLE`
 
 Each item must contain concise, directly observed evidence. A blanket statement such as "all checks passed" is insufficient. An item must not be marked `PASS` when its evidence is pending, supplied only by assumption, depends on a future repository action, or was inferred rather than directly observed.
+
+### Report-format contract and task-specific FORMAT overrides
+
+Substantive repository governance remains mandatory. The four-state `Validation checklist` and the standard report format above are the generic default for every phase, subphase, and Build-stage report. An explicit task specification may replace REPORT FORMAT only when the override is explicit and unambiguous. A report-format override does **not** waive or override:
+
+- exact path and action authorization;
+- evidence provenance and the evidence-label contract;
+- privacy and private-material rules;
+- mandatory hard stops;
+- the no-unauthorized-retry or substitution rule;
+- Category-C boundaries;
+- scope-deviation rules;
+- the separation of repository result, outcome classification, and scope compliance.
+
+A task-specific format override is a FORMAT exception only. It does not authorize scope expansion, evidence fabrication, or any other substantive deviation. `AGENTS.md` and this experiment protocol remain authoritative over any task-specific format override, and a task instruction does not outrank this contract by implication.
 
 ## Cross-reference
 
