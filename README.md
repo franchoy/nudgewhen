@@ -4,7 +4,7 @@ NudgeWhen is an early-stage experimental open-source project exploring a voice-f
 
 ## Project status
 
-NudgeWhen is currently in the `v0.1.1` release train, a documentation, governance, validation, CI, supply-chain, workspace-hygiene, and release metadata hardening patch release on the single branch `release/v0.1.1`. The previous `v0.1.0` release is complete and historical; its branch `release/v0.1.0` is no longer the active branch.
+NudgeWhen is currently in the `v0.1.2` release train, **Local Reminder Foundation**, on the single branch `release/v0.1.2`. Phase 0 — Release Definition & Bootstrap — is `Complete`. Phase 1 — Reminder Architecture Contract — is `Complete`. Phase 2 — Reminder Domain Core — is `Complete`. Phase 3 — Local Persistence — is `Complete`. Phase 4 — Minimal Android Reminder UI — is `Complete`. Phase 5 — Integration & Device Validation — is `Complete`. Phase 6 — Integrated Audit & Agent Evaluation — is `Complete`. Phase 7 — Full Pre-Release Gate — is a `Complete` closure candidate (8 Complete / 0 Planned); Phase 7 local clean gate was accepted with correction; final Phase 7 exact-head CI, release PR, tag, merge, and GitHub release remain pending and are not executed by this closure candidate. The previous `v0.1.1` release is complete and historical.
 
 ## What exists now
 
@@ -12,7 +12,6 @@ NudgeWhen is currently in the `v0.1.1` release train, a documentation, governanc
 - One `:app` module.
 - Kotlin and Jetpack Compose.
 - One launcher activity.
-- One static screen displaying the string: `NudgeWhen — Android technical baseline`.
 - Gradle wrapper `9.4.1`.
 - Android Gradle Plugin `9.2.1`.
 - Compile and target SDK `36`; minimum SDK `26`.
@@ -21,23 +20,27 @@ NudgeWhen is currently in the `v0.1.1` release train, a documentation, governanc
 - A GitHub Actions CI workflow.
 - Historical `v0.1.0` release evidence, including the published GitHub `v0.1.0` release and the v0.1.0 release documentation under `docs/releases/v0.1.0/`.
 - A locally generated debug APK at `app/build/outputs/apk/debug/app-debug.apk` (ignored and not committed).
+- The accepted Phase 2 reminder domain core: a deterministic `Reminder` model, a `ReminderStore` interface, a `ReminderController`, and deterministic JVM tests for the domain core under `app/src/test/kotlin/...`. JUnit 4.13.2 is the Phase 2 test-only dependency. The existing `android` validation group now runs `:app:testDebugUnitTest`; no new validation group was added.
+- The accepted Phase 3 local persistence layer: a `FileReminderStore` production implementation belonging to the local persistence layer; deterministic persistence JVM tests; persistence round-trip proven; persisted ordering proven; removal persistence proven at the store/domain boundary; restoration proven using a newly constructed `FileReminderStore`/`ReminderController` in JVM evidence; combined JVM total of 56 tests, 0 failures, 0 errors, and 0 skipped.
+- The accepted Phase 4 minimal Android reminder UI: `ReminderScreen` is implemented; `MainActivity` integrates the local persistence (`FileReminderStore` over app-private `filesDir`) with the `ReminderController`; textual create, visible reminder list, and permanent remove are present; persisted/oldest-first ordering is preserved; production UUID reminder IDs are used; source-level application-startup restoration is integrated; Compose presentation state is owned by `ReminderScreen`; no new Android component or permission was introduced.
+- The accepted Phase 5 integrated validation and one-device runtime acceptance: Phase 5B Android artifact identity alignment is landed; Phase 5C exact-head integrated local validation is accepted at HEAD `e6a10bde87aa5841c5669d91512d7040089b100a` (Python validator `Ran 100 tests / OK`; `required` `11/0/0`; `docs` `11/0/0`; full offline `39/0/0`; `release_gate=SATISFIED`); Phase 5D-R8 one-device runtime acceptance is accepted on one physical `PA2310GBB` running Android 13 (`ONE_PHYSICAL_DEVICE_ONLY`); runtime checkpoints P5-01 through P5-07 are `PASS`; P5-08 is `DEVICE_PROOF_NOT_REQUIRED` because retained deterministic Phase 3 JVM persistence evidence already covers malformed-file rejection. The local reminder lifecycle is now implemented at source level with persisted ordering, permanent removal, and start-up restoration; the runtime evidence is explicitly scoped to one physical `PA2310GBB` on Android 13 and is not a general Android compatibility or production-readiness statement.
 
 ## What still does not exist
 
-The following are explicitly out of scope at this stage:
+The following functionality does not yet exist in the current repository state:
 
-- Reminder, scheduling, contextual-list, or checklist functionality.
+- Multi-device or general Android compatibility validation of the integrated v0.1.2 reminder lifecycle; only one physical `PA2310GBB` on Android 13 has runtime acceptance evidence (`ONE_PHYSICAL_DEVICE_ONLY`).
+- Scheduling, contextual-list, or checklist functionality.
 - Notification functionality.
 - Voice or speech functionality.
 - Location, geofencing, or device-state functionality.
-- Persistence.
 - Contextual triggers.
 - Background service.
 - Application networking.
 - Analytics or telemetry.
 - A production-readiness, stability, security, or compatibility guarantee.
 
-`v0.1.1` is a documentation, governance, validation, CI, supply-chain, workspace-hygiene, and release metadata hardening patch release. It does not add reminder functionality, voice, speech, location, geofencing, persistence, contextual triggers, background behavior, application networking, analytics, telemetry, or any production-readiness guarantee.
+`v0.1.2` — **Local Reminder Foundation** — the Phase 2 reminder domain core is implemented; the Phase 3 local persistence layer is implemented; the Phase 4 source-level application integration is implemented; `ReminderScreen` is implemented; `MainActivity` integrates `FileReminderStore` over app-private `filesDir`; source-level `MainActivity` startup restoration of reminders is integrated; the user-facing textual create / visible list / permanent-remove flow exists at source level. Phase 5 integrated local validation and one-device runtime acceptance are accepted on one physical `PA2310GBB` on Android 13 (`ONE_PHYSICAL_DEVICE_ONLY`); runtime evidence covers clean launch, valid create, whitespace-only create no-op, oldest-first ordering, permanent removal, restart restoration, and removal persistence across restart. The accepted runtime evidence is explicitly scoped to that single device and is not a general Android compatibility or production-readiness statement. Voice or speech, notifications, time scheduling or alarms, location or geofencing, contextual or device-state triggers, background execution, application networking or sync, analytics or telemetry, additional Android activities/services/receivers/providers, new Android permissions, and production-readiness guarantees remain explicit release non-goals.
 
 ## Long-term design intentions
 
@@ -47,7 +50,7 @@ The long-term design intentions for NudgeWhen, presented as goals rather than im
 - **Local-first.** Work offline by default. User data stays on the device unless the user explicitly opts into a sync mechanism.
 - **Contextual reminders.** Let reminders be triggered by context (time, location, device state, or other signals) rather than by manual checks.
 
-These are long-term goals. None of them is implemented in the current state of the repository.
+These are long-term goals. Voice-first capture and contextual-reminder behavior remain future goals. The minimal local reminder lifecycle is now implemented at source level through the local `FileReminderStore` and the Phase 4 UI integration; Phase 5 integrated local validation and one-device runtime acceptance on `PA2310GBB` (Android 13) have been accepted; Phase 6 integrated audit and agent evaluation is `Complete`. Phase 7 — Full Pre-Release Gate — is a `Complete` closure candidate (8 Complete / 0 Planned); Phase 7 local clean gate was accepted with correction; final Phase 7 exact-head CI, release PR, tag, merge, and GitHub release remain pending and are not executed by this closure candidate.
 
 ## Agentic-development experiment
 
@@ -55,7 +58,7 @@ This repository is also used to evaluate OpenCode and MiniMax M3 (3x usage) as p
 
 ## Current release train
 
-The project follows a phased release train on the single branch `release/vX.Y.Z`. The current active branch is `release/v0.1.1`. The previous `v0.1.0` release train on `release/v0.1.0` is complete and historical.
+The project follows a phased release train on the single branch `release/vX.Y.Z`. The current active branch is `release/v0.1.2`. The previous `v0.1.1` release is complete and historical; `v0.1.0` remains historical evidence.
 
 `v0.1.0` phases (historical, complete):
 
@@ -68,7 +71,9 @@ The project follows a phased release train on the single branch `release/vX.Y.Z`
 - Phase 6 — Agent evaluation evidence: complete.
 - Phase 7 — Final pre-release gate: complete.
 
-`v0.1.1` is a documentation, governance, validation, CI, supply-chain, workspace-hygiene, and release metadata hardening patch release following the v0.1.0 baseline.
+Historical `v0.1.1` was the documentation, governance, validation, CI, supply-chain, workspace-hygiene, and release-metadata hardening release that followed the v0.1.0 baseline.
+
+The active `v0.1.2` release is **Local Reminder Foundation**. Phase 0 — Release Definition & Bootstrap — is `Complete`. Phase 1 — Reminder Architecture Contract — is `Complete`. Phase 2 — Reminder Domain Core — is `Complete`. Phase 3 — Local Persistence — is `Complete`. Phase 4 — Minimal Android Reminder UI — is `Complete`. Phase 5 — Integration & Device Validation — is `Complete`. Phase 6 — Integrated Audit & Agent Evaluation — is `Complete`. Phase 7 — Full Pre-Release Gate — is a `Complete` closure candidate (8 Complete / 0 Planned); Phase 7 local clean gate was accepted with correction; final Phase 7 exact-head CI, release PR, tag, merge, and GitHub release remain pending and are not executed by this closure candidate.
 
 No delivery dates or completion promises are made.
 
@@ -161,8 +166,10 @@ This project is licensed under the Apache License 2.0. See [LICENSE](LICENSE) fo
 
 ## Related documents
 
-- [Release charter — v0.1.1 (active)](docs/releases/v0.1.1/release-charter.md)
-- [Phase list — v0.1.1 (active)](docs/releases/v0.1.1/phase-list.md)
+- [Release charter — v0.1.2 (active)](docs/releases/v0.1.2/release-charter.md)
+- [Phase list — v0.1.2 (active)](docs/releases/v0.1.2/phase-list.md)
+- [Release charter — v0.1.1 (historical)](docs/releases/v0.1.1/release-charter.md)
+- [Phase list — v0.1.1 (historical)](docs/releases/v0.1.1/phase-list.md)
 - [Release charter — v0.1.0 (historical)](docs/releases/v0.1.0/release-charter.md)
 - [Phase list — v0.1.0 (historical)](docs/releases/v0.1.0/phase-list.md)
 - [Experiment protocol](docs/agentic-development/experiment-protocol.md)

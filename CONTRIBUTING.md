@@ -7,7 +7,7 @@ Thank you for your interest in NudgeWhen. This document explains how to contribu
 NudgeWhen is an early-stage experimental open-source Android project. At this phase:
 
 - The `v0.1.0` release is complete and historical; see `docs/releases/v0.1.0/` for its record.
-- The active in-progress release is `v0.1.1`, developed on the `release/v0.1.1` branch.
+- The active in-progress release is `v0.1.2`, developed on the `release/v0.1.2` branch.
 - The repository contains Android source, Gradle build files, a manifest and resources, documentation, agentic-workflow experiment records, and community-health files.
 - A single maintainer reviews contributions.
 - There is no production-readiness or support guarantee; this is experimental software.
@@ -16,7 +16,7 @@ Android source, Gradle, manifest, resources, validation, and CI artefacts now ex
 
 ## Branches and pull-request targets
 
-External contributors should work on a topic branch and target the current release branch. The durable convention is `release/vX.Y.Z`; the current binding is `release/v0.1.1`. The historical `release/v0.1.0` branch remains in the repository as evidence of the completed release and is not the current target for new work. The maintainer reviews and decides whether to merge; there is no guaranteed review time and no guaranteed acceptance.
+External contributors should work on a topic branch and target the current release branch. The durable convention is `release/vX.Y.Z`; the current binding is `release/v0.1.2`. The historical `release/v0.1.0` and `release/v0.1.1` branches remain in the repository as evidence of the completed releases and are not the current target for new work. The maintainer reviews and decides whether to merge; there is no guaranteed review time and no guaranteed acceptance.
 
 ## What is useful right now
 
@@ -47,7 +47,7 @@ Pull requests should be:
 - Self-contained: do not include unrelated changes, reformatting, or drive-by modifications.
 - Linked to the relevant issue when one exists.
 
-External contributors should open pull requests from a topic branch against the current release branch (`release/v0.1.1` at the time of writing). The maintainer will review and decide whether to merge. There is no guaranteed review time and no guaranteed acceptance.
+External contributors should open pull requests from a topic branch against the current release branch (`release/v0.1.2` at the time of writing). The maintainer will review and decide whether to merge. There is no guaranteed review time and no guaranteed acceptance. Ordinary release work does not target `main` early; only after the release phases and the full pre-release gate are complete does the maintainer open the release-bearing PR from the release branch to `main`.
 
 ## Validation
 

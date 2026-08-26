@@ -1,6 +1,6 @@
 # Evaluation Template — Agent-Assisted Experiment Record
 
-**Document status:** Accepted — Phase 0 governance baseline; v0.1.1 release in progress
+**Document status:** Accepted — stable governance; active v0.1.2 release; Phases 0 through 7 complete closure candidate (8 Complete / 0 Planned candidate); Phase 7 final maintainer acceptance is `pending final landing/exact-head CI`; the v0.1.2 release is **not** merged, **not** tagged, and **not** published by this closure candidate
 
 **Usage.** Copy this template, replace every field, and save as `docs/agentic-development/experiments/EXP-NNNN.md`. Every unknown value is written as `Not available`, `Not applicable`, or `Pending maintainer input` with an inline explanation. No value is guessed.
 
@@ -133,4 +133,6 @@ Reproduce and complete every item. Use exactly one status per item:
 
 Add concise, directly observed evidence to every item. A blanket "all checks passed" statement is insufficient. An item must not be marked `PASS` when its evidence is pending, supplied only by assumption, depends on a future repository action, or was inferred rather than directly observed.
 
-The checklist is the final section of the experiment record. Its content is determined by the phase or subphase that the experiment supports.
+The four-state checklist is the ordinary/default format for the final section of the experiment record. An explicit task-specific FORMAT override may replace that report-format section only when the override is explicit and unambiguous. Even when the report-format section is replaced, evidence-provenance, scope-compliance, and outcome-classification requirements remain mandatory. A report-format override is a FORMAT exception only and does not waive the substantive governance in `AGENTS.md` and the experiment protocol.
+
+The checklist content is determined by the phase or subphase that the experiment supports.
