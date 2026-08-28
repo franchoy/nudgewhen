@@ -1,16 +1,48 @@
 # NudgeWhen v0.1.3 — Editing Architecture Contract
 
-**Document status:** Candidate — Phase 1 Editing Architecture Contract.
+**Document status:** Accepted — Phase 1 Editing Architecture Contract.
 
-Phase 1 remains `Planned` pending architecture-candidate audit, maintainer
-acceptance, repository landing, accepted exact-head evidence, and separately
-authorized closure synchronization.
+Architecture repository boundary:
+closed.
 
-This candidate:
+Architecture commit:
 
-- does not close Phase 1;
-- does not start Phase 2;
-- does not claim release readiness.
+`9004b0f90f60d2d5c8b1ac4828d0a4521316ae5a`
+
+Parent:
+
+`f570055d70aa6569ec8260f9165c1f92c1580da8`
+
+Frozen SHA-256:
+
+`71a8c56e3515a17ebfebd4bde42be90991caab7afeb8528ca4173eec3a0630c5`
+
+Remote branch exact SHA:
+
+`9004b0f90f60d2d5c8b1ac4828d0a4521316ae5a`
+
+Exact-head CI:
+
+`33183197545`
+
+CI result:
+
+`success`
+
+Phase 1:
+Complete in this closure-synchronization candidate.
+
+Phase 2:
+Planned / next / not started.
+
+Release readiness:
+NO.
+
+This document is the accepted architecture contract for the Phase 1
+Editing Architecture phase of v0.1.3. It does not implement editing.
+The frozen API, persistence, and UI semantics below are preserved
+unchanged from the landed architecture commit and are the normative
+contract for the later Phase 2+ implementation phases.
 
 ## 7A. Authority and scope
 
@@ -405,21 +437,63 @@ Product scope remains:
 ["reminders", "persistence"]
 ```
 
-## 7M. Candidate acceptance boundary
+## 7M. Acceptance boundary and later phases
 
-This document is a Phase 1 architecture candidate. It does not itself close
-Phase 1.
+Historical architecture starting state:
 
-Phase 1 closure requires:
+- HEAD `f570055d70aa6569ec8260f9165c1f92c1580da8` on `release/v0.1.3`
+  was the Phase 1 entry baseline;
+- no editing API existed in `ReminderController`;
+- `NWR1` and `FileReminderStore` were complete with no edit operation;
+- `ReminderScreen` and `MainActivity` were complete with no edit UI;
+- Phase 1 produced architecture only and no product code.
 
-- architecture candidate audit / validation;
-- maintainer acceptance;
-- repository landing;
-- accepted exact-head evidence;
-- separately authorized closure synchronization.
+Accepted architecture decisions (frozen):
 
-Only after that may the active lifecycle state become:
+- domain API: `edit(id: String, text: String): Boolean`;
+- Boolean means the edit request was accepted;
+- controller owns `text.trim()` normalization;
+- invalid blank / whitespace-only / missing-id edits are `false` with no
+  save;
+- identical normalized edits are `true` with no save;
+- changed valid edits are `true` with save exactly once after successful
+  save;
+- reminder identity, list index, and neighbor order are preserved;
+- `NWR1` format remains with no migration and no new field;
+- existing compatible whole-file rewrite remains the physical save
+  behavior;
+- `ReminderScreen` owns the edit presentation state (`editingId`,
+  `editBuffer`) via ordinary `remember(controller)`;
+- Save passes an explicit non-null `activeEditingId` derived from the
+  active editing row, not the nullable `editingId` state directly;
+- the unsaved edit buffer is discarded on Activity recreation; no
+  `rememberSaveable` is required for editing.
+
+Later Phase 2+ implementation (not authorized by this document):
+
+- Phase 2 owns the editing domain implementation and deterministic JVM
+  proof on top of the existing `Reminder` model and `ReminderController`;
+- Phase 3 owns persistence compatibility proof;
+- Phase 4 owns minimal Compose editing UX;
+- Phase 5 owns later integrated/device validation and, if separately
+  authorized, Android identity alignment.
+
+Architecture repository boundary:
+
+- architecture commit: `9004b0f90f60d2d5c8b1ac4828d0a4521316ae5a`
+  (parent `f570055d70aa6569ec8260f9165c1f92c1580da8`);
+- frozen SHA-256:
+  `71a8c56e3515a17ebfebd4bde42be90991caab7afeb8528ca4173eec3a0630c5`;
+- remote branch exact SHA:
+  `9004b0f90f60d2d5c8b1ac4828d0a4521316ae5a`;
+- exact-head CI: `33183197545`, result `success`;
+- architecture repository boundary: closed.
+
+Phase lifecycle in this closure-synchronization candidate:
 
 - Phase 0 `Complete`
 - Phase 1 `Complete`
 - Phase 2 `Planned` / next / not started
+
+Release readiness is **not** claimed. The v0.1.3 release is not merged,
+not tagged, not published, and not release-ready.

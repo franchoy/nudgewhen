@@ -1,6 +1,6 @@
 # Release Charter — NudgeWhen v0.1.3
 
-**Document status:** v0.1.3 Phase 0 closure charter — Phases 0 through 0 complete; Phase 0 — Release Definition & Bootstrap — is `Complete`; Phases 1 through 7 remain `Planned`; 1 Complete / 7 Planned. Phase 1 — Editing Architecture Contract — is the next lifecycle phase and has not started. This charter is normative for v0.1.3 release policy. It does not claim release readiness.
+**Document status:** v0.1.3 Phase 1 closure charter — Phases 0 through 1 complete; Phase 0 — Release Definition & Bootstrap — is `Complete`; Phase 1 — Editing Architecture Contract — is `Complete`; Phases 2 through 7 remain `Planned`; 2 Complete / 6 Planned. Phase 2 — Editing Domain Implementation & JVM Proof — is the next lifecycle phase and has not started. This charter is normative for v0.1.3 release policy. It does not claim release readiness.
 
 ## Release identity
 
@@ -78,19 +78,26 @@ The machine-recognized product scope remains exactly:
 
 No other machine capability is authorized.
 
-## Editing semantics deferred to Phase 1
+## Editing semantics resolved by Phase 1
 
-The following editing semantics are explicitly deferred to Phase 1 and are
-not decided by this charter:
+The following editing semantics are resolved by the accepted Phase 1
+architecture contract (`docs/releases/v0.1.3/editing-architecture.md`) and
+are normative for v0.1.3:
 
-- edit whitespace normalization;
-- whitespace-only edit behavior;
-- identical-text edit behavior;
-- save/cancel interaction;
-- edit widget or affordance;
-- edit-buffer behavior across Activity recreation.
+- domain API: `edit(id: String, text: String): Boolean`;
+- the Boolean means the edit request was accepted; it does not mean
+  persisted text changed;
+- the controller owns whitespace normalization (`text.trim()`);
+- an invalid edit (blank or missing) returns `false` and does not save;
+- an identical normalized edit returns `true` and does not save;
+- a changed valid edit returns `true` and saves exactly once after
+  successful save;
+- reminder identity and list index are preserved;
+- no `NWR1` migration; the existing compatible whole-file rewrite remains;
+- `ReminderScreen` owns the edit presentation state;
+- the unsaved edit buffer is discarded on Activity recreation.
 
-Phase 1 owns the exact editing semantics contract.
+No architecture semantic change is authorized in this closure synchronization.
 
 ## Phase model
 
@@ -105,9 +112,9 @@ The accepted eight-phase model for v0.1.3 is:
 - Phase 6 — Integrated Audit & Reconciliation
 - Phase 7 — Full Pre-Release Gate
 
-Phase 0 — Release Definition & Bootstrap — is `Complete`. Phases 1 through 7 remain `Planned`; 1 Complete / 7 Planned. Phase 1 — Editing Architecture Contract — is the next lifecycle phase and has not started.
+Phase 0 — Release Definition & Bootstrap — is `Complete`. Phase 1 — Editing Architecture Contract — is `Complete`. Phases 2 through 7 remain `Planned`; 2 Complete / 6 Planned. Phase 2 — Editing Domain Implementation & JVM Proof — is the next lifecycle phase and has not started.
 
-Phase 0 completed the v0.1.3 release-definition, governance, and document-bootstrap synchronization and the initial dirty-candidate repository-consistency validation. Phase 0 did not implement reminder editing. Phase 1 owns the Editing Architecture Contract and remains `Planned`.
+Phase 0 completed the v0.1.3 release-definition, governance, and document-bootstrap synchronization and the initial dirty-candidate repository-consistency validation. Phase 1 produced the frozen editing architecture contract at `docs/releases/v0.1.3/editing-architecture.md` (architecture commit `9004b0f90f60d2d5c8b1ac4828d0a4521316ae5a`, exact-head CI run `33183197545` succeeded). Phases 0 and 1 did not implement reminder editing. Phase 2 owns the editing domain implementation and deterministic JVM proof and remains `Planned`.
 
 This charter does not claim v0.1.3 is merged, tagged, published, or
 complete. The release is not ready.

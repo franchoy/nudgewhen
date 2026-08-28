@@ -1,10 +1,10 @@
 # Phase List — NudgeWhen v0.1.3
 
-**Document status:** v0.1.3 Phase 0 closure phase-list — Phases 0 through 0 complete; Phase 0 — Release Definition & Bootstrap — is `Complete`; Phase 1 — Editing Architecture Contract — is the next lifecycle phase and remains `Planned`; Phases 2 through 7 remain `Planned`; 1 Complete / 7 Planned. This document is normative for the eight-phase ordering and per-phase scope. It does not claim that Phase 1 has started or that v0.1.3 is ready.
+**Document status:** v0.1.3 Phase 1 closure phase-list — Phases 0 through 1 complete; Phase 0 — Release Definition & Bootstrap — is `Complete`; Phase 1 — Editing Architecture Contract — is `Complete`; Phase 2 — Editing Domain Implementation & JVM Proof — is the next lifecycle phase and remains `Planned`; Phases 3 through 7 remain `Planned`; 2 Complete / 6 Planned. This document is normative for the eight-phase ordering and per-phase scope. It does not claim that Phase 2 has started or that v0.1.3 is ready.
 
 ## Phase 0 — Release Definition & Bootstrap
 
-Phase 0 completed the v0.1.3 release-definition, governance, and document-bootstrap synchronization, including the active release charter, phase list, current-facing tracked governance, machine-readable release contract, local-validation documentation, and the initial dirty-candidate repository-consistency validation. Phase 0 did not implement reminder editing and did not change `app/build.gradle.kts`. Phase 1 — Editing Architecture Contract — is the next lifecycle phase and remains `Planned`.
+Phase 0 completed the v0.1.3 release-definition, governance, and document-bootstrap synchronization, including the active release charter, phase list, current-facing tracked governance, machine-readable release contract, local-validation documentation, and the initial dirty-candidate repository-consistency validation. Phase 0 did not implement reminder editing and did not change `app/build.gradle.kts`. Phase 1 — Editing Architecture Contract — is formally closed; Phase 2 — Editing Domain Implementation & JVM Proof — is the next lifecycle phase and remains `Planned`.
 
 ### Status
 
@@ -12,11 +12,18 @@ Complete
 
 ## Phase 1 — Editing Architecture Contract
 
-Phase 1 owns the exact editing semantics contract. It decides whitespace normalization for edits, whitespace-only edit behavior, identical-text edit behavior, save/cancel interaction, the edit widget or affordance, and edit-buffer behavior across Activity recreation. Phase 1 is architecture-only and produces no product code or tests.
+Phase 1 owns the exact editing semantics contract. It decided whitespace normalization for edits, whitespace-only edit behavior, identical-text edit behavior, save/cancel interaction, the edit widget or affordance, and edit-buffer behavior across Activity recreation. Phase 1 was architecture-only and produced no product code or tests.
+
+Phase 1 outcomes:
+
+- editing architecture semantics are frozen;
+- architecture candidate was landed at `9004b0f90f60d2d5c8b1ac4828d0a4521316ae5a`;
+- exact-head CI run `33183197545` succeeded;
+- Phase 1 architecture repository boundary is closed.
 
 ### Status
 
-Planned
+Complete
 
 ## Phase 2 — Editing Domain Implementation & JVM Proof
 
