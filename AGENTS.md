@@ -1,6 +1,6 @@
 # AGENTS.md
 
-**Document status:** Accepted — stable governance; v0.1.2 Phases 0 through 6 Complete; Phase 7 current; Phase 7 Planned
+**Document status:** Accepted — stable governance; active v0.1.3 release; Phases 0 through 0 complete; Phase 0 — Release Definition & Bootstrap — is formally closed following accepted Phase 0-C6 closure-candidate validation; 1 Complete / 7 Planned; Phase 1 — Editing Architecture Contract — is next and remains `Planned`; Phase 1 has not started; the narrow v0.1.3 bootstrap exception is terminated; v0.1.3 is **not** merged, **not** tagged, **not** published, and is not claimed release-ready
 
 ## Purpose and scope
 
@@ -25,10 +25,10 @@ Stable cross-references:
 
 Current release context cross-references:
 
-- [Active release charter](docs/releases/v0.1.2/release-charter.md)
-- [Active phase list](docs/releases/v0.1.2/phase-list.md)
+- [Active release charter](docs/releases/v0.1.3/release-charter.md)
+- [Active phase list](docs/releases/v0.1.3/phase-list.md)
 
-Historical v0.1.0 and v0.1.1 release documents remain under `docs/releases/` for traceability and are not normative for active v0.1.2 work.
+Historical v0.1.0 and v0.1.1 release documents remain under `docs/releases/` for traceability and are not normative for active v0.1.3 work.
 
 ## Precedence model
 
@@ -271,13 +271,22 @@ Category D items cannot be authorized by a normal maintainer turn. A change to C
 
 ## Current release context
 
-- **Active release:** `v0.1.2`
-- **Release title:** `NudgeWhen v0.1.2 — Local Reminder Foundation`
-- **Active branch:** `release/v0.1.2`
-- **Active release charter:** `docs/releases/v0.1.2/release-charter.md`
-- **Active phase list:** `docs/releases/v0.1.2/phase-list.md`
-- **Current phase:** Phase 7 — Full Pre-Release Gate — closure candidate (`Complete`; 8 Complete / 0 Planned candidate). Phase 7 final maintainer acceptance is `pending closure-candidate landing and final exact-head CI`. Next repository action after Phase 7 acceptance is the release-bearing pull request opening under separate authorization. The v0.1.2 release is **not** merged, **not** tagged, and **not** published by this Phase 7C closure candidate.
+- **Active release:** `v0.1.3`
+- **Release title:** `NudgeWhen v0.1.3 — Editable Local Reminders`
+- **Active branch:** `release/v0.1.3`
+- **Active release charter:** `docs/releases/v0.1.3/release-charter.md`
+- **Active phase list:** `docs/releases/v0.1.3/phase-list.md`
+- **Current lifecycle state:** `Phase 0 — Release Definition & Bootstrap — formally closed`
+- **Phase 0 status:** `Complete`
+- **Phase model:** `1 Complete / 7 Planned`
+- **Next lifecycle phase:** `Phase 1 — Editing Architecture Contract`
+- **Phase 1 status:** `Planned`
+- **Phase 1 started:** `No`
+- **Current Android identity:** `versionCode 3 / versionName 0.1.2`
+- **Target Android identity:** `versionCode 4 / versionName 0.1.3`
 - **Current OpenCode model/provider:** MiniMax M3 via the official MiniMax provider (`minimax/MiniMax-M3`), temporarily replacing OpenCode Go after the changed OpenCode Go recurring charge was blocked as anomalous during renewal. This is an operational provider migration, not a model-policy change. OpenCode Go may be reevaluated later under explicit maintainer authorization when its billing path is reliable and its economics remain acceptable.
+- **Bootstrap exception (v0.1.3, terminated):** The narrow v0.1.3 Phase 0 bootstrap exception permitted work on the actual branch `release/v0.1.3` while current-facing bootstrap synchronization was incomplete. All five tracked current-facing bootstrap paths were synchronized, and Phase 0-B3 directly accepted `docs/repository-consistency` for the initial v0.1.3 bootstrap state. The exception's validation prerequisite was therefore satisfied and the branch/current-release transition exception is terminated. This termination does not waive or alter any exact-path, baseline, hard-stop, privacy, network, staging/commit/push, dependency/configuration, or Category-C rule.
+- **v0.1.3 Phase 0 formal-closure record:** Phase 0 is formally closed based on accepted Phase 0-C6 closure-candidate validation. C6 directly observed the synchronized eight-path closure candidate at `1 Complete / 7 Planned` and accepted: Python validator regression `100 tests / OK`; required `11 / 0 / 0`; docs `11 / 0 / 0` including `docs/phase-status — contiguous phase status: 1 Complete, 7 Planned` and `docs/repository-consistency — active release identity consistent (version='v0.1.3', branch='release/v0.1.3')`; and skip-Android `22 / 0 / 0`. The partial validator invocations correctly reported `release_gate=NOT_SATISFIED`. Phase 0 performed release-definition, governance, document-bootstrap synchronization, cumulative evidence synchronization, and closure-candidate validation; it did not implement reminder editing. Phase 1 — Editing Architecture Contract — is next, remains `Planned`, and has not started. Formal Phase 0 closure does not claim v0.1.3 is merged, tagged, published, or release-ready.
 - **Bootstrap exception (v0.1.2, terminated):** Candidate B performed the bounded active-release synchronization from the inherited v0.1.1 current-release pointers to v0.1.2. The maintainer-authorized Phase 0 bootstrap exception permitted work on the actual branch `release/v0.1.2` while current-facing synchronization was incomplete. It terminated after `AGENTS.md`, `README.md`, `scripts/release_contract.json`, `docs/releases/v0.1.2/release-charter.md`, and `docs/releases/v0.1.2/phase-list.md` were synchronized and repository-consistency validation accepted that state. The exception did not waive exact-path authorization, exact starting-HEAD verification, exact working-tree baselines, hard-stop behavior, private-working-material rules, network restrictions, or separate staging/commit/push/repository-action authorization.
 - **Bootstrap exception (historical, terminated):** The tracked `AGENTS.md` baseline clause historically required a specific completed release branch; that historical coupling required a narrow bootstrap exception for Phase 0 to proceed on the released `main` baseline before the new `AGENTS.md` was written. Branch creation alone did not terminate the exception. Phase 0D directly confirmed the four termination conditions: (a) this `AGENTS.md` recognizes `v0.1.1` and `release/v0.1.1`; (b) stable repository governance is separated from current-release context; (c) no normative dependence on any completed release branch remains; (d) the updated governance documents are mutually consistent. The maintainer accepted the Phase 0D evidence. The exception is now terminated. Ordinary baseline rules apply to later tasks.
 - **Phase 0 closure record:** Phase 0 is `Complete`. The observed two-commit history on `release/v0.1.1` is the initial Phase 0 content commit `c2011b10c10fbd04b9911876bcf3d71f8c317d48` (subject `v0.1.1 continuation`, parent `2a092ed013d21f49044142395a8fedd24f9432b5`), which directly modified the seven authorized Phase 0 paths (4 modifications of existing governance files and 3 additions of the release-definition and experiment files), followed by the Phase 0 closure-synchronization commit `aa5fc6e42a85ecd00aaec4e86ed5d75c06bb4b1a` (subject `v0.1.1`, parent `c2011b10…`), which directly modified the four closure-overlay paths. The complete range from `2a092ed0…` through `aa5fc6e…` contains exactly seven distinct Phase 0 paths. Four paths were modified in both commits. The semantic descriptions "initial Phase 0 content commit" and "closure-synchronization commit" are strongly supported inferences based on path sets and chronology, not direct observations. The retained `Phase 0 staged-index validation` evidence records the cached name-status set, the cached whitespace-check output, the absence of an unstaged tracked diff, and seven stage-zero index records for the seven-path pre-closure candidate; numeric exit statuses were not surfaced and remain `Not available`; chronology strongly supports that this retained validation preceded `c2011b10…` and that relationship is labelled as inference. No retained direct evidence establishes a cached/index validation of the four-path closure overlay immediately before `aa5fc6e…`; the later two-commit-range `git diff --check` result is post-commit whitespace evidence and is not a substitute for the unavailable pre-commit cached validation. At that historical point, Phases 1 through 4 were also `Complete` and Phase 5 was the current phase. Ordinary baseline rules continued to apply.

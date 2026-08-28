@@ -4,7 +4,7 @@ NudgeWhen is an early-stage experimental open-source project exploring a voice-f
 
 ## Project status
 
-NudgeWhen is currently in the `v0.1.2` release train, **Local Reminder Foundation**, on the single branch `release/v0.1.2`. Phase 0 — Release Definition & Bootstrap — is `Complete`. Phase 1 — Reminder Architecture Contract — is `Complete`. Phase 2 — Reminder Domain Core — is `Complete`. Phase 3 — Local Persistence — is `Complete`. Phase 4 — Minimal Android Reminder UI — is `Complete`. Phase 5 — Integration & Device Validation — is `Complete`. Phase 6 — Integrated Audit & Agent Evaluation — is `Complete`. Phase 7 — Full Pre-Release Gate — is a `Complete` closure candidate (8 Complete / 0 Planned); Phase 7 local clean gate was accepted with correction; final Phase 7 exact-head CI, release PR, tag, merge, and GitHub release remain pending and are not executed by this closure candidate. The previous `v0.1.1` release is complete and historical.
+NudgeWhen is currently in the `v0.1.3` release train, **Editable Local Reminders**, on the single branch `release/v0.1.3`. Phases 0 through 0 are complete; Phase 0 — Release Definition & Bootstrap — is formally closed following accepted Phase 0-C6 closure-candidate validation; Phases 1 through 7 remain `Planned`; 1 Complete / 7 Planned. Phase 1 — Editing Architecture Contract — is the next lifecycle phase, remains `Planned`, and has not started. The completed `v0.1.2` — **Local Reminder Foundation** — release remains historical and provides the inherited local reminder baseline. Phase 0 did not implement reminder editing. Formal Phase 0 closure does not claim v0.1.3 is merged, tagged, published, or release-ready.
 
 ## What exists now
 
@@ -40,7 +40,7 @@ The following functionality does not yet exist in the current repository state:
 - Analytics or telemetry.
 - A production-readiness, stability, security, or compatibility guarantee.
 
-`v0.1.2` — **Local Reminder Foundation** — the Phase 2 reminder domain core is implemented; the Phase 3 local persistence layer is implemented; the Phase 4 source-level application integration is implemented; `ReminderScreen` is implemented; `MainActivity` integrates `FileReminderStore` over app-private `filesDir`; source-level `MainActivity` startup restoration of reminders is integrated; the user-facing textual create / visible list / permanent-remove flow exists at source level. Phase 5 integrated local validation and one-device runtime acceptance are accepted on one physical `PA2310GBB` on Android 13 (`ONE_PHYSICAL_DEVICE_ONLY`); runtime evidence covers clean launch, valid create, whitespace-only create no-op, oldest-first ordering, permanent removal, restart restoration, and removal persistence across restart. The accepted runtime evidence is explicitly scoped to that single device and is not a general Android compatibility or production-readiness statement. Voice or speech, notifications, time scheduling or alarms, location or geofencing, contextual or device-state triggers, background execution, application networking or sync, analytics or telemetry, additional Android activities/services/receivers/providers, new Android permissions, and production-readiness guarantees remain explicit release non-goals.
+`v0.1.3` — **Editable Local Reminders** — inherits the completed `v0.1.2` Local Reminder Foundation baseline: the reminder domain core, local `FileReminderStore` persistence, minimal Compose reminder UI, textual create, visible reminder list, permanent remove, persisted ordering, startup restoration, and the accepted one-device Android 13 runtime evidence remain implemented. The v0.1.3 release authorizes textual editing of an existing local reminder while preserving its identity, list position, and persistence across restart. Phase 0 did not implement reminder editing. Phase 1 — Editing Architecture Contract — owns the exact editing-semantics contract, remains `Planned`, and has not started. Completion or archive, new `Reminder` model fields, reorder or custom sort, scheduling or alarms, notifications, voice or speech, location or geofencing, contextual or device-state triggers, background execution, application networking or sync, analytics or telemetry, new Android Activity/Service/Receiver/Provider components, new Android permissions, Room or DataStore replacement, ViewModel/Flow/coroutines/DI/navigation expansion solely for editing, a general Android compatibility claim, a production-readiness claim, unrelated dependency modernization, nudge-land / nudge-commit, and Hermes or MCP integration remain explicit release non-goals.
 
 ## Long-term design intentions
 
@@ -50,7 +50,7 @@ The long-term design intentions for NudgeWhen, presented as goals rather than im
 - **Local-first.** Work offline by default. User data stays on the device unless the user explicitly opts into a sync mechanism.
 - **Contextual reminders.** Let reminders be triggered by context (time, location, device state, or other signals) rather than by manual checks.
 
-These are long-term goals. Voice-first capture and contextual-reminder behavior remain future goals. The minimal local reminder lifecycle is now implemented at source level through the local `FileReminderStore` and the Phase 4 UI integration; Phase 5 integrated local validation and one-device runtime acceptance on `PA2310GBB` (Android 13) have been accepted; Phase 6 integrated audit and agent evaluation is `Complete`. Phase 7 — Full Pre-Release Gate — is a `Complete` closure candidate (8 Complete / 0 Planned); Phase 7 local clean gate was accepted with correction; final Phase 7 exact-head CI, release PR, tag, merge, and GitHub release remain pending and are not executed by this closure candidate.
+These are long-term goals. Voice-first capture and contextual-reminder behavior remain future goals. The completed `v0.1.2` Local Reminder Foundation supplies the inherited minimal local reminder lifecycle and accepted one-device Android 13 runtime evidence. Phase 0 — Release Definition & Bootstrap — of the active `v0.1.3` release is formally closed following accepted Phase 0-C6 closure-candidate validation; Phases 1 through 7 remain `Planned`; 1 Complete / 7 Planned. Phase 1 — Editing Architecture Contract — is next, remains `Planned`, and has not started. Phase 0 did not implement reminder editing.
 
 ## Agentic-development experiment
 
@@ -58,7 +58,7 @@ This repository is also used to evaluate OpenCode and MiniMax M3 (3x usage) as p
 
 ## Current release train
 
-The project follows a phased release train on the single branch `release/vX.Y.Z`. The current active branch is `release/v0.1.2`. The previous `v0.1.1` release is complete and historical; `v0.1.0` remains historical evidence.
+The project follows a phased release train on the single branch `release/vX.Y.Z`. The current active branch is `release/v0.1.3`. The completed `v0.1.2` release is historical and provides the inherited local reminder baseline; `v0.1.1` and `v0.1.0` remain historical evidence.
 
 `v0.1.0` phases (historical, complete):
 
@@ -73,7 +73,7 @@ The project follows a phased release train on the single branch `release/vX.Y.Z`
 
 Historical `v0.1.1` was the documentation, governance, validation, CI, supply-chain, workspace-hygiene, and release-metadata hardening release that followed the v0.1.0 baseline.
 
-The active `v0.1.2` release is **Local Reminder Foundation**. Phase 0 — Release Definition & Bootstrap — is `Complete`. Phase 1 — Reminder Architecture Contract — is `Complete`. Phase 2 — Reminder Domain Core — is `Complete`. Phase 3 — Local Persistence — is `Complete`. Phase 4 — Minimal Android Reminder UI — is `Complete`. Phase 5 — Integration & Device Validation — is `Complete`. Phase 6 — Integrated Audit & Agent Evaluation — is `Complete`. Phase 7 — Full Pre-Release Gate — is a `Complete` closure candidate (8 Complete / 0 Planned); Phase 7 local clean gate was accepted with correction; final Phase 7 exact-head CI, release PR, tag, merge, and GitHub release remain pending and are not executed by this closure candidate.
+Historical `v0.1.2` — **Local Reminder Foundation** — is complete and provides the inherited local reminder baseline. The active `v0.1.3` release is **Editable Local Reminders**. Phases 0 through 0 are complete; Phase 0 — Release Definition & Bootstrap — is formally closed following accepted Phase 0-C6 closure-candidate validation; Phases 1 through 7 remain `Planned`; 1 Complete / 7 Planned. Phase 1 — Editing Architecture Contract — is the next lifecycle phase, remains `Planned`, and has not started. Reminder editing was not implemented by Phase 0. Formal Phase 0 closure does not claim v0.1.3 is merged, tagged, published, or release-ready.
 
 No delivery dates or completion promises are made.
 
@@ -166,8 +166,10 @@ This project is licensed under the Apache License 2.0. See [LICENSE](LICENSE) fo
 
 ## Related documents
 
-- [Release charter — v0.1.2 (active)](docs/releases/v0.1.2/release-charter.md)
-- [Phase list — v0.1.2 (active)](docs/releases/v0.1.2/phase-list.md)
+- [Release charter — v0.1.3 (active)](docs/releases/v0.1.3/release-charter.md)
+- [Phase list — v0.1.3 (active)](docs/releases/v0.1.3/phase-list.md)
+- [Release charter — v0.1.2 (historical)](docs/releases/v0.1.2/release-charter.md)
+- [Phase list — v0.1.2 (historical)](docs/releases/v0.1.2/phase-list.md)
 - [Release charter — v0.1.1 (historical)](docs/releases/v0.1.1/release-charter.md)
 - [Phase list — v0.1.1 (historical)](docs/releases/v0.1.1/phase-list.md)
 - [Release charter — v0.1.0 (historical)](docs/releases/v0.1.0/release-charter.md)

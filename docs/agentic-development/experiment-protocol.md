@@ -1,6 +1,6 @@
 # Experiment Protocol — Agent-Assisted Tasks
 
-**Document status:** Accepted — stable governance; active v0.1.2 release; Phases 0 through 7 complete as the Phase 7 closure candidate (8 Complete / 0 Planned candidate); Phase 7 final maintainer acceptance is `pending closure-candidate landing and final exact-head CI`; the v0.1.2 release is **not** merged, **not** tagged, and **not** published by this closure candidate
+**Document status:** Accepted — stable governance; active v0.1.3 release; Phases 0 through 0 complete; Phase 0 — Release Definition & Bootstrap — is formally closed following accepted Phase 0-C6 closure-candidate validation; 1 Complete / 7 Planned; Phase 1 — Editing Architecture Contract — is next and remains `Planned`; Phase 1 has not started; the narrow v0.1.3 bootstrap exception is terminated; v0.1.3 is **not** merged, **not** tagged, **not** published, and is not claimed release-ready
 
 ## Purpose
 
