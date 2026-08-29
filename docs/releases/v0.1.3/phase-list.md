@@ -1,6 +1,6 @@
 # Phase List — NudgeWhen v0.1.3
 
-**Document status:** v0.1.3 Phase 3 closure lifecycle candidate — Phases 0 through 3 complete; Phase 0 — Release Definition & Bootstrap — is `Complete`; Phase 1 — Editing Architecture Contract — is `Complete`; Phase 2 — Editing Domain Implementation & JVM Proof — is `Complete`; Phase 3 — Persistence Compatibility Proof — is `Complete`; Phase 4 — Minimal Compose Editing UX — is the next lifecycle phase and remains `Planned`; Phases 5 through 7 remain `Planned`; 4 Complete / 4 Planned. This document is normative for the eight-phase ordering and per-phase scope. It does not claim that Phase 4 has started or that v0.1.3 is ready.
+**Document status:** v0.1.3 Phase 4 closure lifecycle candidate — Phases 0 through 4 complete; Phase 0 — Release Definition & Bootstrap — is `Complete`; Phase 1 — Editing Architecture Contract — is `Complete`; Phase 2 — Editing Domain Implementation & JVM Proof — is `Complete`; Phase 3 — Persistence Compatibility Proof — is `Complete`; Phase 4 — Minimal Compose Editing UX — is `Complete` in this closure-synchronization candidate; Phase 5 — Integration & Device Validation — is the next lifecycle phase and remains `Planned`; Phases 6 through 7 remain `Planned`; 5 Complete / 3 Planned. This document is normative for the eight-phase ordering and per-phase scope. It does not claim that Phase 5 has started or that v0.1.3 is ready.
 
 ## Phase 0 — Release Definition & Bootstrap
 
@@ -97,9 +97,43 @@ Complete
 
 Phase 4 owns the minimal Compose editing UX layered onto the existing `ReminderScreen` / `MainActivity` integration. It adds the bounded editing affordance, retains `ReminderScreen`-owned Compose state, and keeps `MainActivity` free of `MutableState`. Phase 4 introduces no `ViewModel`, no `Flow`, no coroutines, no DI, and no navigation architecture solely for editing.
 
+Phase 4 outcomes (closure-synchronization candidate):
+
+- Phase 4 is `Complete` in this closure-synchronization candidate;
+- implementation path: `app/src/main/kotlin/io/github/franchoy/nudgewhen/ui/ReminderScreen.kt`;
+- no Phase 4 test path was added;
+- `P4_01` through `P4_20` were accepted by the B2 semantic audit;
+- `editingId: String?` and `editBuffer: String` are owned by `ReminderScreen`;
+- ordinary `remember(controller)` is the editing state holder;
+- a normal row renders reminder text plus Edit and Remove `TextButton`s;
+- an editing row renders an `OutlinedTextField` plus Save and Cancel `TextButton`s;
+- Save derives the explicit non-null `activeEditingId` from the active editing row and calls `controller.edit(activeEditingId, editBuffer)`;
+- an accepted `true` refreshes `controller.reminders`, exits edit mode, and clears `editBuffer`;
+- a normalized-identical accepted `true` also exits edit mode;
+- an accepted `false` retains the editing state and `editBuffer`;
+- a thrown `controller.edit` causes no success transition;
+- Cancel performs no controller mutation, exits edit mode, and clears `editBuffer`;
+- the create input remains independent and usable during editing;
+- the `LazyColumn` row key remains the stable `reminder.id`;
+- no reorder or sort behavior was introduced;
+- implementation commit: `673951082061562b45a40096bc2f9f5debdfb72d` (subject `feat: add reminder editing ux`, parent `938a38c7b2ba659e11eb31588b3a21526f180492`);
+- B3 frozen candidate SHA: `322c57bb2adfa192e0eb3115e9bfb5233bc7e29beb18a2ef9641411be9bb3add`;
+- exact-head CI: `33250408328 / success`;
+- repository boundary: `LANDED_AND_EXACT_HEAD_CI_ACCEPTED`;
+- `MainActivity` change: `NONE`;
+- `Reminder` model change: `NONE`;
+- Phase 4 production `ReminderController` change: `NONE`;
+- persistence production change: `NONE`;
+- dependency change: `NONE`;
+- validator change: `NONE`;
+- CI change: `NONE`;
+- Android identity alignment: `NONE`;
+- integrated/device validation: `NOT_STARTED`;
+- Phase 5 has not started.
+
 ### Status
 
-Planned
+Complete
 
 ## Phase 5 — Integration & Device Validation
 

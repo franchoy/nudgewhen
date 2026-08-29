@@ -1,6 +1,6 @@
 # Release Charter — NudgeWhen v0.1.3
 
-**Document status:** v0.1.3 Phase 3 closure charter candidate — Phases 0 through 3 complete; Phase 0 — Release Definition & Bootstrap — is `Complete`; Phase 1 — Editing Architecture Contract — is `Complete`; Phase 2 — Editing Domain Implementation & JVM Proof — is `Complete`; Phase 3 — Persistence Compatibility Proof — is `Complete`; Phases 4 through 7 remain `Planned`; 4 Complete / 4 Planned. Phase 4 — Minimal Compose Editing UX — is the next lifecycle phase and has not started. This charter is normative for v0.1.3 release policy. It does not claim release readiness.
+**Document status:** v0.1.3 Phase 4 closure charter candidate — Phases 0 through 4 complete; Phase 0 — Release Definition & Bootstrap — is `Complete`; Phase 1 — Editing Architecture Contract — is `Complete`; Phase 2 — Editing Domain Implementation & JVM Proof — is `Complete`; Phase 3 — Persistence Compatibility Proof — is `Complete`; Phase 4 — Minimal Compose Editing UX — is `Complete` in this closure-synchronization candidate; Phases 5 through 7 remain `Planned`; 5 Complete / 3 Planned. Phase 5 — Integration & Device Validation — is the next lifecycle phase and has not started. This charter is normative for v0.1.3 release policy. It does not claim release readiness.
 
 ## Release identity
 
@@ -136,6 +136,39 @@ Phase 3 — Persistence Compatibility Proof — is `Complete` in this closure-sy
 - Phase 3 introduced no Android identity alignment;
 - Phase 3 did not implement any user-facing editing flow; the Compose editing UX is `NOT_STARTED`.
 
+## Established Phase 4 outcome
+
+Phase 4 — Minimal Compose Editing UX — is `Complete` in this closure-synchronization candidate. The Phase 4 outcome statement is:
+
+- Phase 4 is `Complete` in this closure-synchronization candidate;
+- the bounded Compose editing UX is implemented on the existing `ReminderScreen`; the exact implementation path is `app/src/main/kotlin/io/github/franchoy/nudgewhen/ui/ReminderScreen.kt`;
+- implementation commit: `673951082061562b45a40096bc2f9f5debdfb72d` (subject `feat: add reminder editing ux`, parent `938a38c7b2ba659e11eb31588b3a21526f180492`);
+- B3 frozen candidate SHA: `322c57bb2adfa192e0eb3115e9bfb5233bc7e29beb18a2ef9641411be9bb3add`;
+- exact-head CI run `33250408328` succeeded;
+- Phase 4 repository boundary: `LANDED_AND_EXACT_HEAD_CI_ACCEPTED`;
+- no Phase 4 test path was added;
+- the B2 semantic audit accepted `P4_01` through `P4_20`;
+- `ReminderScreen` owns the editing presentation state (`editingId: String?`, `editBuffer: String`);
+- ordinary `remember(controller)` is the editing state holder;
+- a normal row renders reminder text plus Edit and Remove `TextButton`s;
+- an editing row renders an `OutlinedTextField` plus Save and Cancel `TextButton`s;
+- Save derives the explicit non-null `activeEditingId` from the active editing row and calls `controller.edit(activeEditingId, editBuffer)`; only on accepted `true` does Save refresh `controller.reminders`, exit edit mode, and clear `editBuffer`;
+- a normalized-identical accepted `true` also exits edit mode;
+- an accepted `false` retains the editing state and `editBuffer`;
+- a thrown `controller.edit` causes no success transition;
+- Cancel performs no controller mutation, exits edit mode, and clears `editBuffer`;
+- the create input remains independent and usable during editing;
+- the `LazyColumn` row key remains the stable `reminder.id`;
+- no reorder or sort behavior was introduced;
+- Phase 4 introduced no `MainActivity` change;
+- Phase 4 introduced no `Reminder` model change;
+- Phase 4 introduced no Phase 4 production `ReminderController` change;
+- Phase 4 introduced no persistence production change;
+- Phase 4 introduced no dependency change;
+- Phase 4 introduced no Android identity alignment;
+- user-facing textual editing is `IMPLEMENTED_AT_SOURCE_LEVEL`;
+- integrated/device validation is `NOT_STARTED`.
+
 ## Phase model
 
 The accepted eight-phase model for v0.1.3 is:
@@ -149,9 +182,9 @@ The accepted eight-phase model for v0.1.3 is:
 - Phase 6 — Integrated Audit & Reconciliation
 - Phase 7 — Full Pre-Release Gate
 
-Phase 0 — Release Definition & Bootstrap — is `Complete`. Phase 1 — Editing Architecture Contract — is `Complete`. Phase 2 — Editing Domain Implementation & JVM Proof — is `Complete`. Phase 3 — Persistence Compatibility Proof — is `Complete`. Phases 4 through 7 remain `Planned`; 4 Complete / 4 Planned. Phase 4 — Minimal Compose Editing UX — is the next lifecycle phase and has not started.
+Phase 0 — Release Definition & Bootstrap — is `Complete`. Phase 1 — Editing Architecture Contract — is `Complete`. Phase 2 — Editing Domain Implementation & JVM Proof — is `Complete`. Phase 3 — Persistence Compatibility Proof — is `Complete`. Phase 4 — Minimal Compose Editing UX — is `Complete` in this closure-synchronization candidate. Phases 5 through 7 remain `Planned`; 5 Complete / 3 Planned. Phase 5 — Integration & Device Validation — is the next lifecycle phase and has not started.
 
-Phase 0 completed the v0.1.3 release-definition, governance, and document-bootstrap synchronization and the initial dirty-candidate repository-consistency validation. Phase 1 produced the frozen editing architecture contract at `docs/releases/v0.1.3/editing-architecture.md` (architecture commit `9004b0f90f60d2d5c8b1ac4828d0a4521316ae5a`, exact-head CI run `33183197545` succeeded). Phases 0 and 1 did not implement reminder editing. Phase 2 implemented the frozen edit domain API and the deterministic controller JVM proof on top of the existing `Reminder` model and `ReminderController` (implementation commit `7eacbe3746807a36fecc2a33aac8768f30287686`, exact-head CI run `33239803189` succeeded). Phase 3 — Persistence Compatibility Proof — proved persistence compatibility with the existing `FileReminderStore` and `NWR1` (implementation commit `b77af048950a720482c4ec279762d51f7f65ca5f`, exact-head CI run `33245690596` succeeded); the persistence compatibility proof is `LANDED_AND_EXACT_HEAD_CI_ACCEPTED`. Phase 4 — Minimal Compose Editing UX — is `Planned` and has not started; the Compose editing UX is `NOT_STARTED`.
+Phase 0 completed the v0.1.3 release-definition, governance, and document-bootstrap synchronization and the initial dirty-candidate repository-consistency validation. Phase 1 produced the frozen editing architecture contract at `docs/releases/v0.1.3/editing-architecture.md` (architecture commit `9004b0f90f60d2d5c8b1ac4828d0a4521316ae5a`, exact-head CI run `33183197545` succeeded). Phases 0 and 1 did not implement reminder editing. Phase 2 implemented the frozen edit domain API and the deterministic controller JVM proof on top of the existing `Reminder` model and `ReminderController` (implementation commit `7eacbe3746807a36fecc2a33aac8768f30287686`, exact-head CI run `33239803189` succeeded). Phase 3 — Persistence Compatibility Proof — proved persistence compatibility with the existing `FileReminderStore` and `NWR1` (implementation commit `b77af048950a720482c4ec279762d51f7f65ca5f`, exact-head CI run `33245690596` succeeded); the persistence compatibility proof is `LANDED_AND_EXACT_HEAD_CI_ACCEPTED`. Phase 4 — Minimal Compose Editing UX — has landed the bounded Compose editing UX on `ReminderScreen` (implementation commit `673951082061562b45a40096bc2f9f5debdfb72d`, exact-head CI run `33250408328` succeeded); the Compose editing UX is `LANDED_AND_EXACT_HEAD_CI_ACCEPTED`.
 
 This charter does not claim v0.1.3 is merged, tagged, published, or
 complete. Release readiness: `NO`. The release is not ready.
