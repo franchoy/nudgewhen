@@ -1,6 +1,6 @@
 # Phase List — NudgeWhen v0.1.3
 
-**Document status:** v0.1.3 Phase 2 closure lifecycle candidate — Phases 0 through 2 complete; Phase 0 — Release Definition & Bootstrap — is `Complete`; Phase 1 — Editing Architecture Contract — is `Complete`; Phase 2 — Editing Domain Implementation & JVM Proof — is `Complete`; Phase 3 — Persistence Compatibility Proof — is the next lifecycle phase and remains `Planned`; Phases 4 through 7 remain `Planned`; 3 Complete / 5 Planned. This document is normative for the eight-phase ordering and per-phase scope. It does not claim that Phase 3 has started or that v0.1.3 is ready.
+**Document status:** v0.1.3 Phase 3 closure lifecycle candidate — Phases 0 through 3 complete; Phase 0 — Release Definition & Bootstrap — is `Complete`; Phase 1 — Editing Architecture Contract — is `Complete`; Phase 2 — Editing Domain Implementation & JVM Proof — is `Complete`; Phase 3 — Persistence Compatibility Proof — is `Complete`; Phase 4 — Minimal Compose Editing UX — is the next lifecycle phase and remains `Planned`; Phases 5 through 7 remain `Planned`; 4 Complete / 4 Planned. This document is normative for the eight-phase ordering and per-phase scope. It does not claim that Phase 4 has started or that v0.1.3 is ready.
 
 ## Phase 0 — Release Definition & Bootstrap
 
@@ -62,9 +62,36 @@ persistence across edit. Phase 0 does not pre-decide the persistence-format
 outcome; any format change would require separate Phase 3 evidence and
 authorization. A new persistence backend remains out of scope.
 
+Phase 3 outcomes (closure-synchronization candidate):
+
+- Phase 3 is `Complete` in this closure-synchronization candidate;
+- implementation path: `app/src/test/kotlin/io/github/franchoy/nudgewhen/data/FileReminderStoreTest.kt`;
+- existing `P3_01` through `P3_29` preserved;
+- `P3E_01` through `P3E_10` added and semantically accepted;
+- source-level `FileReminderStoreTest` count: 39;
+- persistence edit round-trip proven;
+- same `id` after reload;
+- same list index after reload;
+- neighbors/order/content unchanged;
+- new store/controller restores edited text;
+- existing valid NWR1 supports load/edit/save/reload;
+- NWR1 header unchanged;
+- record grammar unchanged;
+- Unicode edited text round-trip;
+- NWR1 migration: `NOT_REQUIRED_BY_PHASE_3_TEST_EVIDENCE`;
+- production `FileReminderStore` change: `NONE`;
+- production `ReminderController` change during Phase 3: `NONE`;
+- implementation commit: `b77af048950a720482c4ec279762d51f7f65ca5f` (subject `test: prove reminder edit persistence compatibility`, parent `fa387ece5eeb972f4344ea4bd04582749b6bbf02`);
+- frozen B3 SHA: `74e46f94fcfbc823911faf971124c4600f70f5d02002b5dc4e6f2a1d623aa4a7`;
+- exact-head CI: `33245690596 / success`;
+- repository boundary: `LANDED_AND_EXACT_HEAD_CI_ACCEPTED`;
+- no Compose edit UX;
+- no Android identity alignment;
+- Phase 4 not started.
+
 ### Status
 
-Planned
+Complete
 
 ## Phase 4 — Minimal Compose Editing UX
 
