@@ -35,6 +35,26 @@ class ReminderController(
         state = candidate
     }
 
+    fun edit(id: String, text: String): Boolean {
+        val index = state.indexOfFirst { it.id == id }
+        if (index < 0) return false
+
+        val normalizedText = text.trim()
+        if (normalizedText.isEmpty()) return false
+
+        if (state[index].text == normalizedText) return true
+
+        val mutableCandidate = state.toMutableList()
+        mutableCandidate[index] = Reminder(
+            id = state[index].id,
+            text = normalizedText,
+        )
+        val candidate: List<Reminder> = mutableCandidate
+        store.save(candidate)
+        state = candidate
+        return true
+    }
+
     private fun validateGeneratedIdGrammar(id: String) {
         if (id.isEmpty() ||
             id.contains('\t') ||
