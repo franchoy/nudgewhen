@@ -14,6 +14,7 @@ import org.junit.Before
 import org.junit.Test
 import java.io.File
 import java.nio.file.Files
+import java.util.Base64
 
 class FileReminderStoreTest {
 
@@ -336,6 +337,242 @@ class FileReminderStoreTest {
         val afterBytes = target().readBytes()
         assertArrayEquals(beforeBytes, afterBytes)
         assertEquals(beforeText, target().readText(Charsets.UTF_8))
+    }
+
+    @Test
+    fun P3E_01_edit_persists_changed_text_across_reload() {
+        val store = newStore()
+        store.save(listOf(Reminder("edit-1", "original")))
+        val controller = ReminderController(store) { "unused" }
+
+        assertTrue(controller.edit("edit-1", "changed"))
+
+        val reloaded = newStore().load()
+        assertEquals(1, reloaded.size)
+        assertEquals("edit-1", reloaded[0].id)
+        assertEquals("changed", reloaded[0].text)
+    }
+
+    @Test
+    fun P3E_02_edit_preserves_reminder_id_after_reload() {
+        val store = newStore()
+        store.save(
+            listOf(
+                Reminder("a", "first"),
+                Reminder("b", "second"),
+                Reminder("c", "third"),
+            ),
+        )
+        val controller = ReminderController(store) { "unused" }
+
+        assertTrue(controller.edit("b", "edited-second"))
+
+        val reloaded = newStore().load()
+        assertEquals(listOf("a", "b", "c"), reloaded.map { it.id })
+        val edited = reloaded.first { it.text == "edited-second" }
+        assertEquals("b", edited.id)
+    }
+
+    @Test
+    fun P3E_03_edit_preserves_reminder_index_after_reload() {
+        val store = newStore()
+        store.save(
+            listOf(
+                Reminder("a", "first"),
+                Reminder("b", "second"),
+                Reminder("c", "third"),
+            ),
+        )
+        val controller = ReminderController(store) { "unused" }
+
+        assertTrue(controller.edit("b", "edited-second"))
+
+        val reloaded = newStore().load()
+        assertEquals(3, reloaded.size)
+        assertEquals(1, reloaded.indexOfFirst { it.id == "b" })
+    }
+
+    @Test
+    fun P3E_04_edit_leaves_neighbors_order_and_unrelated_content_unchanged() {
+        val store = newStore()
+        store.save(
+            listOf(
+                Reminder("a", "first"),
+                Reminder("b", "second"),
+                Reminder("c", "third"),
+                Reminder("d", "fourth"),
+            ),
+        )
+        val controller = ReminderController(store) { "unused" }
+
+        assertTrue(controller.edit("b", "edited-second"))
+
+        val reloaded = newStore().load()
+        assertEquals(
+            listOf(
+                Reminder("a", "first"),
+                Reminder("b", "edited-second"),
+                Reminder("c", "third"),
+                Reminder("d", "fourth"),
+            ),
+            reloaded,
+        )
+    }
+
+    @Test
+    fun P3E_05_new_controller_with_new_store_restores_edited_text() {
+        val storeA = newStore()
+        storeA.save(listOf(Reminder("restore-id", "before")))
+        val controllerA = ReminderController(storeA) { "unused" }
+
+        assertTrue(controllerA.edit("restore-id", "after"))
+
+        val storeB = newStore()
+        val controllerB = ReminderController(storeB) { "unused" }
+        assertEquals(
+            listOf(Reminder("restore-id", "after")),
+            controllerB.reminders,
+        )
+    }
+
+    @Test
+    fun P3E_06_existing_valid_NWR1_load_edit_save_reload() {
+        val file = target()
+        file.writeText("NWR1\nfirst-id\tZmlyc3Q=\nsecond-id\tc2Vjb25k")
+
+        val store = newStore()
+        val controller = ReminderController(store) { "unused" }
+        assertEquals(
+            listOf(
+                Reminder("first-id", "first"),
+                Reminder("second-id", "second"),
+            ),
+            controller.reminders,
+        )
+
+        assertTrue(controller.edit("first-id", "edited-first"))
+
+        val reloaded = newStore().load()
+        assertEquals(
+            listOf(
+                Reminder("first-id", "edited-first"),
+                Reminder("second-id", "second"),
+            ),
+            reloaded,
+        )
+    }
+
+    @Test
+    fun P3E_07_NWR1_header_remains_exactly_NWR1_after_edit_save() {
+        val store = newStore()
+        store.save(listOf(Reminder("header-id", "before")))
+        val controller = ReminderController(store) { "unused" }
+
+        assertTrue(controller.edit("header-id", "after"))
+
+        val text = target().readText(Charsets.UTF_8)
+        assertEquals("NWR1", text.substringBefore('\n'))
+    }
+
+    @Test
+    fun P3E_08_record_grammar_unchanged_after_edit_save() {
+        val store = newStore()
+        store.save(
+            listOf(
+                Reminder("grammar-a", "alpha"),
+                Reminder("grammar-b", "beta"),
+            ),
+        )
+        val controller = ReminderController(store) { "unused" }
+
+        assertTrue(controller.edit("grammar-a", "alpha-edited"))
+
+        val text = target().readText(Charsets.UTF_8)
+        val lines = text.split("\n")
+        assertEquals("NWR1", lines[0])
+        assertEquals(3, lines.size)
+        assertFalse(text.endsWith("\n"))
+
+        val expectedById = mapOf(
+            "grammar-a" to "alpha-edited",
+            "grammar-b" to "beta",
+        )
+
+        for (i in 1..2) {
+            val record = lines[i]
+            assertEquals(1, record.count { it == '\t' })
+            val tabIndex = record.indexOf('\t')
+            val id = record.substring(0, tabIndex)
+            val encoded = record.substring(tabIndex + 1)
+            assertTrue("unexpected id: $id", expectedById.containsKey(id))
+            assertFalse("TAB must not appear in encoded form", encoded.contains('\t'))
+            assertFalse("CR must not appear in encoded form", encoded.contains('\r'))
+            assertFalse("LF must not appear in encoded form", encoded.contains('\n'))
+            val decodedBytes = Base64.getUrlDecoder().decode(encoded)
+            val decodedText = decodedBytes.toString(Charsets.UTF_8)
+            assertEquals(expectedById[id], decodedText)
+        }
+    }
+
+    @Test
+    fun P3E_09_unicode_edited_text_round_trips_exactly() {
+        val store = newStore()
+        store.save(listOf(Reminder("unicode-edit", "before")))
+        val controller = ReminderController(store) { "unused" }
+        val unicodeText = "Héllo 👋 世界 — Ω∞ café 🌟"
+
+        assertTrue(controller.edit("unicode-edit", unicodeText))
+
+        val reloaded = newStore().load()
+        assertEquals(1, reloaded.size)
+        assertEquals("unicode-edit", reloaded[0].id)
+        assertEquals(unicodeText, reloaded[0].text)
+    }
+
+    @Test
+    fun P3E_10_edit_requires_no_NWR1_migration() {
+        val file = target()
+        file.writeText("NWR1\nmig-id1\tZmlyc3Q=\nmig-id2\tc2Vjb25k")
+
+        val store = newStore()
+        val controller = ReminderController(store) { "unused" }
+        assertEquals(
+            listOf(
+                Reminder("mig-id1", "first"),
+                Reminder("mig-id2", "second"),
+            ),
+            controller.reminders,
+        )
+
+        assertTrue(controller.edit("mig-id1", "edited-first"))
+
+        val text = target().readText(Charsets.UTF_8)
+        val lines = text.split("\n")
+        assertEquals("NWR1", lines[0])
+        assertEquals(3, lines.size)
+        assertFalse(text.endsWith("\n"))
+
+        for (i in 1..2) {
+            val record = lines[i]
+            assertEquals(1, record.count { it == '\t' })
+            val tabIndex = record.indexOf('\t')
+            assertTrue(tabIndex > 0)
+            val encoded = record.substring(tabIndex + 1)
+            assertFalse(encoded.contains('\t'))
+            assertFalse(encoded.contains('\r'))
+            assertFalse(encoded.contains('\n'))
+            // Must decode as valid Base64URL + UTF-8
+            Base64.getUrlDecoder().decode(encoded)
+        }
+
+        val reloaded = newStore().load()
+        assertEquals(
+            listOf(
+                Reminder("mig-id1", "edited-first"),
+                Reminder("mig-id2", "second"),
+            ),
+            reloaded,
+        )
     }
 
     @Suppress("unused")
