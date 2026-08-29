@@ -33,6 +33,9 @@ Phase 1:
 Complete in this closure-synchronization candidate.
 
 Phase 2:
+Complete.
+
+Phase 3:
 Planned / next / not started.
 
 Release readiness:
@@ -493,7 +496,8 @@ Phase lifecycle in this closure-synchronization candidate:
 
 - Phase 0 `Complete`
 - Phase 1 `Complete`
-- Phase 2 `Planned` / next / not started
+- Phase 2 `Complete`
+- Phase 3 `Planned` / next / not started
 
 Release readiness is **not** claimed. The v0.1.3 release is not merged,
 not tagged, not published, and not release-ready.

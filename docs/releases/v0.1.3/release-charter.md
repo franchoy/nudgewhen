@@ -1,6 +1,6 @@
 # Release Charter — NudgeWhen v0.1.3
 
-**Document status:** v0.1.3 Phase 1 closure charter — Phases 0 through 1 complete; Phase 0 — Release Definition & Bootstrap — is `Complete`; Phase 1 — Editing Architecture Contract — is `Complete`; Phases 2 through 7 remain `Planned`; 2 Complete / 6 Planned. Phase 2 — Editing Domain Implementation & JVM Proof — is the next lifecycle phase and has not started. This charter is normative for v0.1.3 release policy. It does not claim release readiness.
+**Document status:** v0.1.3 Phase 2 closure charter candidate — Phases 0 through 2 complete; Phase 0 — Release Definition & Bootstrap — is `Complete`; Phase 1 — Editing Architecture Contract — is `Complete`; Phase 2 — Editing Domain Implementation & JVM Proof — is `Complete`; Phases 3 through 7 remain `Planned`; 3 Complete / 5 Planned. Phase 3 — Persistence Compatibility Proof — is the next lifecycle phase and has not started. This charter is normative for v0.1.3 release policy. It does not claim release readiness.
 
 ## Release identity
 
@@ -99,6 +99,20 @@ are normative for v0.1.3:
 
 No architecture semantic change is authorized in this closure synchronization.
 
+## Established Phase 2 outcome
+
+Phase 2 — Editing Domain Implementation & JVM Proof — is `Complete`. The Phase 2 outcome statement is:
+
+- the frozen edit domain API `edit(id: String, text: String): Boolean` is implemented in `ReminderController`;
+- implementation commit: `7eacbe3746807a36fecc2a33aac8768f30287686` (subject `feat: implement reminder editing domain`, parent `2fa810cce63e60c06d6c2b9ad04d80c30db2368d`);
+- exact-head CI run `33239803189` succeeded;
+- Phase 2 repository boundary: `LANDED_AND_EXACT_HEAD_CI_ACCEPTED`;
+- the source-level controller-test count is 42 (25 existing responsibilities plus 17 edit responsibilities);
+- clean B3 direct JVM validation completed with `BUILD SUCCESSFUL`;
+- Phase 2 introduced no persistence production change, no Compose change, and no Android identity alignment;
+- Phase 2 did not prove persistence across edit; the persistence compatibility proof is `NOT_STARTED`;
+- Phase 2 did not implement any user-facing editing flow; the Compose editing UX is `NOT_STARTED`.
+
 ## Phase model
 
 The accepted eight-phase model for v0.1.3 is:
@@ -112,9 +126,9 @@ The accepted eight-phase model for v0.1.3 is:
 - Phase 6 — Integrated Audit & Reconciliation
 - Phase 7 — Full Pre-Release Gate
 
-Phase 0 — Release Definition & Bootstrap — is `Complete`. Phase 1 — Editing Architecture Contract — is `Complete`. Phases 2 through 7 remain `Planned`; 2 Complete / 6 Planned. Phase 2 — Editing Domain Implementation & JVM Proof — is the next lifecycle phase and has not started.
+Phase 0 — Release Definition & Bootstrap — is `Complete`. Phase 1 — Editing Architecture Contract — is `Complete`. Phase 2 — Editing Domain Implementation & JVM Proof — is `Complete`. Phases 3 through 7 remain `Planned`; 3 Complete / 5 Planned. Phase 3 — Persistence Compatibility Proof — is the next lifecycle phase and has not started.
 
-Phase 0 completed the v0.1.3 release-definition, governance, and document-bootstrap synchronization and the initial dirty-candidate repository-consistency validation. Phase 1 produced the frozen editing architecture contract at `docs/releases/v0.1.3/editing-architecture.md` (architecture commit `9004b0f90f60d2d5c8b1ac4828d0a4521316ae5a`, exact-head CI run `33183197545` succeeded). Phases 0 and 1 did not implement reminder editing. Phase 2 owns the editing domain implementation and deterministic JVM proof and remains `Planned`.
+Phase 0 completed the v0.1.3 release-definition, governance, and document-bootstrap synchronization and the initial dirty-candidate repository-consistency validation. Phase 1 produced the frozen editing architecture contract at `docs/releases/v0.1.3/editing-architecture.md` (architecture commit `9004b0f90f60d2d5c8b1ac4828d0a4521316ae5a`, exact-head CI run `33183197545` succeeded). Phases 0 and 1 did not implement reminder editing. Phase 2 implemented the frozen edit domain API and the deterministic controller JVM proof on top of the existing `Reminder` model and `ReminderController` (implementation commit `7eacbe3746807a36fecc2a33aac8768f30287686`, exact-head CI run `33239803189` succeeded). Phase 3 — Persistence Compatibility Proof — is `Planned` and has not started; the persistence compatibility proof is `NOT_STARTED`.
 
 This charter does not claim v0.1.3 is merged, tagged, published, or
-complete. The release is not ready.
+complete. Release readiness: `NO`. The release is not ready.

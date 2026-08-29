@@ -1,6 +1,6 @@
 # Phase List — NudgeWhen v0.1.3
 
-**Document status:** v0.1.3 Phase 1 closure phase-list — Phases 0 through 1 complete; Phase 0 — Release Definition & Bootstrap — is `Complete`; Phase 1 — Editing Architecture Contract — is `Complete`; Phase 2 — Editing Domain Implementation & JVM Proof — is the next lifecycle phase and remains `Planned`; Phases 3 through 7 remain `Planned`; 2 Complete / 6 Planned. This document is normative for the eight-phase ordering and per-phase scope. It does not claim that Phase 2 has started or that v0.1.3 is ready.
+**Document status:** v0.1.3 Phase 2 closure lifecycle candidate — Phases 0 through 2 complete; Phase 0 — Release Definition & Bootstrap — is `Complete`; Phase 1 — Editing Architecture Contract — is `Complete`; Phase 2 — Editing Domain Implementation & JVM Proof — is `Complete`; Phase 3 — Persistence Compatibility Proof — is the next lifecycle phase and remains `Planned`; Phases 4 through 7 remain `Planned`; 3 Complete / 5 Planned. This document is normative for the eight-phase ordering and per-phase scope. It does not claim that Phase 3 has started or that v0.1.3 is ready.
 
 ## Phase 0 — Release Definition & Bootstrap
 
@@ -27,11 +27,31 @@ Complete
 
 ## Phase 2 — Editing Domain Implementation & JVM Proof
 
-Phase 2 owns the domain-level edit implementation on top of the existing `Reminder` model and `ReminderController`. It adds the domain edit behavior and deterministic JVM proof. Phase 2 does not modify persistence or Compose UI.
+Phase 2 implemented the frozen Phase 1 edit domain API `edit(id: String, text: String): Boolean` on top of the existing `Reminder` model and `ReminderController`. It added the domain edit behavior and the deterministic JVM proof for that behavior. Phase 2 did not modify persistence production, did not modify Compose UI, and did not perform Android identity alignment.
+
+Phase 2 outcomes:
+
+- the frozen edit domain API `edit(id: String, text: String): Boolean` is implemented in `ReminderController`;
+- the controller owns `text.trim()` normalization;
+- invalid blank / whitespace-only / missing-id edits return `false` and do not save;
+- identical normalized edits return `true` and do not save;
+- a changed valid edit changes only the target text and returns `true`;
+- target id, target index, neighbor order, and the complete candidate list ordering are preserved;
+- the complete candidate list is saved exactly once;
+- controller state is published only after a successful save;
+- save failure propagates and preserves the previous controller state;
+- `edit` never invokes `idGenerator`;
+- Unicode text is supported;
+- the source-level `ReminderControllerTest` count is 42: 25 existing `C_01` through `C_25` plus 17 edit responsibilities `E_01` through `E_17`;
+- clean B3 direct JVM validation completed with `BUILD SUCCESSFUL`;
+- implementation commit: `7eacbe3746807a36fecc2a33aac8768f30287686` (subject `feat: implement reminder editing domain`, parent `2fa810cce63e60c06d6c2b9ad04d80c30db2368d`);
+- exact-head CI run `33239803189` succeeded;
+- Phase 2 repository boundary is `LANDED_AND_EXACT_HEAD_CI_ACCEPTED`;
+- Phase 2 introduced no `Reminder` model change, no `FileReminderStore` change, no persistence production change, no Compose UI change, no Android identity change, no `app/build.gradle.kts` change, no new Gradle dependency, no test dependency change, no validator architecture change, and no CI workflow change.
 
 ### Status
 
-Planned
+Complete
 
 ## Phase 3 — Persistence Compatibility Proof
 
