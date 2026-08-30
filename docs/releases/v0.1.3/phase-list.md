@@ -1,6 +1,6 @@
 # Phase List — NudgeWhen v0.1.3
 
-**Document status:** v0.1.3 Phase 4 closure lifecycle candidate — Phases 0 through 4 complete; Phase 0 — Release Definition & Bootstrap — is `Complete`; Phase 1 — Editing Architecture Contract — is `Complete`; Phase 2 — Editing Domain Implementation & JVM Proof — is `Complete`; Phase 3 — Persistence Compatibility Proof — is `Complete`; Phase 4 — Minimal Compose Editing UX — is `Complete` in this closure-synchronization candidate; Phase 5 — Integration & Device Validation — is the next lifecycle phase and remains `Planned`; Phases 6 through 7 remain `Planned`; 5 Complete / 3 Planned. This document is normative for the eight-phase ordering and per-phase scope. It does not claim that Phase 5 has started or that v0.1.3 is ready.
+**Document status:** v0.1.3 Phase 5 closure lifecycle candidate — Phases 0 through 5 complete; Phase 0 — Release Definition & Bootstrap — is `Complete`; Phase 1 — Editing Architecture Contract — is `Complete`; Phase 2 — Editing Domain Implementation & JVM Proof — is `Complete`; Phase 3 — Persistence Compatibility Proof — is `Complete`; Phase 4 — Minimal Compose Editing UX — is `Complete`; Phase 5 — Integration & Device Validation — is `Complete` in this closure-synchronization candidate; Phase 6 — Integrated Audit & Reconciliation — is the next lifecycle phase and remains `Planned`; Phase 7 remains `Planned`; 6 Complete / 2 Planned. This document is normative for the eight-phase ordering and per-phase scope. It does not claim that v0.1.3 is merged, tagged, published, or release-ready.
 
 ## Phase 0 — Release Definition & Bootstrap
 
@@ -137,15 +137,37 @@ Complete
 
 ## Phase 5 — Integration & Device Validation
 
-Phase 5 owns the integrated local validation and the bounded device/end-to-end validation for v0.1.3. If separately authorized, Phase 5 may also own the Android current-identity alignment (versionCode 4 / versionName 0.1.3) via a consistent `app/build.gradle.kts` change. Phase 5 introduces no new Android permission, component, Gradle dependency, test dependency, or validator architecture.
+Phase 5 — Integration & Device Validation — is `Complete` in this closure-synchronization candidate. The Phase 5 outcome statement is:
+
+- Phase 5 is `Complete` in this closure-synchronization candidate;
+- Android CURRENT identity advanced to `versionCode 4` / `versionName 0.1.3`;
+- identity implementation commit: `1cfb9c373abfa24cf10f23daa152f4a410932d26` (subject `chore: align v0.1.3 android identity`, parent `3ba8470918a28acd4376639cf061f20209f78735`);
+- identity implementation paths: `app/build.gradle.kts` and `scripts/release_contract.json`;
+- exact-head identity CI: `33255108409 / success`;
+- integrated local validation at HEAD `1cfb9c373abfa24cf10f23daa152f4a410932d26`: Python validator regression `100 tests / OK`; `required` `11/0/0`; `docs` `11/0/0`; `android offline` `17/0/0`; full offline `39/0/0`; `release_gate=SATISFIED`;
+- frozen APK identity: package `io.github.franchoy.nudgewhen`, `versionCode 4`, `versionName 0.1.3`;
+- frozen debug APK path: `app/build/outputs/apk/debug/app-debug.apk`;
+- frozen APK SHA-256: `209bfb2a11628a903d7163ca807776a01aeb107e9fbe4c7168e6984a715f8908`;
+- P5_01 through P5_13 accepted: identity, integrated local validation, APK identity, installed-artifact reconciliation and physical-device launch, bounded runtime reminder-list baseline, accepted user-facing edit, observable logical identity/list-position preservation, restart-persistence, create-after-edit, remove-after-edit, Cancel-leaves-original, whitespace-save-retains-editing, and `ONE_PHYSICAL_DEVICE_ONLY` runtime boundary;
+- original D1 `adb install` CLI failure: `FAIL_PRESERVED`;
+- accepted D1-R1, D1-R2, and D1-R3 recovery reconciled installed bytes to the Phase 5-C frozen APK and proved physical `MainActivity` cold launch;
+- D2-A-R3 accepted edit, list-position preservation, and restart-persistence evidence;
+- D2-B-R1 accepted Cancel / whitespace / create / remove / restart evidence;
+- physical runtime evidence: `ONE_PHYSICAL_DEVICE_ONLY`;
+- general Android compatibility: `NOT_CLAIMED`;
+- production readiness: `NOT_CLAIMED`;
+- supported Android version range: `NOT_CLAIMED`;
+- multi-device validation: `NOT_CLAIMED`;
+- Phase 5 introduced no new Android permission, no new Android component, no new Gradle dependency, no new test dependency, and no validator-architecture change;
+- Phase 6 is `NOT_STARTED`.
 
 ### Status
 
-Planned
+Complete
 
 ## Phase 6 — Integrated Audit & Reconciliation
 
-Phase 6 owns the integrated audit and reconciliation pass for v0.1.3. It cross-checks release charter, phase list, experiment evidence, validator evidence, and device evidence for consistency. Phase 6 introduces no product functionality, Android behavior, or Android permission.
+Phase 6 is the next lifecycle phase and remains `Planned`; Phase 6 has not started. Phase 6 owns the integrated audit and reconciliation pass for v0.1.3. It cross-checks release charter, phase list, experiment evidence, validator evidence, and device evidence for consistency. Phase 6 introduces no product functionality, Android behavior, or Android permission.
 
 ### Status
 

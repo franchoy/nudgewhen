@@ -1,6 +1,6 @@
 # Release Charter — NudgeWhen v0.1.3
 
-**Document status:** v0.1.3 Phase 4 closure charter candidate — Phases 0 through 4 complete; Phase 0 — Release Definition & Bootstrap — is `Complete`; Phase 1 — Editing Architecture Contract — is `Complete`; Phase 2 — Editing Domain Implementation & JVM Proof — is `Complete`; Phase 3 — Persistence Compatibility Proof — is `Complete`; Phase 4 — Minimal Compose Editing UX — is `Complete` in this closure-synchronization candidate; Phases 5 through 7 remain `Planned`; 5 Complete / 3 Planned. Phase 5 — Integration & Device Validation — is the next lifecycle phase and has not started. This charter is normative for v0.1.3 release policy. It does not claim release readiness.
+**Document status:** v0.1.3 Phase 5 closure charter candidate — Phases 0 through 5 complete; Phase 0 — Release Definition & Bootstrap — is `Complete`; Phase 1 — Editing Architecture Contract — is `Complete`; Phase 2 — Editing Domain Implementation & JVM Proof — is `Complete`; Phase 3 — Persistence Compatibility Proof — is `Complete`; Phase 4 — Minimal Compose Editing UX — is `Complete`; Phase 5 — Integration & Device Validation — is `Complete` in this closure-synchronization candidate; Phase 6 — Integrated Audit & Reconciliation — is the next lifecycle phase and remains `Planned`; Phase 7 — Full Pre-Release Gate — remains `Planned`; 6 Complete / 2 Planned. This charter is normative for v0.1.3 release policy. It does not claim release readiness.
 
 ## Release identity
 
@@ -15,17 +15,17 @@ release/v0.1.3
 
 Previous release:
 v0.1.2
-
 Android current identity:
-versionCode 3
-versionName 0.1.2
 
-Android target identity:
 versionCode 4
 versionName 0.1.3
 
-The CURRENT Android identity (versionCode 3 / versionName 0.1.2) remains unchanged during Phase 0. CURRENT identity may advance to versionCode 4 / versionName 0.1.3 only in a later separately authorized candidate that changes `app/build.gradle.kts` consistently. The TARGET Android identity is versionCode 4 / versionName 0.1.3. No `app/build.gradle.kts` change is authorized by Phase 0.
+Android target identity:
 
+versionCode 4
+versionName 0.1.3
+
+Phase 5-B advanced CURRENT identity to 4 / 0.1.3 under separate authorization and landed that identity at commit `1cfb9c373abfa24cf10f23daa152f4a410932d26`.
 ## Single product promise
 
 A user can edit the text of an existing local reminder without deleting and
@@ -169,6 +169,31 @@ Phase 4 — Minimal Compose Editing UX — is `Complete` in this closure-synchro
 - user-facing textual editing is `IMPLEMENTED_AT_SOURCE_LEVEL`;
 - integrated/device validation is `NOT_STARTED`.
 
+## Established Phase 5 outcome
+
+Phase 5 — Integration & Device Validation — is `Complete` in this closure-synchronization candidate. The Phase 5 outcome statement is:
+
+- Phase 5 is `Complete` in this closure-synchronization candidate;
+- Phase 5-B Android identity implementation commit: `1cfb9c373abfa24cf10f23daa152f4a410932d26` (subject `chore: align v0.1.3 android identity`, parent `3ba8470918a28acd4376639cf061f20209f78735`);
+- Phase 5-B identity implementation paths: `app/build.gradle.kts` and `scripts/release_contract.json`;
+- Phase 5-B exact-head identity CI: `33255108409 / success`;
+- Phase 5-C integrated full offline validation at HEAD `1cfb9c373abfa24cf10f23daa152f4a410932d26`: Python validator regression `100 tests / OK`; `required` `11/0/0`; `docs` `11/0/0`; full offline `39/0/0`; `release_gate=SATISFIED`;
+- frozen debug APK path: `app/build/outputs/apk/debug/app-debug.apk`;
+- frozen APK SHA-256: `209bfb2a11628a903d7163ca807776a01aeb107e9fbe4c7168e6984a715f8908`;
+- frozen APK identity: package `io.github.franchoy.nudgewhen`, `versionCode 4`, `versionName 0.1.3`;
+- P5_01 through P5_13: `PASS`;
+- physical runtime evidence: `ONE_PHYSICAL_DEVICE_ONLY`;
+- general Android compatibility: `NOT_CLAIMED`;
+- multi-device validation: `NOT_CLAIMED`;
+- production readiness: `NOT_CLAIMED`;
+- supported Android version range: `NOT_CLAIMED`;
+- original D1 `adb install` CLI failure: `FAIL_PRESERVED`;
+- accepted D1-R1, D1-R2, and D1-R3 recovery: installed bytes exactly matched the frozen Phase 5-C APK and physical `MainActivity` cold launch was observed;
+- D2-A-R3: accepted edit, list-position preservation, and restart-persistence evidence;
+- D2-B-R1: accepted Cancel / whitespace / create / remove / restart evidence;
+- Phase 5 introduced no new Android permission, no new Android component, no new Gradle dependency, no new test dependency, and no validator-architecture change;
+- Phase 6 is `NOT_STARTED`.
+
 ## Phase model
 
 The accepted eight-phase model for v0.1.3 is:
@@ -182,9 +207,9 @@ The accepted eight-phase model for v0.1.3 is:
 - Phase 6 — Integrated Audit & Reconciliation
 - Phase 7 — Full Pre-Release Gate
 
-Phase 0 — Release Definition & Bootstrap — is `Complete`. Phase 1 — Editing Architecture Contract — is `Complete`. Phase 2 — Editing Domain Implementation & JVM Proof — is `Complete`. Phase 3 — Persistence Compatibility Proof — is `Complete`. Phase 4 — Minimal Compose Editing UX — is `Complete` in this closure-synchronization candidate. Phases 5 through 7 remain `Planned`; 5 Complete / 3 Planned. Phase 5 — Integration & Device Validation — is the next lifecycle phase and has not started.
+Phase 0 — Release Definition & Bootstrap — is `Complete`. Phase 1 — Editing Architecture Contract — is `Complete`. Phase 2 — Editing Domain Implementation & JVM Proof — is `Complete`. Phase 3 — Persistence Compatibility Proof — is `Complete`. Phase 4 — Minimal Compose Editing UX — is `Complete`. Phase 5 — Integration & Device Validation — is `Complete` in this closure-synchronization candidate. Phases 6 and 7 remain `Planned`. Phase model: 6 Complete / 2 Planned. Phase 6 — Integrated Audit & Reconciliation — is the next lifecycle phase, remains `Planned`, and has not started. Phase 7 — Full Pre-Release Gate — remains `Planned`.
 
-Phase 0 completed the v0.1.3 release-definition, governance, and document-bootstrap synchronization and the initial dirty-candidate repository-consistency validation. Phase 1 produced the frozen editing architecture contract at `docs/releases/v0.1.3/editing-architecture.md` (architecture commit `9004b0f90f60d2d5c8b1ac4828d0a4521316ae5a`, exact-head CI run `33183197545` succeeded). Phases 0 and 1 did not implement reminder editing. Phase 2 implemented the frozen edit domain API and the deterministic controller JVM proof on top of the existing `Reminder` model and `ReminderController` (implementation commit `7eacbe3746807a36fecc2a33aac8768f30287686`, exact-head CI run `33239803189` succeeded). Phase 3 — Persistence Compatibility Proof — proved persistence compatibility with the existing `FileReminderStore` and `NWR1` (implementation commit `b77af048950a720482c4ec279762d51f7f65ca5f`, exact-head CI run `33245690596` succeeded); the persistence compatibility proof is `LANDED_AND_EXACT_HEAD_CI_ACCEPTED`. Phase 4 — Minimal Compose Editing UX — has landed the bounded Compose editing UX on `ReminderScreen` (implementation commit `673951082061562b45a40096bc2f9f5debdfb72d`, exact-head CI run `33250408328` succeeded); the Compose editing UX is `LANDED_AND_EXACT_HEAD_CI_ACCEPTED`.
+Phase 0 completed the v0.1.3 release-definition, governance, and document-bootstrap synchronization and the initial dirty-candidate repository-consistency validation. Phase 1 produced the frozen editing architecture contract at `docs/releases/v0.1.3/editing-architecture.md` (architecture commit `9004b0f90f60d2d5c8b1ac4828d0a4521316ae5a`, exact-head CI run `33183197545` succeeded). Phases 0 and 1 did not implement reminder editing. Phase 2 implemented the frozen edit domain API and the deterministic controller JVM proof on top of the existing `Reminder` model and `ReminderController` (implementation commit `7eacbe3746807a36fecc2a33aac8768f30287686`, exact-head CI run `33239803189` succeeded). Phase 3 — Persistence Compatibility Proof — proved persistence compatibility with the existing `FileReminderStore` and `NWR1` (implementation commit `b77af048950a720482c4ec279762d51f7f65ca5f`, exact-head CI run `33245690596` succeeded); the persistence compatibility proof is `LANDED_AND_EXACT_HEAD_CI_ACCEPTED`. Phase 4 — Minimal Compose Editing UX — has landed the bounded Compose editing UX on `ReminderScreen` (implementation commit `673951082061562b45a40096bc2f9f5debdfb72d`, exact-head CI run `33250408328` succeeded); the Compose editing UX is `LANDED_AND_EXACT_HEAD_CI_ACCEPTED`. Phase 5 — Integration & Device Validation — has landed the Android current-identity alignment to `versionCode 4 / versionName 0.1.3` (commit `1cfb9c373abfa24cf10f23daa152f4a410932d26`, exact-head CI run `33255108409` succeeded) and accepted the integrated local validation together with the bounded one-physical-device runtime evidence; the Phase 5 technical boundary is `COMPLETE` and runtime evidence is explicitly scoped to `ONE_PHYSICAL_DEVICE_ONLY`.
 
 This charter does not claim v0.1.3 is merged, tagged, published, or
 complete. Release readiness: `NO`. The release is not ready.

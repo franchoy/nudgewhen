@@ -42,7 +42,13 @@ Phase 4:
 Complete.
 
 Phase 5:
+Complete in this closure-synchronization candidate.
+
+Phase 6:
 Planned / next / not started.
+
+Phase 7:
+Planned.
 
 Release readiness:
 NO.
@@ -75,8 +81,10 @@ Phase 3 owns persistence compatibility proof.
 
 Phase 4 owns minimal Compose UX.
 
-Phase 5 owns later integrated/device validation and, if separately
-authorized, Android identity alignment.
+Phase 5 owns integrated/device validation and, if separately
+authorized, Android identity alignment. The accepted Phase 5 outcome is
+recorded in the current v0.1.3 Phase 5 synchronized lifecycle record and
+in `EXP-0048`.
 
 ## 7B. Existing architecture baseline
 
@@ -505,7 +513,9 @@ Phase lifecycle in this closure-synchronization candidate:
 - Phase 2 `Complete`
 - Phase 3 `Complete`
 - Phase 4 `Complete`
-- Phase 5 `Planned` / next / not started
+- Phase 5 `Complete`
+- Phase 6 `Planned` / next / not started
+- Phase 7 `Planned`
 
 Release readiness is **not** claimed. The v0.1.3 release is not merged,
 not tagged, not published, and not release-ready.
