@@ -1,6 +1,6 @@
 # Release Charter — NudgeWhen v0.1.3
 
-**Document status:** v0.1.3 Phase 5 closure charter candidate — Phases 0 through 5 complete; Phase 0 — Release Definition & Bootstrap — is `Complete`; Phase 1 — Editing Architecture Contract — is `Complete`; Phase 2 — Editing Domain Implementation & JVM Proof — is `Complete`; Phase 3 — Persistence Compatibility Proof — is `Complete`; Phase 4 — Minimal Compose Editing UX — is `Complete`; Phase 5 — Integration & Device Validation — is `Complete` in this closure-synchronization candidate; Phase 6 — Integrated Audit & Reconciliation — is the next lifecycle phase and remains `Planned`; Phase 7 — Full Pre-Release Gate — remains `Planned`; 6 Complete / 2 Planned. This charter is normative for v0.1.3 release policy. It does not claim release readiness.
+**Document status:** v0.1.3 current lifecycle charter — Phases 0 through 6 complete; Phase 0 — Release Definition & Bootstrap — is `Complete`; Phase 1 — Editing Architecture Contract — is `Complete`; Phase 2 — Editing Domain Implementation & JVM Proof — is `Complete`; Phase 3 — Persistence Compatibility Proof — is `Complete`; Phase 4 — Minimal Compose Editing UX — is `Complete`; Phase 5 — Integration & Device Validation — is `Complete`; Phase 6 — Integrated Audit & Reconciliation — is `Complete`; Phase 6-C real-use nudge-land evidence is complete at landing-core commit `844db073394b9d76e847f4078b7eb12b79b07a78` (terminal state `LANDED / S10_LANDED`); the completed single-use Phase 6-C authorization `nudgewhen-v0.1.3-phase6c-first-use-001` is `PROHIBITED` from reuse; Phase 7 — Full Pre-Release Gate — remains `Planned` and is `NOT_STARTED`; 7 Complete / 1 Planned. This charter is normative for v0.1.3 release policy. It does not claim release readiness.
 
 ## Release identity
 
@@ -67,8 +67,12 @@ The release does NOT add:
 - a general Android compatibility claim;
 - a production-readiness claim;
 - unrelated dependency modernization;
-- nudge-land / nudge-commit;
+- nudge-land / nudge-commit as an **end-user / product capability**: v0.1.3 does NOT add an end-user nudge-land / nudge-commit capability, and does NOT add an Android component, Android permission, or product networking/background behavior for that purpose;
 - Hermes or MCP integration.
+
+### Repository-local development / release tooling (distinct from end-user / product scope)
+
+Phase 6 may use separately authorized **repository-local landing tooling** used to develop, validate, and land release work. This tooling is not an Android/end-user product capability; it does not widen `product_scope.allowed_capabilities`; it does not add product networking/background behavior; it does not itself establish production readiness; it remains governed by AGENTS.md and explicit maintainer authorization.
 
 ## Product-scope authorization
 
@@ -194,6 +198,29 @@ Phase 5 — Integration & Device Validation — is `Complete` in this closure-sy
 - Phase 5 introduced no new Android permission, no new Android component, no new Gradle dependency, no new test dependency, and no validator-architecture change;
 - Phase 6 is `NOT_STARTED`.
 
+## Current Phase 6 state
+
+Phase 6 — Integrated Audit & Reconciliation — is `Complete` in this closure-synchronization candidate. The Phase 6 outcome statement is:
+
+- Phase 6 — Integrated Audit & Reconciliation — is `Complete` in this closure-synchronization candidate;
+- authority and evidence reconciliation accepted;
+- Phase 6-C constrained nudge-land real-use landing accepted;
+- standard-validation decision selected existing Python regression integration; current standard Python regression is 244 tests;
+- no fourth nudge-land validator group is added;
+- real nudge-land transaction remains prohibited from ordinary validation;
+- current-open Dependabot PR reconciliation completed for the maintainer-required current-open set;
+- `#11` is deferred until after v0.1.3;
+- `#13` is deferred until after v0.1.3;
+- dependency-update Build is not required;
+- final Phase-6 closure-readiness was established by F1-R1;
+- Phase 7 — Full Pre-Release Gate — remains the next separate gate and is `NOT_STARTED`;
+- Phase 6-C real-use nudge-land evidence is complete;
+- Phase 6-C bounded landing-core commit: `844db073394b9d76e847f4078b7eb12b79b07a78`;
+- the completed Phase 6-C transaction reached terminal state `LANDED` and terminal verified state `S10_LANDED`;
+- the completed single-use Phase 6-C authorization `nudgewhen-v0.1.3-phase6c-first-use-001` is `PROHIBITED` from reuse;
+- Phase 6 introduces no product functionality, no new Android component, no new Android permission, no new product networking/background behavior, and no `product_scope.allowed_capabilities` widening. The product-scope authorization remains exactly `["reminders", "persistence"]`;
+- v0.1.3 is **not** merged, **not** tagged, **not** published, and **not** release-ready.
+
 ## Phase model
 
 The accepted eight-phase model for v0.1.3 is:
@@ -207,7 +234,7 @@ The accepted eight-phase model for v0.1.3 is:
 - Phase 6 — Integrated Audit & Reconciliation
 - Phase 7 — Full Pre-Release Gate
 
-Phase 0 — Release Definition & Bootstrap — is `Complete`. Phase 1 — Editing Architecture Contract — is `Complete`. Phase 2 — Editing Domain Implementation & JVM Proof — is `Complete`. Phase 3 — Persistence Compatibility Proof — is `Complete`. Phase 4 — Minimal Compose Editing UX — is `Complete`. Phase 5 — Integration & Device Validation — is `Complete` in this closure-synchronization candidate. Phases 6 and 7 remain `Planned`. Phase model: 6 Complete / 2 Planned. Phase 6 — Integrated Audit & Reconciliation — is the next lifecycle phase, remains `Planned`, and has not started. Phase 7 — Full Pre-Release Gate — remains `Planned`.
+Phase 0 — Release Definition & Bootstrap — is `Complete`. Phase 1 — Editing Architecture Contract — is `Complete`. Phase 2 — Editing Domain Implementation & JVM Proof — is `Complete`. Phase 3 — Persistence Compatibility Proof — is `Complete`. Phase 4 — Minimal Compose Editing UX — is `Complete`. Phase 5 — Integration & Device Validation — is `Complete` in this closure-synchronization candidate. Phase model: 7 Complete / 1 Planned. Phase 6 — Integrated Audit & Reconciliation — is `Complete` in this closure-synchronization candidate; Phase 6-C real-use nudge-land evidence is complete at landing-core commit `844db073394b9d76e847f4078b7eb12b79b07a78` (terminal state `LANDED / S10_LANDED`). Phase 7 — Full Pre-Release Gate — remains `Planned` and is `NOT_STARTED`.
 
 Phase 0 completed the v0.1.3 release-definition, governance, and document-bootstrap synchronization and the initial dirty-candidate repository-consistency validation. Phase 1 produced the frozen editing architecture contract at `docs/releases/v0.1.3/editing-architecture.md` (architecture commit `9004b0f90f60d2d5c8b1ac4828d0a4521316ae5a`, exact-head CI run `33183197545` succeeded). Phases 0 and 1 did not implement reminder editing. Phase 2 implemented the frozen edit domain API and the deterministic controller JVM proof on top of the existing `Reminder` model and `ReminderController` (implementation commit `7eacbe3746807a36fecc2a33aac8768f30287686`, exact-head CI run `33239803189` succeeded). Phase 3 — Persistence Compatibility Proof — proved persistence compatibility with the existing `FileReminderStore` and `NWR1` (implementation commit `b77af048950a720482c4ec279762d51f7f65ca5f`, exact-head CI run `33245690596` succeeded); the persistence compatibility proof is `LANDED_AND_EXACT_HEAD_CI_ACCEPTED`. Phase 4 — Minimal Compose Editing UX — has landed the bounded Compose editing UX on `ReminderScreen` (implementation commit `673951082061562b45a40096bc2f9f5debdfb72d`, exact-head CI run `33250408328` succeeded); the Compose editing UX is `LANDED_AND_EXACT_HEAD_CI_ACCEPTED`. Phase 5 — Integration & Device Validation — has landed the Android current-identity alignment to `versionCode 4 / versionName 0.1.3` (commit `1cfb9c373abfa24cf10f23daa152f4a410932d26`, exact-head CI run `33255108409` succeeded) and accepted the integrated local validation together with the bounded one-physical-device runtime evidence; the Phase 5 technical boundary is `COMPLETE` and runtime evidence is explicitly scoped to `ONE_PHYSICAL_DEVICE_ONLY`.
 

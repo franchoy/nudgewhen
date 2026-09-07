@@ -1,6 +1,6 @@
 # AGENTS.md
 
-**Document status:** Accepted — stable governance; active v0.1.3 release; Phases 0 through 5 complete; Phase 0 — Release Definition & Bootstrap — is formally closed; Phase 1 — Editing Architecture Contract — is formally closed; Phase 2 — Editing Domain Implementation & JVM Proof — is formally closed; Phase 3 — Persistence Compatibility Proof — is formally closed; Phase 4 — Minimal Compose Editing UX — is formally closed; Phase 5 — Integration & Device Validation — is formally closed in this closure-synchronization candidate; 6 Complete / 2 Planned; Phase 6 — Integrated Audit & Reconciliation — is next and remains `Planned`; Phase 6 has not started; the narrow v0.1.3 bootstrap exception is terminated; v0.1.3 is **not** merged, **not** tagged, **not** published, and is not claimed release-ready
+**Document status:** Accepted — stable governance; active v0.1.3 release; Phases 0 through 6 complete; Phase 0 — Release Definition & Bootstrap — is formally closed; Phase 1 — Editing Architecture Contract — is formally closed; Phase 2 — Editing Domain Implementation & JVM Proof — is formally closed; Phase 3 — Persistence Compatibility Proof — is formally closed; Phase 4 — Minimal Compose Editing UX — is formally closed; Phase 5 — Integration & Device Validation — is formally closed in this closure-synchronization candidate; Phase 6 — Integrated Audit & Reconciliation — is formally closed in this closure-synchronization candidate; 7 Complete / 1 Planned; Phase 6 activity is CLOSED / COMPLETE; top-level Phase 6 is `Complete`; Phase 7 — Full Pre-Release Gate — remains `Planned` and is `NOT_STARTED`; Phase 6-C real-use nudge-land evidence is complete at landing-core commit `844db073394b9d76e847f4078b7eb12b79b07a78` (terminal state `LANDED / S10_LANDED`); the completed single-use Phase 6-C authorization `nudgewhen-v0.1.3-phase6c-first-use-001` is `PROHIBITED` from reuse; the narrow v0.1.3 bootstrap exception is terminated; v0.1.3 is **not** merged, **not** tagged, **not** published, and is not claimed release-ready
 
 ## Purpose and scope
 
@@ -276,17 +276,25 @@ Category D items cannot be authorized by a normal maintainer turn. A change to C
 - **Active branch:** `release/v0.1.3`
 - **Active release charter:** `docs/releases/v0.1.3/release-charter.md`
 - **Active phase list:** `docs/releases/v0.1.3/phase-list.md`
-- **Current lifecycle state:** `Phase 5 — Integration & Device Validation — Complete in the closure-synchronization candidate`
+- **Current lifecycle state:** Phase 0 through Phase 6 complete in closure-synchronization candidate; Phase 7 — Full Pre-Release Gate — `Planned` and `NOT_STARTED`; Phase 6-C real-use nudge-land evidence complete at landing-core commit `844db073394b9d76e847f4078b7eb12b79b07a78` (terminal state `LANDED / S10_LANDED`)
 - **Phase 0 status:** `Complete`
 - **Phase 1 status:** `Complete`
 - **Phase 2 status:** `Complete`
 - **Phase 3 status:** `Complete`
 - **Phase 4 status:** `Complete`
 - **Phase 5 status:** `Complete`
-- **Phase model:** `6 Complete / 2 Planned`
-- **Next lifecycle phase:** `Phase 6 — Integrated Audit & Reconciliation`
-- **Phase 6 status:** `Planned`
-- **Phase 6 started:** `No`
+- **Phase model:** `7 Complete / 1 Planned`
+- **Current lifecycle phase:** `Phase 7 — Full Pre-Release Gate`
+- **Phase 6 status:** `Complete`
+- **Phase 6 started:** `Yes`
+- **Phase 6 activity state:** `CLOSED / COMPLETE`
+- **Phase 6-C status:** `Complete`
+- **Phase 6 landing-core commit:** `844db073394b9d76e847f4078b7eb12b79b07a78`
+- **Phase 6 terminal state:** `LANDED / S10_LANDED`
+- **Phase 6-C terminal authorization reuse:** `PROHIBITED` (`nudgewhen-v0.1.3-phase6c-first-use-001` is single-use)
+- **Phase 7 status:** `Planned`
+- **Release readiness:** `NO`
+- **Merged / tagged / published:** `NO / NO / NO`
 - **Phase 1 architecture repository boundary:** `LANDED_AND_EXACT_HEAD_CI_ACCEPTED`
 - **Phase 1 architecture commit:** `9004b0f90f60d2d5c8b1ac4828d0a4521316ae5a`
 - **Phase 2 domain implementation repository boundary:** `LANDED_AND_EXACT_HEAD_CI_ACCEPTED`

@@ -1,6 +1,6 @@
 # Phase List — NudgeWhen v0.1.3
 
-**Document status:** v0.1.3 Phase 5 closure lifecycle candidate — Phases 0 through 5 complete; Phase 0 — Release Definition & Bootstrap — is `Complete`; Phase 1 — Editing Architecture Contract — is `Complete`; Phase 2 — Editing Domain Implementation & JVM Proof — is `Complete`; Phase 3 — Persistence Compatibility Proof — is `Complete`; Phase 4 — Minimal Compose Editing UX — is `Complete`; Phase 5 — Integration & Device Validation — is `Complete` in this closure-synchronization candidate; Phase 6 — Integrated Audit & Reconciliation — is the next lifecycle phase and remains `Planned`; Phase 7 remains `Planned`; 6 Complete / 2 Planned. This document is normative for the eight-phase ordering and per-phase scope. It does not claim that v0.1.3 is merged, tagged, published, or release-ready.
+**Document status:** v0.1.3 current lifecycle authority — Phases 0 through 6 complete; Phase 0 — Release Definition & Bootstrap — is `Complete`; Phase 1 — Editing Architecture Contract — is `Complete`; Phase 2 — Editing Domain Implementation & JVM Proof — is `Complete`; Phase 3 — Persistence Compatibility Proof — is `Complete`; Phase 4 — Minimal Compose Editing UX — is `Complete`; Phase 5 — Integration & Device Validation — is `Complete`; Phase 6 — Integrated Audit & Reconciliation — is `Complete`; Phase 6-C real-use nudge-land evidence is `Complete` at landing-core commit `844db073394b9d76e847f4078b7eb12b79b07a78` (terminal state `LANDED / S10_LANDED`); the completed single-use Phase 6-C authorization `nudgewhen-v0.1.3-phase6c-first-use-001` is `PROHIBITED` from reuse; Phase 7 — Full Pre-Release Gate — remains `Planned` and is `NOT_STARTED`; 7 Complete / 1 Planned. This document is normative for the eight-phase ordering and per-phase scope. It does not claim that v0.1.3 is merged, tagged, published, or release-ready.
 
 ## Phase 0 — Release Definition & Bootstrap
 
@@ -167,11 +167,51 @@ Complete
 
 ## Phase 6 — Integrated Audit & Reconciliation
 
-Phase 6 is the next lifecycle phase and remains `Planned`; Phase 6 has not started. Phase 6 owns the integrated audit and reconciliation pass for v0.1.3. It cross-checks release charter, phase list, experiment evidence, validator evidence, and device evidence for consistency. Phase 6 introduces no product functionality, Android behavior, or Android permission.
+Phase 6 — Integrated Audit & Reconciliation — is `Complete` in this closure-synchronization candidate. Phase 6 owned the integrated audit and reconciliation pass for v0.1.3. It cross-checked release charter, phase list, experiment evidence, validator evidence, and device evidence for consistency. Phase 6 introduced no product functionality, Android behavior, or Android permission.
+
+### Phase 6-C real-use nudge-land evidence (COMPLETE)
+
+Phase 6-C real-use nudge-land work is complete. The accepted Phase 6-C evidence summary is:
+
+- Bounded landing-core commit: `844db073394b9d76e847f4078b7eb12b79b07a78`.
+- First real Stage: `AUDIT_ACCEPTED`.
+- First real Commit: `AUDIT_ACCEPTED_AFTER_MAINTAINER_POST_PROOF_RECOVERY`.
+- First real Push: `AUDIT_ACCEPTED`.
+- First real VerifyCI: `AUDIT_ACCEPTED`.
+- Terminal state: `LANDED`.
+- Terminal verified state: `S10_LANDED`.
+- Real-use chain: `AUDIT_ACCEPTED_STAGE_COMMIT_PUSH_VERIFYCI`.
+- The completed single-use Phase 6-C authorization `nudgewhen-v0.1.3-phase6c-first-use-001` is `PROHIBITED` from reuse.
+
+No release-readiness claim follows from Phase 6-C alone. F1-R1 established `READY_FOR_PHASE_6_FORMAL_CLOSURE`; this formal-closure synchronization records Phase 6 as `Complete`. Phase 7 — Full Pre-Release Gate — is the next separate gate and is `NOT_STARTED`.
+
+### Phase 6 outcome summary
+
+The completed Phase 6 outcome is:
+
+- Authority and evidence reconciliation accepted.
+- Phase 6-C constrained nudge-land real-use landing accepted.
+- Standard-validation decision selected existing Python regression integration; current standard Python regression is 244 tests.
+- No fourth nudge-land validator group is added.
+- Real nudge-land transaction remains prohibited from ordinary validation.
+- Current-open Dependabot PR reconciliation completed for the maintainer-required current-open set.
+- `#11` is deferred until after v0.1.3.
+- `#13` is deferred until after v0.1.3.
+- Dependency-update Build is not required.
+- Final Phase-6 closure-readiness was established by F1-R1.
+
+### Dependabot PR reconciliation scope
+
+The dedicated Dependabot PR reconciliation covers the maintainer-required current-open set:
+
+- `#11`
+- `#13`
+
+Both PRs are deferred until after v0.1.3. No dependency-update Build is required for the current-open set. Dependabot reconciliation is a release-governance review and does not constitute authorization for unrelated dependency modernization. The historical `#3`, `#4`, `#6`, `#7`, `#8`, `#9` PR set is not assigned a terminal disposition by this Build and remains historical.
 
 ### Status
 
-Planned
+Complete
 
 ## Phase 7 — Full Pre-Release Gate
 
