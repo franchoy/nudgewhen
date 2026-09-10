@@ -1,6 +1,6 @@
 # Phase List — NudgeWhen v0.1.3
 
-**Document status:** v0.1.3 current lifecycle authority — Phases 0 through 6 complete; Phase 0 — Release Definition & Bootstrap — is `Complete`; Phase 1 — Editing Architecture Contract — is `Complete`; Phase 2 — Editing Domain Implementation & JVM Proof — is `Complete`; Phase 3 — Persistence Compatibility Proof — is `Complete`; Phase 4 — Minimal Compose Editing UX — is `Complete`; Phase 5 — Integration & Device Validation — is `Complete`; Phase 6 — Integrated Audit & Reconciliation — is `Complete`; Phase 6-C real-use nudge-land evidence is `Complete` at landing-core commit `844db073394b9d76e847f4078b7eb12b79b07a78` (terminal state `LANDED / S10_LANDED`); the completed single-use Phase 6-C authorization `nudgewhen-v0.1.3-phase6c-first-use-001` is `PROHIBITED` from reuse; Phase 7 — Full Pre-Release Gate — remains `Planned` and is `NOT_STARTED`; 7 Complete / 1 Planned. This document is normative for the eight-phase ordering and per-phase scope. It does not claim that v0.1.3 is merged, tagged, published, or release-ready.
+**Document status:** v0.1.3 current lifecycle authority — Phases 0 through 7 complete; Phase 0 — Release Definition & Bootstrap — is `Complete`; Phase 1 — Editing Architecture Contract — is `Complete`; Phase 2 — Editing Domain Implementation & JVM Proof — is `Complete`; Phase 3 — Persistence Compatibility Proof — is `Complete`; Phase 4 — Minimal Compose Editing UX — is `Complete`; Phase 5 — Integration & Device Validation — is `Complete`; Phase 6 — Integrated Audit & Reconciliation — is `Complete`; Phase 6-C real-use nudge-land evidence is `Complete` at landing-core commit `844db073394b9d76e847f4078b7eb12b79b07a78` (terminal state `LANDED / S10_LANDED`); the completed single-use Phase 6-C authorization `nudgewhen-v0.1.3-phase6c-first-use-001` is `PROHIBITED` from reuse; Phase 7 — Full Pre-Release Gate — is `Complete` in this closure-synchronization candidate; 8 Complete / 0 Planned. This document is normative for the eight-phase ordering and per-phase scope. It does not claim that v0.1.3 is merged, tagged, published, or release-ready.
 
 ## Phase 0 — Release Definition & Bootstrap
 
@@ -217,6 +217,24 @@ Complete
 
 Phase 7 owns the full pre-release gate for v0.1.3, including final exact-head CI, final validator run, and the closure-candidate landing record. Phase 7 does not itself merge, tag, or publish v0.1.3; the release-bearing pull request, tag, and GitHub release are separate maintainer repository actions.
 
+### Outcome (closure-synchronization candidate)
+
+- First Phase-7 landing SHA: `4213fd2f6750a71bc91d7e3516e043bf037aaff1`.
+- First landing terminal state: `LANDED / S10_LANDED`.
+- First authorization: `nudgewhen-v0.1.3-phase7b-first-use-001` (single-use; `PROHIBITED` from reuse).
+- Exact hosted CI: workflow `CI`, branch `release/v0.1.3`, head `4213fd2f6750a71bc91d7e3516e043bf037aaff1`, event `push`, conclusion `success`.
+- Phase 7-C standard regression: `244 tests / OK`.
+- Phase 7-C definitive clean validator: `41 / 0 / 0`.
+- Normal validator checks: `39`; clean-boundary checks: `2`.
+- `release_gate=SATISFIED`.
+- Post-validator exact HEAD: `4213fd2f6750a71bc91d7e3516e043bf037aaff1`.
+- Final Phase-7-C local observation: `CLEAN`.
+- Physical-device rerun: `NOT_REQUIRED`.
+- Retained accepted Phase-5 evidence: `ONE_PHYSICAL_DEVICE_ONLY`.
+- General Android compatibility, multi-device validation, and production readiness remain `NOT_CLAIMED`.
+- Formal closure synchronization is still pre-release and does not itself merge, tag, or publish.
+- Formal Phase-7 closure synchronization uses a separate second nudge-land Stage / Commit / Push / VerifyCI transaction before the release-bearing pull-request gate; that landing transaction is a separate maintainer repository action from closure-candidate authoring.
+
 ### Status
 
-Planned
+Complete

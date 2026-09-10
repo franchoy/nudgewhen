@@ -45,10 +45,10 @@ Phase 5:
 Complete in this closure-synchronization candidate.
 
 Phase 6:
-Planned / next / not started.
+Complete.
 
 Phase 7:
-Planned.
+Complete in this closure-synchronization candidate.
 
 Release readiness:
 NO.
@@ -514,8 +514,8 @@ Phase lifecycle in this closure-synchronization candidate:
 - Phase 3 `Complete`
 - Phase 4 `Complete`
 - Phase 5 `Complete`
-- Phase 6 `Planned` / next / not started
-- Phase 7 `Planned`
+- Phase 6 `Complete`
+- Phase 7 `Complete`
 
 Release readiness is **not** claimed. The v0.1.3 release is not merged,
 not tagged, not published, and not release-ready.
