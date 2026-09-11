@@ -1,6 +1,6 @@
 # Experiment Protocol — Agent-Assisted Tasks
 
-**Document status:** Accepted — stable governance; active v0.1.2 release; Phases 0 through 7 complete as the Phase 7 closure candidate (8 Complete / 0 Planned candidate); Phase 7 final maintainer acceptance is `pending closure-candidate landing and final exact-head CI`; the v0.1.2 release is **not** merged, **not** tagged, and **not** published by this closure candidate
+**Document status:** Accepted — stable governance; active v0.1.3 release on branch `release/v0.1.3`; Phases 0 through 7 complete in closure-synchronization candidate; Phase 6 — Integrated Audit & Reconciliation — is `Complete`; Phase 6-C real-use nudge-land evidence is complete at landing-core commit `844db073394b9d76e847f4078b7eb12b79b07a78` (terminal state `LANDED / S10_LANDED`); 8 Complete / 0 Planned; Phase 7 — Full Pre-Release Gate — is `Complete` in this closure-synchronization candidate; v0.1.3 is **not** merged, **not** tagged, **not** published, and is not claimed release-ready
 
 ## Purpose
 

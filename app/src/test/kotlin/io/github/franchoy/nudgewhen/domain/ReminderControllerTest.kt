@@ -339,4 +339,244 @@ class ReminderControllerTest {
         }
         assertEquals(initial, controller.reminders)
     }
+
+    @Test
+    fun E_01_changed_valid_edit_returns_true() {
+        val initial = listOf(Reminder("a", "old text"))
+        val store = FakeReminderStore(initial)
+        val controller = ReminderController(store) { "x" }
+        val result = controller.edit("a", "new text")
+        assertEquals(true, result)
+    }
+
+    @Test
+    fun E_02_changed_edit_changes_only_target_text() {
+        val initial = listOf(
+            Reminder("a", "first"),
+            Reminder("b", "second"),
+            Reminder("c", "third"),
+        )
+        val store = FakeReminderStore(initial)
+        val controller = ReminderController(store) { "x" }
+        controller.edit("b", "second-edited")
+        val reminders = controller.reminders
+        assertEquals("first", reminders[0].text)
+        assertEquals("second-edited", reminders[1].text)
+        assertEquals("third", reminders[2].text)
+    }
+
+    @Test
+    fun E_03_changed_edit_preserves_target_id() {
+        val initial = listOf(
+            Reminder("a", "first"),
+            Reminder("b", "second"),
+        )
+        val store = FakeReminderStore(initial)
+        val controller = ReminderController(store) { "x" }
+        val beforeId = controller.reminders[1].id
+        controller.edit("b", "second-edited")
+        val reminders = controller.reminders
+        assertEquals(beforeId, reminders[1].id)
+        assertEquals("b", reminders[1].id)
+    }
+
+    @Test
+    fun E_04_changed_edit_preserves_target_index() {
+        val initial = listOf(
+            Reminder("a", "first"),
+            Reminder("b", "second"),
+            Reminder("c", "third"),
+        )
+        val store = FakeReminderStore(initial)
+        val controller = ReminderController(store) { "x" }
+        controller.edit("b", "second-edited")
+        val reminders = controller.reminders
+        assertEquals("a", reminders[0].id)
+        assertEquals("b", reminders[1].id)
+        assertEquals("c", reminders[2].id)
+    }
+
+    @Test
+    fun E_05_changed_edit_preserves_neighbors_and_order() {
+        val initial = listOf(
+            Reminder("a", "first"),
+            Reminder("b", "second"),
+            Reminder("c", "third"),
+            Reminder("d", "fourth"),
+        )
+        val store = FakeReminderStore(initial)
+        val controller = ReminderController(store) { "x" }
+        controller.edit("b", "second-edited")
+        val reminders = controller.reminders
+        assertEquals(listOf("a", "b", "c", "d"), reminders.map { it.id })
+        assertEquals("first", reminders[0].text)
+        assertEquals("second-edited", reminders[1].text)
+        assertEquals("third", reminders[2].text)
+        assertEquals("fourth", reminders[3].text)
+    }
+
+    @Test
+    fun E_06_changed_edit_trims_input() {
+        val initial = listOf(Reminder("a", "old text"))
+        val store = FakeReminderStore(initial)
+        val controller = ReminderController(store) { "x" }
+        controller.edit("a", "   new text   ")
+        val reminders = controller.reminders
+        assertEquals("new text", reminders[0].text)
+        assertEquals(1, store.savedSnapshots.size)
+        assertEquals("new text", store.savedSnapshots[0][0].text)
+    }
+
+    @Test
+    fun E_07_empty_edit_returns_false_no_save() {
+        val initial = listOf(Reminder("a", "existing"))
+        val store = FakeReminderStore(initial)
+        val controller = ReminderController(store) { "x" }
+        val result = controller.edit("a", "")
+        assertEquals(false, result)
+        assertEquals(0, store.saveCallCount)
+        assertEquals(initial, controller.reminders)
+    }
+
+    @Test
+    fun E_08_whitespace_only_edit_returns_false_no_save() {
+        val initial = listOf(Reminder("a", "existing"))
+        val store = FakeReminderStore(initial)
+        val controller = ReminderController(store) { "x" }
+        val result = controller.edit("a", " \t\n ")
+        assertEquals(false, result)
+        assertEquals(0, store.saveCallCount)
+        assertEquals(initial, controller.reminders)
+    }
+
+    @Test
+    fun E_09_missing_id_edit_returns_false_no_save() {
+        val initial = listOf(Reminder("a", "existing"))
+        val store = FakeReminderStore(initial)
+        val controller = ReminderController(store) { "x" }
+        val result = controller.edit("nonexistent", "new text")
+        assertEquals(false, result)
+        assertEquals(0, store.saveCallCount)
+        assertEquals(initial, controller.reminders)
+    }
+
+    @Test
+    fun E_10_exact_identical_edit_returns_true_no_save() {
+        val initial = listOf(Reminder("a", "hello"))
+        val store = FakeReminderStore(initial)
+        val controller = ReminderController(store) { "x" }
+        val result = controller.edit("a", "hello")
+        assertEquals(true, result)
+        assertEquals(0, store.saveCallCount)
+        assertEquals(initial, controller.reminders)
+    }
+
+    @Test
+    fun E_11_normalized_identical_edit_returns_true_no_save() {
+        val initial = listOf(Reminder("a", "hello"))
+        val store = FakeReminderStore(initial)
+        val controller = ReminderController(store) { "x" }
+        val result = controller.edit("a", "  hello  ")
+        assertEquals(true, result)
+        assertEquals(0, store.saveCallCount)
+        assertEquals(initial, controller.reminders)
+    }
+
+    @Test
+    fun E_12_changed_edit_saves_exactly_once_with_complete_candidate() {
+        val initial = listOf(
+            Reminder("a", "first"),
+            Reminder("b", "second"),
+            Reminder("c", "third"),
+        )
+        val store = FakeReminderStore(initial)
+        val controller = ReminderController(store) { "x" }
+        controller.edit("b", "second-edited")
+        val expected = listOf(
+            Reminder("a", "first"),
+            Reminder("b", "second-edited"),
+            Reminder("c", "third"),
+        )
+        assertEquals(1, store.saveCallCount)
+        assertEquals(1, store.savedSnapshots.size)
+        assertEquals(expected, store.savedSnapshots[0])
+    }
+
+    @Test
+    fun E_13_edit_does_not_invoke_idGenerator() {
+        val initial = listOf(Reminder("a", "existing"))
+        val store = FakeReminderStore(initial)
+        var calls = 0
+        val controller = ReminderController(store) {
+            calls += 1
+            "new-id-$calls"
+        }
+        // changed valid edit
+        controller.edit("a", "changed")
+        // missing id
+        controller.edit("nonexistent", "anything")
+        // invalid blank edit
+        controller.edit("a", "   ")
+        // identical edit
+        controller.edit("a", "changed")
+        assertEquals(0, calls)
+    }
+
+    @Test
+    fun E_14_old_state_observable_during_save() {
+        val initial = listOf(
+            Reminder("a", "first"),
+            Reminder("b", "second"),
+            Reminder("c", "third"),
+        )
+        val store = FakeReminderStore(initial)
+        val controller = ReminderController(store) { "x" }
+        var stateDuringSave: List<Reminder>? = null
+        store.saveCallback = { _ ->
+            stateDuringSave = controller.reminders.toList()
+        }
+        controller.edit("b", "second-edited")
+        assertNotNull(stateDuringSave)
+        assertEquals(initial, stateDuringSave!!)
+        val reminders = controller.reminders
+        assertEquals("second-edited", reminders[1].text)
+    }
+
+    @Test
+    fun E_15_edit_save_failure_propagates() {
+        val initial = listOf(Reminder("a", "existing"))
+        val store = FakeReminderStore(initial)
+        val controller = ReminderController(store) { "x" }
+        val original = IllegalStateException("save failure")
+        store.saveException = original
+        val thrown = assertThrows(IllegalStateException::class.java) {
+            controller.edit("a", "new text")
+        }
+        assertSame(original, thrown)
+    }
+
+    @Test
+    fun E_16_edit_save_failure_preserves_state() {
+        val initial = listOf(Reminder("a", "existing"))
+        val store = FakeReminderStore(initial)
+        val controller = ReminderController(store) { "x" }
+        store.saveException = IllegalStateException("save failure")
+        assertThrows(IllegalStateException::class.java) {
+            controller.edit("a", "new text")
+        }
+        assertEquals(initial, controller.reminders)
+    }
+
+    @Test
+    fun E_17_unicode_edit_text_supported() {
+        val initial = listOf(Reminder("a", "old text"))
+        val store = FakeReminderStore(initial)
+        val controller = ReminderController(store) { "x" }
+        val unicodeText = "caf\u00E9 \uD83D\uDE0A \u4E2D\u6587"
+        val result = controller.edit("a", unicodeText)
+        assertEquals(true, result)
+        assertEquals(unicodeText, controller.reminders[0].text)
+        assertEquals(1, store.savedSnapshots.size)
+        assertEquals(unicodeText, store.savedSnapshots[0][0].text)
+    }
 }

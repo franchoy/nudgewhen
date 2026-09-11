@@ -1,6 +1,6 @@
 # OpenCode Governance — Companion Document
 
-**Document status:** Accepted — stable governance; active v0.1.2 release; Phases 0 through 7 complete closure candidate (8 Complete / 0 Planned candidate); final Phase 7 acceptance is `pending landing/exact-head CI`; the v0.1.2 release is **not** merged, **not** tagged, and **not** published by this closure candidate
+**Document status:** Accepted — stable governance; active v0.1.3 release on branch `release/v0.1.3`; Phases 0 through 7 complete in closure-synchronization candidate; Phase 6 — Integrated Audit & Reconciliation — is `Complete`; Phase 6-C is `Complete`; Phase 7 — Full Pre-Release Gate — is `Complete` in this closure-synchronization candidate; 8 Complete / 0 Planned; v0.1.3 is **not** merged, **not** tagged, **not** published, and is not claimed release-ready
 
 ## Authority and link to `AGENTS.md`
 

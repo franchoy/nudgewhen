@@ -29,6 +29,8 @@ fun ReminderScreen(
     var reminders by remember(controller) {
         mutableStateOf(controller.reminders)
     }
+    var editingId by remember(controller) { mutableStateOf<String?>(null) }
+    var editBuffer by remember(controller) { mutableStateOf("") }
 
     Column(
         modifier = modifier
@@ -63,18 +65,59 @@ fun ReminderScreen(
         } else {
             LazyColumn(modifier = Modifier.weight(1f)) {
                 items(items = reminders, key = { it.id }) { reminder ->
-                    Row(modifier = Modifier.fillMaxWidth()) {
-                        Text(
-                            text = reminder.text,
-                            modifier = Modifier.weight(1f),
-                        )
-                        TextButton(
-                            onClick = {
-                                controller.remove(reminder.id)
-                                reminders = controller.reminders
-                            },
-                        ) {
-                            Text("Remove")
+                    if (editingId == reminder.id) {
+                        Row(modifier = Modifier.fillMaxWidth()) {
+                            OutlinedTextField(
+                                value = editBuffer,
+                                onValueChange = { editBuffer = it },
+                                modifier = Modifier.weight(1f),
+                                label = { Text("Edit reminder") },
+                                singleLine = true,
+                            )
+                            TextButton(
+                                onClick = {
+                                    val activeEditingId = reminder.id
+                                    val accepted = controller.edit(activeEditingId, editBuffer)
+                                    if (accepted) {
+                                        reminders = controller.reminders
+                                        editingId = null
+                                        editBuffer = ""
+                                    }
+                                },
+                            ) {
+                                Text("Save")
+                            }
+                            TextButton(
+                                onClick = {
+                                    editingId = null
+                                    editBuffer = ""
+                                },
+                            ) {
+                                Text("Cancel")
+                            }
+                        }
+                    } else {
+                        Row(modifier = Modifier.fillMaxWidth()) {
+                            Text(
+                                text = reminder.text,
+                                modifier = Modifier.weight(1f),
+                            )
+                            TextButton(
+                                onClick = {
+                                    editBuffer = reminder.text
+                                    editingId = reminder.id
+                                },
+                            ) {
+                                Text("Edit")
+                            }
+                            TextButton(
+                                onClick = {
+                                    controller.remove(reminder.id)
+                                    reminders = controller.reminders
+                                },
+                            ) {
+                                Text("Remove")
+                            }
                         }
                     }
                 }
