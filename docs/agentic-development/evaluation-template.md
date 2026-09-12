@@ -1,6 +1,6 @@
 # Evaluation Template — Agent-Assisted Experiment Record
 
-**Document status:** Accepted — stable governance; active v0.1.3 release on branch `release/v0.1.3`; Phases 0 through 7 complete in closure-synchronization candidate; Phase 6 — Integrated Audit & Reconciliation — is `Complete`; Phase 6-C is `Complete`; Phase 7 — Full Pre-Release Gate — is `Complete` in this closure-synchronization candidate; 8 Complete / 0 Planned; v0.1.3 is **not** merged, **not** tagged, **not** published, and is not claimed release-ready
+**Document status:** Accepted — stable governance; active v0.1.4 release on branch `release/v0.1.4`; Phase 0 — Release Definition & Bootstrap — is `Complete`; Phase 1 — Done State Architecture Contract — is `Planned` and `NOT_STARTED`; Phases 2 through 7 are `Planned`; phase model: `1 Complete / 7 Planned`; Phase 1 implementation has not started; latest stable published release is `v0.1.3`; v0.1.4 is **not** merged, **not** tagged, **not** published, and is not claimed release-ready
 
 **Usage.** Copy this template, replace every field, and save as `docs/agentic-development/experiments/EXP-NNNN.md`. Every unknown value is written as `Not available`, `Not applicable`, or `Pending maintainer input` with an inline explanation. No value is guessed.
 
