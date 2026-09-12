@@ -1,6 +1,6 @@
 # Release Charter — NudgeWhen v0.1.4
 
-**Document status:** v0.1.4 current lifecycle charter — Phases 0 through 0 complete; Phase 0 — Release Definition & Bootstrap — is `Complete`; Phase 1 — Done State Architecture Contract — is `Planned` and `NOT_STARTED`; Phase 2 — Done State Domain Implementation & JVM Proof — is `Planned`; Phase 3 — Persistence Compatibility / Migration Proof — is `Planned`; Phase 4 — Minimal Compose Integration — is `Planned`; Phase 5 — Integration & Device Validation — is `Planned`; Phase 6 — Integrated Audit & Reconciliation — is `Planned`; Phase 7 — Full Pre-Release Gate — is `Planned`; phase model: `1 Complete / 7 Planned`. Phase 1 implementation has not started. v0.1.4 is **not** merged, **not** tagged, **not** published, and is not claimed release-ready. This charter is normative for v0.1.4 release policy.
+**Document status:** v0.1.4 current lifecycle charter — Phases 0 through 1 complete; Phase 0 — Release Definition & Bootstrap — is `Complete`; Phase 1 — Done State Architecture Contract — is `Complete`; Phase 2 — Done State Domain Implementation & JVM Proof — is `Planned` and `NOT_STARTED`; Phase 3 — Persistence Compatibility / Migration Proof — is `Planned`; Phase 4 — Minimal Compose Integration — is `Planned`; Phase 5 — Integration & Device Validation — is `Planned`; Phase 6 — Integrated Audit & Reconciliation — is `Planned`; Phase 7 — Full Pre-Release Gate — is `Planned`; phase model: `2 Complete / 6 Planned`. Phase 2 is the next lifecycle phase; Phase-2 implementation has not started. v0.1.4 is **not** merged, **not** tagged, **not** published, and is not claimed release-ready. This charter is normative for v0.1.4 release policy.
 
 ## Release identity
 
@@ -107,11 +107,15 @@ The current released persistence format is NWR1. Its reminder record stores:
 
 `id + encoded text`
 
-NWR1 has no completion-state field. Phase 0 does not select a concrete persistence migration implementation. The final persistence representation decision is `PHASE_1_REQUIRED` and must be made by the Phase 1 architecture contract. Phase 1 may evaluate, but Phase 0 does not select among:
+NWR1 has no completion-state field. Phase 1 selected the persistence-format decision:
 
-- a compatible NWR1 extension;
-- a new NWR2 format;
-- another explicitly justified design.
+**Phase 1 selected:** `NWR2_WITH_NWR1_BACKWARD_LOAD`.
+
+Current production/released persistence remains NWR1.
+
+Phase 3 owns implementation, backward-load behavior, lazy same-file migration, and persistence proof.
+
+The Phase 1 architecture contract (`docs/releases/v0.1.4/done-state-architecture.md`) freezes the full NWR2 write grammar, the NWR1 backward-load contract, the lazy same-file migration semantics, and the persistence-format rationale.
 
 The persistence decision must:
 
@@ -134,9 +138,13 @@ The accepted eight-phase model for v0.1.4 is:
 - Phase 6 — Integrated Audit & Reconciliation
 - Phase 7 — Full Pre-Release Gate
 
-Phase 0 — Release Definition & Bootstrap — is `Complete`. Phases 1 through 7 are `Planned`. Phase 1 — Done State Architecture Contract — is the next lifecycle phase; its implementation has not started. Phase model: `1 Complete / 7 Planned`.
+Phase 0 — Release Definition & Bootstrap — is `Complete`. Phase 1 — Done State Architecture Contract — is `Complete`. Phases 2 through 7 are `Planned`. Phase 2 — Done State Domain Implementation & JVM Proof — is the next lifecycle phase; Phase-2 implementation has not started. Phase model: `2 Complete / 6 Planned`.
 
-Phase 0 performed the v0.1.4 release-definition, governance, document-bootstrap synchronization, and the initial dirty-candidate repository-consistency validation. Phase 0 did not implement any done-state functionality, did not modify `app/build.gradle.kts`, did not modify any product Kotlin, did not modify persistence, did not modify Compose, did not perform Android identity alignment, and did not select a concrete persistence representation. Phase 1 — Done State Architecture Contract — owns the persistence representation decision and the complete done-state semantics contract. Phase 2 must not own UI integration. Phase 3 owns the old v0.1.3 data compatibility / migration proof. Phase 4 owns minimal UI integration only after domain/persistence proof. Phase 5 owns integrated and bounded physical-device proof. Phase 6 owns integrated audit plus reconciliation. Phase 7 owns the full final pre-release gate.
+Phase 0 performed the v0.1.4 release-definition, governance, document-bootstrap synchronization, and the initial dirty-candidate repository-consistency validation. Phase 0 did not implement any done-state functionality, did not modify `app/build.gradle.kts`, did not modify any product Kotlin, did not modify persistence, did not modify Compose, did not perform Android identity alignment, and did not select a concrete persistence representation.
+
+Phase 1 — Done State Architecture Contract — is architecture-only and produced the frozen done-state architecture contract (`docs/releases/v0.1.4/done-state-architecture.md`); it selected the NWR2_WITH_NWR1_BACKWARD_LOAD persistence-format decision and froze the complete done-state semantics contract, but did not implement any done-state behavior in product Kotlin or persistence.
+
+Phase 2 must not own UI integration. Phase 3 owns the old v0.1.3 data compatibility / migration proof. Phase 4 owns minimal UI integration only after domain/persistence proof. Phase 5 owns integrated and bounded physical-device proof. Phase 6 owns integrated audit plus reconciliation. Phase 7 owns the full final pre-release gate.
 
 ## Maintenance window
 

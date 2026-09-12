@@ -23,11 +23,27 @@ Target Android identity: `versionCode 5 / versionName 0.1.4`.
 
 Android identity alignment is not Phase-1 work.
 
-Phase 1 remains `Planned / NOT_STARTED` until this architecture candidate
-is independently audited and separately landed.
+### Phase 1 closure block
 
-This document does not claim that Phase 1 is landed, committed, pushed,
-or CI accepted.
+Architecture repository boundary: `CLOSED`.
+
+Architecture commit: `84446af3d6360cbcb35371fbf451ad9d1b180691`.
+
+Parent: `193fe336b2b147f897b87636b29a2d439d2e1219`.
+
+Remote exact SHA: `84446af3d6360cbcb35371fbf451ad9d1b180691`.
+
+Exact-head CI: `34686932221`.
+
+Validate job: `103535431436`.
+
+CI result: `success`.
+
+Phase 1: `Complete`.
+
+Phase 2: `Planned / NOT_STARTED`.
+
+This document is the landed and exact-head-CI-accepted Phase-1 architecture contract.
 
 ## 1. Domain Model Contract
 
