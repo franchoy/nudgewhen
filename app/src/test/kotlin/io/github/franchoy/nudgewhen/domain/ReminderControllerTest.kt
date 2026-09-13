@@ -51,8 +51,10 @@ class ReminderControllerTest {
         controller.create("  hello  ")
         assertEquals(1, controller.reminders.size)
         assertEquals("hello", controller.reminders[0].text)
+        assertEquals(false, controller.reminders[0].done)
         assertEquals(1, store.savedSnapshots.size)
         assertEquals("hello", store.savedSnapshots[0][0].text)
+        assertEquals(false, store.savedSnapshots[0][0].done)
     }
 
     @Test
@@ -231,7 +233,7 @@ class ReminderControllerTest {
     fun C_18_known_remove_removes_the_matching_reminder() {
         val initial = listOf(
             Reminder("a", "first"),
-            Reminder("b", "second"),
+            Reminder("b", "second", done = true),
             Reminder("c", "third"),
         )
         val store = FakeReminderStore(initial)
@@ -353,7 +355,7 @@ class ReminderControllerTest {
     fun E_02_changed_edit_changes_only_target_text() {
         val initial = listOf(
             Reminder("a", "first"),
-            Reminder("b", "second"),
+            Reminder("b", "second", done = false),
             Reminder("c", "third"),
         )
         val store = FakeReminderStore(initial)
@@ -363,6 +365,7 @@ class ReminderControllerTest {
         assertEquals("first", reminders[0].text)
         assertEquals("second-edited", reminders[1].text)
         assertEquals("third", reminders[2].text)
+        assertEquals(false, reminders[1].done)
     }
 
     @Test
@@ -578,5 +581,146 @@ class ReminderControllerTest {
         assertEquals(unicodeText, controller.reminders[0].text)
         assertEquals(1, store.savedSnapshots.size)
         assertEquals(unicodeText, store.savedSnapshots[0][0].text)
+    }
+
+    @Test
+    fun D_01_setDone_false_to_true_changes_target_only() {
+        val initial = listOf(
+            Reminder("a", "first"),
+            Reminder("b", "second"),
+            Reminder("c", "third"),
+        )
+        val store = FakeReminderStore(initial)
+        val controller = ReminderController(store) { "x" }
+        val result = controller.setDone("b", true)
+        assertEquals(true, result)
+        val reminders = controller.reminders
+        assertEquals(true, reminders[1].done)
+        assertEquals("b", reminders[1].id)
+        assertEquals("second", reminders[1].text)
+        assertEquals("first", reminders[0].text)
+        assertEquals("third", reminders[2].text)
+        val expected = listOf(
+            Reminder("a", "first", done = false),
+            Reminder("b", "second", done = true),
+            Reminder("c", "third", done = false),
+        )
+        assertEquals(expected, reminders)
+        assertEquals(1, store.saveCallCount)
+        assertEquals(1, store.savedSnapshots.size)
+        assertEquals(expected, store.savedSnapshots[0])
+    }
+
+    @Test
+    fun D_02_setDone_true_to_false_changes_target_only() {
+        val initial = listOf(Reminder("a", "existing", done = true))
+        val store = FakeReminderStore(initial)
+        val controller = ReminderController(store) { "x" }
+        val result = controller.setDone("a", false)
+        assertEquals(true, result)
+        assertEquals(false, controller.reminders[0].done)
+    }
+
+    @Test
+    fun D_03_setDone_same_state_returns_true_no_save() {
+        val initial = listOf(Reminder("a", "existing", done = false))
+        val store = FakeReminderStore(initial)
+        val controller = ReminderController(store) { "x" }
+        val result = controller.setDone("a", false)
+        assertEquals(true, result)
+        assertEquals(0, store.saveCallCount)
+        assertEquals(0, store.savedSnapshots.size)
+        assertEquals(initial, controller.reminders)
+    }
+
+    @Test
+    fun D_04_setDone_missing_id_returns_false_no_save() {
+        val initial = listOf(Reminder("a", "existing"))
+        val store = FakeReminderStore(initial)
+        val controller = ReminderController(store) { "x" }
+        val result = controller.setDone("nonexistent", true)
+        assertEquals(false, result)
+        assertEquals(0, store.saveCallCount)
+        assertEquals(0, store.savedSnapshots.size)
+        assertEquals(initial, controller.reminders)
+    }
+
+    @Test
+    fun D_05_setDone_never_invokes_idGenerator() {
+        val initial = listOf(
+            Reminder("a", "first", done = false),
+            Reminder("b", "second", done = true),
+        )
+        val store = FakeReminderStore(initial)
+        var idCalls = 0
+        val controller = ReminderController(store) {
+            idCalls += 1
+            "unused-$idCalls"
+        }
+        controller.setDone("a", true)          // changed-state
+        controller.setDone("b", false)         // changed-state
+        controller.setDone("a", true)          // same-state
+        controller.setDone("nonexistent", true) // missing-id
+        assertEquals(0, idCalls)
+    }
+
+    @Test
+    fun D_06_setDone_old_state_observable_during_save() {
+        val initial = listOf(
+            Reminder("a", "first"),
+            Reminder("b", "second"),
+            Reminder("c", "third"),
+        )
+        val store = FakeReminderStore(initial)
+        val controller = ReminderController(store) { "x" }
+        var stateDuringSave: List<Reminder>? = null
+        store.saveCallback = { _ ->
+            stateDuringSave = controller.reminders.toList()
+        }
+        val result = controller.setDone("b", true)
+        assertEquals(true, result)
+        assertNotNull(stateDuringSave)
+        assertEquals(initial, stateDuringSave!!)
+        assertEquals(true, controller.reminders[1].done)
+    }
+
+    @Test
+    fun D_07_setDone_save_failure_propagates_and_preserves_state() {
+        val initial = listOf(Reminder("a", "existing"))
+        val store = FakeReminderStore(initial)
+        val controller = ReminderController(store) { "x" }
+        val original = IllegalStateException("save failure")
+        store.saveException = original
+        val thrown = assertThrows(IllegalStateException::class.java) {
+            controller.setDone("a", true)
+        }
+        assertSame(original, thrown)
+        assertEquals(initial, controller.reminders)
+    }
+
+    @Test
+    fun D_08_edit_then_setDone_preserves_edited_text_and_done_state() {
+        val initial = listOf(Reminder("a", "old text"))
+        val store = FakeReminderStore(initial)
+        val controller = ReminderController(store) { "x" }
+        val editResult = controller.edit("a", "new text")
+        assertEquals(true, editResult)
+        val setDoneResult = controller.setDone("a", true)
+        assertEquals(true, setDoneResult)
+        assertEquals("new text", controller.reminders[0].text)
+        assertEquals(true, controller.reminders[0].done)
+    }
+
+    @Test
+    fun D_09_setDone_then_edit_preserves_done_state() {
+        val initial = listOf(Reminder("a", "old text"))
+        val store = FakeReminderStore(initial)
+        val controller = ReminderController(store) { "x" }
+        val setDoneResult = controller.setDone("a", true)
+        assertEquals(true, setDoneResult)
+        val editResult = controller.edit("a", "new text")
+        assertEquals(true, editResult)
+        assertEquals("new text", controller.reminders[0].text)
+        assertEquals(true, controller.reminders[0].done)
     }
 }

@@ -11,17 +11,21 @@ class ReminderTest {
         val reminder = Reminder(id = "id-1", text = "buy milk")
         assertEquals("id-1", reminder.id)
         assertEquals("buy milk", reminder.text)
+        assertEquals(false, reminder.done)
     }
 
     @Test
-    fun R_02_reminder_value_equality_depends_on_id_and_text() {
+    fun R_02_reminder_value_equality_depends_on_id_text_and_done() {
         val aSame = Reminder("id-1", "text")
         val bSame = Reminder("id-1", "text")
         val differentId = Reminder("id-2", "text")
         val differentText = Reminder("id-1", "different")
+        val sameIdSameTextDoneFalse = Reminder("id-1", "text", done = false)
+        val sameIdSameTextDoneTrue = Reminder("id-1", "text", done = true)
 
         assertEquals(aSame, bSame)
         assertNotEquals(aSame, differentId)
         assertNotEquals(aSame, differentText)
+        assertNotEquals(sameIdSameTextDoneFalse, sameIdSameTextDoneTrue)
     }
 }
