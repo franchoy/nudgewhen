@@ -1,6 +1,6 @@
 # OpenCode Governance — Companion Document
 
-**Document status:** Accepted — stable governance; active v0.1.4 release on branch `release/v0.1.4`; Phase 0 — Release Definition & Bootstrap — is `Complete`; Phase 1 — Done State Architecture Contract — is `Complete`; Phase 2 — Done State Domain Implementation & JVM Proof — is `Complete`; Phases 3 through 7 are `Planned`; phase model: `3 Complete / 5 Planned`; Phase 3 is the next lifecycle phase and has not started; latest stable published release is `v0.1.3`; v0.1.4 is **not** merged, **not** tagged, **not** published, and is not claimed release-ready
+**Document status:** Accepted — stable governance; active v0.1.4 release on branch `release/v0.1.4`; Phase 0 — Release Definition & Bootstrap — is `Complete`; Phase 1 — Done State Architecture Contract — is `Complete`; Phase 2 — Done State Domain Implementation & JVM Proof — is `Complete`; Phase 3 — Persistence Compatibility / Migration Proof — is `Complete`; Phases 4 through 7 are `Planned`; phase model: `4 Complete / 4 Planned`; Phase 4 — Minimal Compose Integration — is the next lifecycle phase and has not started; latest stable published release is `v0.1.3`; v0.1.4 is **not** merged, **not** tagged, **not** published, and is not claimed release-ready
 
 ## Authority and link to `AGENTS.md`
 

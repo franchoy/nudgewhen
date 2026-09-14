@@ -1,6 +1,6 @@
 # Phase List — NudgeWhen v0.1.4
 
-**Document status:** v0.1.4 current lifecycle authority — Phases 0 through 2 complete; Phase 0 — Release Definition & Bootstrap — is `Complete`; Phase 1 — Done State Architecture Contract — is `Complete`; Phase 2 — Done State Domain Implementation & JVM Proof — is `Complete`; Phase 3 — Persistence Compatibility / Migration Proof — is `Planned` and the next lifecycle phase; Phase 4 — Minimal Compose Integration — is `Planned`; Phase 5 — Integration & Device Validation — is `Planned`; Phase 6 — Integrated Audit & Reconciliation — is `Planned`; Phase 7 — Full Pre-Release Gate — is `Planned`; phase model: `3 Complete / 5 Planned`. Phase-3 implementation has not started. This document is normative for the eight-phase ordering and per-phase scope. It does not claim that v0.1.4 is merged, tagged, published, or release-ready.
+**Document status:** v0.1.4 current lifecycle authority — Phases 0 through 3 complete; Phase 0 — Release Definition & Bootstrap — is `Complete`; Phase 1 — Done State Architecture Contract — is `Complete`; Phase 2 — Done State Domain Implementation & JVM Proof — is `Complete`; Phase 3 — Persistence Compatibility / Migration Proof — is `Complete`; Phase 4 — Minimal Compose Integration — is `Planned` and the next lifecycle phase; Phase 5 — Integration & Device Validation — is `Planned`; Phase 6 — Integrated Audit & Reconciliation — is `Planned`; Phase 7 — Full Pre-Release Gate — is `Planned`; phase model: `4 Complete / 4 Planned`. Phase-4 implementation has not started and is not authorized. This document is normative for the eight-phase ordering and per-phase scope. It does not claim that v0.1.4 is merged, tagged, published, or release-ready.
 
 ## Phase 0 — Release Definition & Bootstrap
 
@@ -117,7 +117,7 @@ Next lifecycle phase:
 
 `Phase 3 — Persistence Compatibility / Migration Proof`
 
-Phase 3 is `Planned` and `NOT_STARTED`. Phase 3 owns NWR2 writes, NWR1 backward loading, lazy same-file migration, and real-file persistence proof.
+Phase 3 has since completed and is `Complete`; Phase 4 — Minimal Compose Integration — is `Planned` and `NOT_STARTED`. Phase 3 owned NWR2 writes, NWR1 backward loading, lazy same-file migration, and real-file persistence proof under the frozen Phase-3 contract.
 
 ### Status
 
@@ -133,9 +133,54 @@ Phase 3 non-goals:
 - no Android identity alignment;
 - no Gradle, validator, or CI change.
 
+### Phase 3 closure record
+
+Phase 3 — Persistence Compatibility / Migration Proof — is `Complete` for the active v0.1.4 release on `release/v0.1.4`.
+
+Implementation commit:
+
+`6c3ca643d47acf94e813d4f62f904d43b967a6e1`
+
+Parent:
+
+`fe876b86977f0f34bded3c3e774ffcaec016591f`
+
+Subject:
+
+`feat: implement v0.1.4 persistence migration`
+
+Repository boundary:
+
+`LANDED_AND_EXACT_HEAD_CI_ACCEPTED`
+
+Implementation exact-head CI:
+
+`CI / 6c3ca643d47acf94e813d4f62f904d43b967a6e1 / release/v0.1.4 / push / success`
+
+Implementation evidence:
+
+`EXP-0056`
+
+Phase-3 implementation facts preserved by this closure:
+
+- The active v0.1.4 release-branch `FileReminderStore` candidate behavior is NWR2 writes; NWR1 backward loading; lazy same-file migration on the first successful persistence-changing save; no load-time rewrite.
+- Order / id / text / done-state preservation is proven under the frozen Phase-3 contract.
+- Phase 3 did not modify Compose.
+- Phase 3 did not perform Android identity alignment.
+- Gradle dependency state is unchanged.
+- Test dependency state is unchanged.
+- Validator architecture is unchanged.
+- CI workflow is unchanged.
+
+Next lifecycle phase:
+
+`Phase 4 — Minimal Compose Integration`
+
+Phase 4 is `Planned` and `NOT_STARTED`.
+
 ### Status
 
-Planned
+Complete
 
 ## Phase 4 — Minimal Compose Integration
 
