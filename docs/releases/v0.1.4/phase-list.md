@@ -1,6 +1,6 @@
 # Phase List — NudgeWhen v0.1.4
 
-**Document status:** v0.1.4 current lifecycle authority — Phases 0 through 1 complete; Phase 0 — Release Definition & Bootstrap — is `Complete`; Phase 1 — Done State Architecture Contract — is `Complete`; Phase 2 — Done State Domain Implementation & JVM Proof — is `Planned` and `NOT_STARTED`; Phase 3 — Persistence Compatibility / Migration Proof — is `Planned`; Phase 4 — Minimal Compose Integration — is `Planned`; Phase 5 — Integration & Device Validation — is `Planned`; Phase 6 — Integrated Audit & Reconciliation — is `Planned`; Phase 7 — Full Pre-Release Gate — is `Planned`; phase model: `2 Complete / 6 Planned`. Phase 2 is the next lifecycle phase; Phase-2 implementation has not started. This document is normative for the eight-phase ordering and per-phase scope. It does not claim that v0.1.4 is merged, tagged, published, or release-ready.
+**Document status:** v0.1.4 current lifecycle authority — Phases 0 through 2 complete; Phase 0 — Release Definition & Bootstrap — is `Complete`; Phase 1 — Done State Architecture Contract — is `Complete`; Phase 2 — Done State Domain Implementation & JVM Proof — is `Complete`; Phase 3 — Persistence Compatibility / Migration Proof — is `Planned` and the next lifecycle phase; Phase 4 — Minimal Compose Integration — is `Planned`; Phase 5 — Integration & Device Validation — is `Planned`; Phase 6 — Integrated Audit & Reconciliation — is `Planned`; Phase 7 — Full Pre-Release Gate — is `Planned`; phase model: `3 Complete / 5 Planned`. Phase-3 implementation has not started. This document is normative for the eight-phase ordering and per-phase scope. It does not claim that v0.1.4 is merged, tagged, published, or release-ready.
 
 ## Phase 0 — Release Definition & Bootstrap
 
@@ -53,9 +53,75 @@ Phase 2 non-goals:
 - no CI workflow change;
 - no UI integration.
 
+### Phase 2 closure record
+
+Phase 2 — Done State Domain Implementation & JVM Proof — is `Complete` for the active v0.1.4 release on `release/v0.1.4`.
+
+Implementation commit:
+
+`658f607f4fda3e886fecdd7e785d325b37a31010`
+
+Parent:
+
+`0d93dea8446a45d76c3a8c869fdc02e8b2944e32`
+
+Subject:
+
+`feat: implement v0.1.4 done-state domain`
+
+Repository boundary:
+
+`LANDED_AND_EXACT_HEAD_CI_ACCEPTED`
+
+Implementation exact-head CI:
+
+`34751025153` / `success`
+
+Validate job:
+
+`103707474220` / `success`
+
+Principal implementation proof:
+
+- `ReminderTest`: `2 / 0 / 0 / 0`
+- `ReminderControllerTest`: `51 / 0 / 0 / 0`
+- affected-class total: `53`
+- standard regression: `244 / OK`
+- `required`: `11 / 0 / 0`
+- `docs`: `11 / 0 / 0`
+- `skip-Android`: `22 / 0 / 0`
+
+Phase-2 implementation facts preserved by this closure:
+
+- `Reminder.done` default `false` is implemented.
+- `ReminderController.setDone(id: String, done: Boolean)` is implemented.
+- `ReminderController.edit(...)` preserves the existing done state across edit.
+- `FileReminderStore` production is unchanged.
+- Persistence implementation is unchanged.
+- Compose is unchanged.
+- Android identity is unchanged (`versionCode 4 / versionName 0.1.3`).
+- Gradle dependency state is unchanged.
+- Test dependency state is unchanged.
+- Validator architecture is unchanged.
+- CI workflow is unchanged.
+
+Implementation Build evidence:
+
+`EXP-0052`
+
+Formal closure-sync planning + Build evidence:
+
+`EXP-0053`
+
+Next lifecycle phase:
+
+`Phase 3 — Persistence Compatibility / Migration Proof`
+
+Phase 3 is `Planned` and `NOT_STARTED`. Phase 3 owns NWR2 writes, NWR1 backward loading, lazy same-file migration, and real-file persistence proof.
+
 ### Status
 
-Planned
+Complete
 
 ## Phase 3 — Persistence Compatibility / Migration Proof
 

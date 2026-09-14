@@ -1,6 +1,6 @@
 # Release Charter — NudgeWhen v0.1.4
 
-**Document status:** v0.1.4 current lifecycle charter — Phases 0 through 1 complete; Phase 0 — Release Definition & Bootstrap — is `Complete`; Phase 1 — Done State Architecture Contract — is `Complete`; Phase 2 — Done State Domain Implementation & JVM Proof — is `Planned` and `NOT_STARTED`; Phase 3 — Persistence Compatibility / Migration Proof — is `Planned`; Phase 4 — Minimal Compose Integration — is `Planned`; Phase 5 — Integration & Device Validation — is `Planned`; Phase 6 — Integrated Audit & Reconciliation — is `Planned`; Phase 7 — Full Pre-Release Gate — is `Planned`; phase model: `2 Complete / 6 Planned`. Phase 2 is the next lifecycle phase; Phase-2 implementation has not started. v0.1.4 is **not** merged, **not** tagged, **not** published, and is not claimed release-ready. This charter is normative for v0.1.4 release policy.
+**Document status:** v0.1.4 current lifecycle charter — Phases 0 through 2 complete; Phase 0 — Release Definition & Bootstrap — is `Complete`; Phase 1 — Done State Architecture Contract — is `Complete`; Phase 2 — Done State Domain Implementation & JVM Proof — is `Complete`; Phase 3 — Persistence Compatibility / Migration Proof — is `Planned` and the next lifecycle phase; Phase 4 — Minimal Compose Integration — is `Planned`; Phase 5 — Integration & Device Validation — is `Planned`; Phase 6 — Integrated Audit & Reconciliation — is `Planned`; Phase 7 — Full Pre-Release Gate — is `Planned`; phase model: `3 Complete / 5 Planned`. Phase-3 implementation has not started. v0.1.4 is **not** merged, **not** tagged, **not** published, and is not claimed release-ready. This charter is normative for v0.1.4 release policy.
 
 ## Release identity
 
@@ -138,13 +138,17 @@ The accepted eight-phase model for v0.1.4 is:
 - Phase 6 — Integrated Audit & Reconciliation
 - Phase 7 — Full Pre-Release Gate
 
-Phase 0 — Release Definition & Bootstrap — is `Complete`. Phase 1 — Done State Architecture Contract — is `Complete`. Phases 2 through 7 are `Planned`. Phase 2 — Done State Domain Implementation & JVM Proof — is the next lifecycle phase; Phase-2 implementation has not started. Phase model: `2 Complete / 6 Planned`.
+Phase 0 — Release Definition & Bootstrap — is `Complete`. Phase 1 — Done State Architecture Contract — is `Complete`. Phase 2 — Done State Domain Implementation & JVM Proof — is `Complete`. Phases 3 through 7 are `Planned`. Phase 3 — Persistence Compatibility / Migration Proof — is the next lifecycle phase; Phase-3 implementation has not started. Phase model: `3 Complete / 5 Planned`.
 
 Phase 0 performed the v0.1.4 release-definition, governance, document-bootstrap synchronization, and the initial dirty-candidate repository-consistency validation. Phase 0 did not implement any done-state functionality, did not modify `app/build.gradle.kts`, did not modify any product Kotlin, did not modify persistence, did not modify Compose, did not perform Android identity alignment, and did not select a concrete persistence representation.
 
 Phase 1 — Done State Architecture Contract — is architecture-only and produced the frozen done-state architecture contract (`docs/releases/v0.1.4/done-state-architecture.md`); it selected the NWR2_WITH_NWR1_BACKWARD_LOAD persistence-format decision and froze the complete done-state semantics contract, but did not implement any done-state behavior in product Kotlin or persistence.
 
 Phase 2 must not own UI integration. Phase 3 owns the old v0.1.3 data compatibility / migration proof. Phase 4 owns minimal UI integration only after domain/persistence proof. Phase 5 owns integrated and bounded physical-device proof. Phase 6 owns integrated audit plus reconciliation. Phase 7 owns the full final pre-release gate.
+
+### Phase 2 formal closure summary
+
+Phase 2 — Done State Domain Implementation & JVM Proof — is `Complete` for the active v0.1.4 release on `release/v0.1.4`. Implementation boundary: `658f607f4fda3e886fecdd7e785d325b37a31010` (subject `feat: implement v0.1.4 done-state domain`, parent `0d93dea8446a45d76c3a8c869fdc02e8b2944e32`). Repository boundary: `LANDED_AND_EXACT_HEAD_CI_ACCEPTED`. Implementation exact-head CI: `34751025153 / success`. Validate job: `103707474220 / success`. Implementation evidence: `EXP-0052`. Formal closure-sync planning + Build evidence: `EXP-0053`. The full Phase 2 test matrix and JVM proof totals are recorded in `docs/releases/v0.1.4/phase-list.md` and `EXP-0052.md`; this charter preserves only the policy summary. Phase 3 — Persistence Compatibility / Migration Proof — is `Planned` and is the next lifecycle phase; Phase-3 implementation has not started.
 
 ## Maintenance window
 
