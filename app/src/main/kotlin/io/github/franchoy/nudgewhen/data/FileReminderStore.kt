@@ -11,22 +11,42 @@ import java.nio.charset.StandardCharsets
 import java.util.Base64
 
 /**
- * File-backed [ReminderStore] using a simple line-oriented wire format:
+ * File-backed [ReminderStore] using a line-oriented wire format.
+ *
+ * Two header versions are supported on load:
  *
  *   NWR1
  *   <id><TAB><base64url-encoded-utf-8-text>
  *   ...
  *
+ *   NWR2
+ *   <id><TAB><base64url-encoded-utf-8-text><TAB><done-literal>
+ *   ...
+ *
+ * `done-literal` is `0` for `done = false` and `1` for `done = true`.
+ *
  * Records are separated by a single LF (`\n`). There is no trailing LF after
  * the final record, and `save(emptyList())` produces exactly the header line
- * `NWR1`. ID grammar rules and Base64URL-with-padding are used both when
+ * `NWR2`. ID grammar rules and Base64URL-with-padding are used both when
  * loading and when saving.
+ *
+ * NWR1 records are loaded with `done = false`; NWR1 is read-only. The first
+ * later successful ordinary `save` rewrites the same file as NWR2 (lazy
+ * in-place format migration). No migration flag and no load-time rewrite
+ * are performed.
+ *
+ * Headers other than `NWR1` and `NWR2` are rejected with
+ * `IllegalStateException`.
  *
  * Validation correctness boundary:
  * - `save` validates the complete input list before opening/truncating the
  *   target file, so a failed validation cannot destroy an existing valid
  *   file on disk.
  * - `save` serializes the complete output in memory before writing.
+ * - NWR1-on-disk lazy migration to NWR2 is provided by controller-level
+ *   no-save paths (same-state `setDone` and normalized-identical `edit`),
+ *   which do not invoke `save`. The first successful `save` rewrites the
+ *   complete file as NWR2.
  * - This implementation does not promise preservation of old on-disk bytes
  *   after an actual filesystem I/O failure during write.
  */
@@ -51,7 +71,8 @@ class FileReminderStore(
             throw IllegalStateException("Empty persistence file")
         }
 
-        if (lines[0] != HEADER) {
+        val header = lines[0]
+        if (header != HEADER_NWR1 && header != HEADER_NWR2) {
             throw IllegalStateException("Unsupported persistence file header")
         }
 
@@ -68,12 +89,34 @@ class FileReminderStore(
             if (firstTab < 0) {
                 throw IllegalStateException("Reminder record without TAB separator")
             }
-            if (record.indexOf('\t', firstTab + 1) >= 0) {
-                throw IllegalStateException("Reminder record with multiple TAB separators")
-            }
 
-            val id = record.substring(0, firstTab)
-            val encodedText = record.substring(firstTab + 1)
+            val id: String
+            val encodedText: String
+            val doneLiteral: String?
+
+            if (header == HEADER_NWR2) {
+                val secondTab = record.indexOf('\t', firstTab + 1)
+                if (secondTab < 0) {
+                    throw IllegalStateException(
+                        "NWR2 reminder record missing done field TAB separator",
+                    )
+                }
+                if (record.indexOf('\t', secondTab + 1) >= 0) {
+                    throw IllegalStateException(
+                        "NWR2 reminder record with extra TAB separator",
+                    )
+                }
+                id = record.substring(0, firstTab)
+                encodedText = record.substring(firstTab + 1, secondTab)
+                doneLiteral = record.substring(secondTab + 1)
+            } else {
+                if (record.indexOf('\t', firstTab + 1) >= 0) {
+                    throw IllegalStateException("Reminder record with multiple TAB separators")
+                }
+                id = record.substring(0, firstTab)
+                encodedText = record.substring(firstTab + 1)
+                doneLiteral = null
+            }
 
             validateLoadedId(id)
             if (!seenIds.add(id)) {
@@ -81,7 +124,15 @@ class FileReminderStore(
             }
 
             val decodedText: String = decodeBase64UrlToText(encodedText, id)
-            reminders.add(Reminder(id, decodedText))
+            val done: Boolean = when (doneLiteral) {
+                null -> false
+                "0" -> false
+                "1" -> true
+                else -> throw IllegalStateException(
+                    "Invalid done literal for reminder id: $id",
+                )
+            }
+            reminders.add(Reminder(id, decodedText, done))
         }
 
         return reminders
@@ -102,7 +153,7 @@ class FileReminderStore(
 
     private fun serialize(reminders: List<Reminder>): ByteArray {
         val builder = StringBuilder()
-        builder.append(HEADER)
+        builder.append(HEADER_NWR2)
         for (reminder in reminders) {
             val textBytes = reminder.text.toByteArray(StandardCharsets.UTF_8)
             val encodedText = Base64.getUrlEncoder().encodeToString(textBytes)
@@ -110,6 +161,8 @@ class FileReminderStore(
             builder.append(reminder.id)
             builder.append('\t')
             builder.append(encodedText)
+            builder.append('\t')
+            builder.append(if (reminder.done) "1" else "0")
         }
         return builder.toString().toByteArray(StandardCharsets.UTF_8)
     }
@@ -174,6 +227,7 @@ class FileReminderStore(
     }
 
     companion object {
-        const val HEADER: String = "NWR1"
+        const val HEADER_NWR1: String = "NWR1"
+        const val HEADER_NWR2: String = "NWR2"
     }
 }
