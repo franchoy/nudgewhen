@@ -1,6 +1,6 @@
 # Experiment Protocol — Agent-Assisted Tasks
 
-**Document status:** Accepted — stable governance; active v0.1.4 release on branch `release/v0.1.4`; Phase 0 — Release Definition & Bootstrap — is `Complete`; Phase 1 — Done State Architecture Contract — is `Complete`; Phase 2 — Done State Domain Implementation & JVM Proof — is `Complete`; Phase 3 — Persistence Compatibility / Migration Proof — is `Complete`; Phases 5 through 7 are `Planned`; 5 Complete / 3 Planned; pre-v0.1.4 maintenance window is closed; v0.1.4 is **not** merged, **not** tagged, **not** published, and is not claimed release-ready; historical v0.1.3 release evidence remains immutable
+**Document status:** Accepted — stable governance; active v0.1.4 release on branch `release/v0.1.4`; Phase 0 — Release Definition & Bootstrap — is `Complete`; Phase 1 — Done State Architecture Contract — is `Complete`; Phase 2 — Done State Domain Implementation & JVM Proof — is `Complete`; Phase 3 — Persistence Compatibility / Migration Proof — is `Complete`; Phase 4 — Minimal Compose Integration — is `Complete`; Phase 5 — Integration & Device Validation — is `Complete`; Phase 6 — Integrated Audit & Reconciliation — is `Planned`; Phase 7 — Full Pre-Release Gate — is `Planned`; 6 Complete / 2 Planned; pre-v0.1.4 maintenance window is closed; v0.1.4 is **not** merged, **not** tagged, **not** published, and is not claimed release-ready; historical v0.1.3 release evidence remains immutable
 
 ## Purpose
 

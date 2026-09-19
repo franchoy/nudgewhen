@@ -1,6 +1,6 @@
 # Phase List — NudgeWhen v0.1.4
 
-**Document status:** v0.1.4 current lifecycle authority — Phases 0 through 4 complete; Phase 0 — Release Definition & Bootstrap — is `Complete`; Phase 1 — Done State Architecture Contract — is `Complete`; Phase 2 — Done State Domain Implementation & JVM Proof — is `Complete`; Phase 3 — Persistence Compatibility / Migration Proof — is `Complete`; Phase 4 — Minimal Compose Integration — is `Complete`; Phase 5 — Integration & Device Validation — is `Planned` and the next lifecycle phase; Phase 6 — Integrated Audit & Reconciliation — is `Planned`; Phase 7 — Full Pre-Release Gate — is `Planned`; phase model: `5 Complete / 3 Planned`. Phase-4 implementation is `LANDED_AND_EXACT_HEAD_CI_ACCEPTED`. This document is normative for the eight-phase ordering and per-phase scope. It does not claim that v0.1.4 is merged, tagged, published, or release-ready.
+**Document status:** v0.1.4 current lifecycle authority — Phases 0 through 5 complete; Phase 0 — Release Definition & Bootstrap — is `Complete`; Phase 1 — Done State Architecture Contract — is `Complete`; Phase 2 — Done State Domain Implementation & JVM Proof — is `Complete`; Phase 3 — Persistence Compatibility / Migration Proof — is `Complete`; Phase 4 — Minimal Compose Integration — is `Complete`; Phase 5 — Integration & Device Validation — is `Complete`; Phase 6 — Integrated Audit & Reconciliation — is `Planned`; Phase 7 — Full Pre-Release Gate — is `Planned`; phase model: `6 Complete / 2 Planned`. Phase-5 implementation is `LANDED_AND_EXACT_HEAD_CI_ACCEPTED`. This document is normative for the eight-phase ordering and per-phase scope. It does not claim that v0.1.4 is merged, tagged, published, or release-ready.
 
 ## Phase 0 — Release Definition & Bootstrap
 
@@ -117,7 +117,7 @@ Next lifecycle phase:
 
 `Phase 3 — Persistence Compatibility / Migration Proof`
 
-Phase 3 has since completed and is `Complete`; Phase 4 — Minimal Compose Integration — has since completed and is `Complete`; Phase 5 — Integration & Device Validation — is the next lifecycle phase and is `Planned` / `NOT_STARTED` / `NOT_AUTHORIZED`. Phase 3 owned NWR2 writes, NWR1 backward loading, lazy same-file migration, and real-file persistence proof under the frozen Phase-3 contract.
+Phase 3 has since completed and is `Complete`; Phase 4 — Minimal Compose Integration — has since completed and is `Complete`; Phase 5 — Integration & Device Validation — has since completed and is `Complete`; Phase 6 — Integrated Audit & Reconciliation — is the next lifecycle phase and is `Planned` / `NOT_STARTED` / `NOT_AUTHORIZED`. Phase 3 owned NWR2 writes, NWR1 backward loading, lazy same-file migration, and real-file persistence proof under the frozen Phase-3 contract.
 
 ### Status
 
@@ -176,7 +176,7 @@ Next lifecycle phase:
 
 `Phase 4 — Minimal Compose Integration`
 
-Phase 4 has since completed and is `Complete`; Phase 5 — Integration & Device Validation — is the next lifecycle phase and is `Planned` / `NOT_STARTED` / `NOT_AUTHORIZED`.
+Phase 4 has since completed and is `Complete`; Phase 5 — Integration & Device Validation — has since completed and is `Complete`; Phase 6 — Integrated Audit & Reconciliation — is the next lifecycle phase and is `Planned` / `NOT_STARTED` / `NOT_AUTHORIZED`.
 
 ### Status
 
@@ -231,7 +231,7 @@ Exact-head CI:
 
 `CI / e173dd69335e0b1dcbade07b4797c78f91c0668e / release/v0.1.4 / push / success`
 
-Phase 4 implemented the bounded source-level done-state Compose integration on the existing `ReminderScreen`: a controlled Material3 Checkbox is integrated into both normal and editing reminder rows; checked state is sourced from `reminder.done`; action delegates to `controller.setDone(reminder.id, newChecked)`; screen refresh occurs only after accepted success; no second done-state UI authority exists; no optimistic done-state publish exists; editing state is preserved during done toggling; no done-specific sort, reorder, removal, dimming, or text decoration was added. Phase 4 did not perform Android identity alignment, did not perform integrated device validation, did not introduce a `ViewModel`, `Flow`, coroutine, DI, or navigation solely for done state, did not add a new Android `Activity`, `Service`, `Receiver`, or `Provider`, did not add a new Android permission, did not introduce a Gradle dependency or test dependency, did not change validator architecture, and did not change CI workflow. Phase 5 — Integration & Device Validation — is the next lifecycle phase and is `Planned` / `NOT_STARTED` / `NOT_AUTHORIZED`.
+Phase 4 implemented the bounded source-level done-state Compose integration on the existing `ReminderScreen`: a controlled Material3 Checkbox is integrated into both normal and editing reminder rows; checked state is sourced from `reminder.done`; action delegates to `controller.setDone(reminder.id, newChecked)`; screen refresh occurs only after accepted success; no second done-state UI authority exists; no optimistic done-state publish exists; editing state is preserved during done toggling; no done-specific sort, reorder, removal, dimming, or text decoration was added. Phase 4 did not perform Android identity alignment, did not perform integrated device validation, did not introduce a `ViewModel`, `Flow`, coroutine, DI, or navigation solely for done state, did not add a new Android `Activity`, `Service`, `Receiver`, or `Provider`, did not add a new Android permission, did not introduce a Gradle dependency or test dependency, did not change validator architecture, and did not change CI workflow. Phase 5 — Integration & Device Validation — has since completed and is `Complete`; Phase 6 — Integrated Audit & Reconciliation — is the next lifecycle phase and is `Planned` / `NOT_STARTED` / `NOT_AUTHORIZED`.
 
 ### Status
 
@@ -251,9 +251,71 @@ Phase 5 non-goals:
 - no general Android compatibility claim;
 - no production-readiness claim.
 
+### Phase 5 closure record
+
+Phase 5 — Integration & Device Validation — is `Complete` for the active v0.1.4 release on `release/v0.1.4`.
+
+Identity landing commit:
+
+`e8c9c08920f5a0c146189c0087b293c260c2701d`
+
+Identity landing parent:
+
+`846d291d2e262fbad7c1e03d2fa1e3b7ec63cf10`
+
+Subject:
+
+`chore: align v0.1.4 android identity`
+
+Implementation repository boundary:
+
+`LANDED_AND_EXACT_HEAD_CI_ACCEPTED`
+
+Android identity:
+
+`versionCode 5 / versionName 0.1.4`
+
+Phase-5 cumulative evidence:
+
+`EXP-0060`
+
+P5_01 through P5_13:
+
+`ACCEPTED`
+
+P5_13:
+
+`ONE_PHYSICAL_DEVICE_ONLY`
+
+`GENERAL_ANDROID_COMPATIBILITY`:
+
+`NOT_CLAIMED`
+
+`MULTI_DEVICE_VALIDATION`:
+
+`NOT_CLAIMED`
+
+`PRODUCTION_READINESS`:
+
+`NOT_CLAIMED`
+
+`SUPPORTED_ANDROID_VERSION_RANGE`:
+
+`NOT_CLAIMED`
+
+Phase 5 advanced the Android artifact identity from `versionCode 4 / versionName 0.1.3` to the v0.1.4 target `versionCode 5 / versionName 0.1.4`; Phase 5 did not add a new Android permission, did not add a new Android component, did not introduce a new Gradle dependency, did not introduce a new test dependency, did not change validator architecture, did not make a general Android compatibility claim, and did not make a production-readiness claim.
+
+Next lifecycle phase:
+
+`Phase 6 — Integrated Audit & Reconciliation`
+
+Phase 6:
+
+`Planned / NOT_STARTED / NOT_AUTHORIZED`
+
 ### Status
 
-Planned
+Complete
 
 ## Phase 6 — Integrated Audit & Reconciliation
 
