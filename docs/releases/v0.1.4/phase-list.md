@@ -1,6 +1,6 @@
 # Phase List — NudgeWhen v0.1.4
 
-**Document status:** v0.1.4 current lifecycle authority — Phases 0 through 5 complete; Phase 0 — Release Definition & Bootstrap — is `Complete`; Phase 1 — Done State Architecture Contract — is `Complete`; Phase 2 — Done State Domain Implementation & JVM Proof — is `Complete`; Phase 3 — Persistence Compatibility / Migration Proof — is `Complete`; Phase 4 — Minimal Compose Integration — is `Complete`; Phase 5 — Integration & Device Validation — is `Complete`; Phase 6 — Integrated Audit & Reconciliation — is `Planned`; Phase 7 — Full Pre-Release Gate — is `Planned`; phase model: `6 Complete / 2 Planned`. Phase-5 implementation is `LANDED_AND_EXACT_HEAD_CI_ACCEPTED`. This document is normative for the eight-phase ordering and per-phase scope. It does not claim that v0.1.4 is merged, tagged, published, or release-ready.
+**Document status:** v0.1.4 current lifecycle authority — Phases 0 through 6 complete; Phase 0 — Release Definition & Bootstrap — is `Complete`; Phase 1 — Done State Architecture Contract — is `Complete`; Phase 2 — Done State Domain Implementation & JVM Proof — is `Complete`; Phase 3 — Persistence Compatibility / Migration Proof — is `Complete`; Phase 4 — Minimal Compose Integration — is `Complete`; Phase 5 — Integration & Device Validation — is `Complete`; Phase 6 — Integrated Audit & Reconciliation — is `Complete`; Phase 7 — Full Pre-Release Gate — is `Planned`; phase model: `7 Complete / 1 Planned`. Phase-7 — Full Pre-Release Gate — is the next lifecycle phase. Phase-5 implementation is `LANDED_AND_EXACT_HEAD_CI_ACCEPTED`. This document is normative for the eight-phase ordering and per-phase scope. It does not claim that v0.1.4 is merged, tagged, published, or release-ready.
 
 ## Phase 0 — Release Definition & Bootstrap
 
@@ -321,9 +321,59 @@ Complete
 
 Phase 6 owns the integrated audit and reconciliation pass for v0.1.4. It cross-checks the release charter, phase list, experiment evidence, validator evidence, and device evidence for consistency. Phase 6 introduces no product functionality, Android behavior, or Android permission.
 
+### Phase 6 closure record (candidate)
+
+Phase 6 — Integrated Audit & Reconciliation — is `Complete` for the active v0.1.4 release on `release/v0.1.4`.
+
+Phase 6 evidence:
+
+`EXP-0061`
+
+Retained Phase-6-A P6V1–P6V4:
+
+- P6V1: `Ran 244 tests` / `OK`
+- P6V2: `SUMMARY pass=11 fail=0 skip=0` / `release_gate=NOT_SATISFIED`
+- P6V3: `SUMMARY pass=11 fail=0 skip=0` / `release_gate=NOT_SATISFIED`
+- P6V4: `SUMMARY pass=22 fail=0 skip=0` / `release_gate=NOT_SATISFIED`
+
+Accepted Phase-6-B Recovery R2:
+
+`PASS_CORRECTED_PHASE6A_TWO_PATH_CANDIDATE_ACCEPTED_FOR_PHASE6C`
+
+Accepted partial AGENTS audit:
+
+`PASS_PARTIAL_AGENTS_MUTATION_ACCEPTED_FOR_SEPARATE_CONTINUATION_RECOVERY`
+
+Product/device nonclaims:
+
+- `DEVICE_PROOF: ONE_PHYSICAL_DEVICE_ONLY`
+- `GENERAL_ANDROID_COMPATIBILITY: NOT_CLAIMED`
+- `MULTI_DEVICE_VALIDATION: NOT_CLAIMED`
+- `SUPPORTED_ANDROID_VERSION_RANGE: NOT_CLAIMED`
+- `PRODUCTION_READINESS: NOT_CLAIMED`
+
+R1 deviations retained externally for EXP serialization:
+
+- Six R1 execution findings 1 through 6
+- Three R1 report findings 1 through 3
+- One R1 reconciliation finding 1
+- One partial-state audit execution finding 1
+- Three partial-state audit report findings 1 through 3
+
+This is a CANDIDATE closure record. Phase 6 does NOT yet claim:
+
+- Phase-6 commit
+- Phase-6 push
+- Phase-6 remote SHA
+- Phase-6 exact-head CI
+- Native `S10_LANDED`
+- Terminal Phase-6 maintainer acceptance
+
+The full 39-pass all-groups release gate belongs to Phase 7 and is NOT claimed here. v0.1.4 is **not** merged, **not** tagged, **not** published, and is not claimed release-ready.
+
 ### Status
 
-Planned
+Complete
 
 ## Phase 7 — Full Pre-Release Gate
 

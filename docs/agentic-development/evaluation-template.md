@@ -1,6 +1,6 @@
 # Evaluation Template — Agent-Assisted Experiment Record
 
-**Document status:** Accepted — stable governance; active v0.1.4 release on branch `release/v0.1.4`; Phase 0 — Release Definition & Bootstrap — is `Complete`; Phase 1 — Done State Architecture Contract — is `Complete`; Phase 2 — Done State Domain Implementation & JVM Proof — is `Complete`; Phase 3 — Persistence Compatibility / Migration Proof — is `Complete`; Phase 4 — Minimal Compose Integration — is `Complete`; Phase 5 — Integration & Device Validation — is `Complete`; Phases 6 and 7 are `Planned`; phase model: `6 Complete / 2 Planned`; Phase 6 — Integrated Audit & Reconciliation — is the next lifecycle phase and has not started; latest stable published release is `v0.1.3`; v0.1.4 is **not** merged, **not** tagged, **not** published, and is not claimed release-ready
+**Document status:** Accepted — stable governance; active v0.1.4 release on branch `release/v0.1.4`; Phase 0 — Release Definition & Bootstrap — is `Complete`; Phase 1 — Done State Architecture Contract — is `Complete`; Phase 2 — Done State Domain Implementation & JVM Proof — is `Complete`; Phase 3 — Persistence Compatibility / Migration Proof — is `Complete`; Phase 4 — Minimal Compose Integration — is `Complete`; Phase 5 — Integration & Device Validation — is `Complete`; Phase 6 — Integrated Audit & Reconciliation — is `Complete`; Phase 7 — Full Pre-Release Gate — is `Planned`; phase model: `7 Complete / 1 Planned`; Phase 7 — Full Pre-Release Gate — is the next lifecycle phase and has not started; latest stable published release is `v0.1.3`; v0.1.4 is **not** merged, **not** tagged, **not** published, and is not claimed release-ready
 
 **Usage.** Copy this template, replace every field, and save as `docs/agentic-development/experiments/EXP-NNNN.md`. Every unknown value is written as `Not available`, `Not applicable`, or `Pending maintainer input` with an inline explanation. No value is guessed.
 
@@ -32,12 +32,12 @@
 
 ### OpenCode harness (when applicable)
 
-Complete this subsection only when the task touches the project's machine-readable OpenCode harness (`opencode.jsonc`, `.opencode/agents/`, or any successor). Each field must support `Not available` or `Pending` with an inline explanation rather than encouraging inference. Writing a configuration file does not itself prove that a running OpenCode process loaded it.
+Complete this subsection only when the task touches the project's machine-readable OpenCode harness (`opencode.jsonc`, `.opencode/agents/`, or any successor). Each field must support `Not available` or `Pending maintainer input` with an inline explanation rather than encouraging inference. Writing a configuration file does not itself prove that a running OpenCode process loaded it.
 
 - **Custom agent display name:** <displayed selectable primary agent that handled the task, or `Not applicable`>
 - **Project OpenCode configuration paths:** <exact paths of the harness files the task was authorized to read, edit, or create, or `Not applicable`>
 - **Configured default agent:** <default selectable agent named by the harness, or `Not available` with explanation>
-- **Fresh-process configuration-load result:** <directly observed load result from a fresh OpenCode process, or `Pending` if a fresh process has not yet been started, or `Not available` with explanation>
+- **Fresh-process configuration-load result:** <directly observed load result from a fresh OpenCode process, or `Pending maintainer input` if a fresh process has not yet been started, or `Not available` with explanation>
 - **Selectable-agent inventory:** <list of selectable agents actually surfaced by the harness, or `Not available` with explanation>
 - **Permission-probe results:** <exact probe commands attempted and their directly observed allow-or-deny outcomes, or `Not available` with explanation>
 - **Built-in-agent disablement result:** <directly observed disablement of the five built-in selectable agents, or `Not available` with explanation>
@@ -48,7 +48,7 @@ Complete this subsection only when the task touches the project's machine-readab
 - **Experiment-start usage snapshot:** <value, or `Not available` with explanation>
 - **Pre-Build usage snapshot:** <value, or `Not available` with explanation>
 - **Post-Build usage snapshot:** <value, or `Not available` with explanation>
-- **Calculated Build-stage delta:** <value and unit, or `Not computable` with explanation, or `Pending maintainer input`>
+- **Calculated Build-stage delta:** <value and unit, or `Not available` with explanation, or `Pending maintainer input`>
 - **Measurement source:** <source name>
 - **Units displayed by the provider:** <unit>
 - **Snapshot timestamps:** <ISO-8601 timestamp(s)>

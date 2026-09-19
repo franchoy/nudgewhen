@@ -1,6 +1,6 @@
 # Release Charter — NudgeWhen v0.1.4
 
-**Document status:** v0.1.4 current lifecycle charter — Phases 0 through 5 complete; Phase 0 — Release Definition & Bootstrap — is `Complete`; Phase 1 — Done State Architecture Contract — is `Complete`; Phase 2 — Done State Domain Implementation & JVM Proof — is `Complete`; Phase 3 — Persistence Compatibility / Migration Proof — is `Complete`; Phase 4 — Minimal Compose Integration — is `Complete`; Phase 5 — Integration & Device Validation — is `Complete`; Phase 6 — Integrated Audit & Reconciliation — is `Planned`; Phase 7 — Full Pre-Release Gate — is `Planned`; phase model: `6 Complete / 2 Planned`. Phase-5 implementation is `LANDED_AND_EXACT_HEAD_CI_ACCEPTED`. v0.1.4 is **not** merged, **not** tagged, **not** published, and is not claimed release-ready. This charter is normative for v0.1.4 release policy.
+**Document status:** v0.1.4 current lifecycle charter — Phases 0 through 6 complete; Phase 0 — Release Definition & Bootstrap — is `Complete`; Phase 1 — Done State Architecture Contract — is `Complete`; Phase 2 — Done State Domain Implementation & JVM Proof — is `Complete`; Phase 3 — Persistence Compatibility / Migration Proof — is `Complete`; Phase 4 — Minimal Compose Integration — is `Complete`; Phase 5 — Integration & Device Validation — is `Complete`; Phase 6 — Integrated Audit & Reconciliation — is `Complete`; Phase 7 — Full Pre-Release Gate — is `Planned`; phase model: `7 Complete / 1 Planned`. Phase-5 implementation is `LANDED_AND_EXACT_HEAD_CI_ACCEPTED`. v0.1.4 is **not** merged, **not** tagged, **not** published, and is not claimed release-ready. This charter is normative for v0.1.4 release policy.
 
 ## Release identity
 
@@ -138,7 +138,7 @@ The accepted eight-phase model for v0.1.4 is:
 - Phase 6 — Integrated Audit & Reconciliation
 - Phase 7 — Full Pre-Release Gate
 
-Phase 0 — Release Definition & Bootstrap — is `Complete`. Phase 1 — Done State Architecture Contract — is `Complete`. Phase 2 — Done State Domain Implementation & JVM Proof — is `Complete`. Phase 3 — Persistence Compatibility / Migration Proof — is `Complete`. Phase 4 — Minimal Compose Integration — is `Complete`. Phase 5 — Integration & Device Validation — is `Complete`. Phase 6 — Integrated Audit & Reconciliation — is `Planned`. Phase 7 — Full Pre-Release Gate — is `Planned`. Phase 6 — Integrated Audit & Reconciliation — is the next lifecycle phase; Phase-6 implementation has not started and is not authorized. Phase model: `6 Complete / 2 Planned`.
+Phase 0 — Release Definition & Bootstrap — is `Complete`. Phase 1 — Done State Architecture Contract — is `Complete`. Phase 2 — Done State Domain Implementation & JVM Proof — is `Complete`. Phase 3 — Persistence Compatibility / Migration Proof — is `Complete`. Phase 4 — Minimal Compose Integration — is `Complete`. Phase 5 — Integration & Device Validation — is `Complete`. Phase 6 — Integrated Audit & Reconciliation — is `Complete`. Phase 7 — Full Pre-Release Gate — is `Planned`. Phase 7 — Full Pre-Release Gate — is the next lifecycle phase; Phase-7 implementation has not started and is not authorized. Phase model: `7 Complete / 1 Planned`.
 
 Phase 0 performed the v0.1.4 release-definition, governance, document-bootstrap synchronization, and the initial dirty-candidate repository-consistency validation. Phase 0 did not implement any done-state functionality, did not modify `app/build.gradle.kts`, did not modify any product Kotlin, did not modify persistence, did not modify Compose, did not perform Android identity alignment, and did not select a concrete persistence representation.
 
@@ -161,6 +161,30 @@ Phase 4 — Minimal Compose Integration — is `Complete` for the active v0.1.4 
 ### Phase 5 formal closure summary
 
 Phase 5 — Integration & Device Validation — is `Complete` for the active v0.1.4 release on `release/v0.1.4`. Identity landing commit: `e8c9c08920f5a0c146189c0087b293c260c2701d`. Identity landing parent: `846d291d2e262fbad7c1e03d2fa1e3b7ec63cf10`. Subject: `chore: align v0.1.4 android identity`. Implementation repository boundary: `LANDED_AND_EXACT_HEAD_CI_ACCEPTED`. Android identity: `versionCode 5 / versionName 0.1.4`. Phase-5 cumulative evidence: `EXP-0060`. P5_01 through P5_13: `ACCEPTED`. P5_13: `ONE_PHYSICAL_DEVICE_ONLY`. `GENERAL_ANDROID_COMPATIBILITY`: `NOT_CLAIMED`. `MULTI_DEVICE_VALIDATION`: `NOT_CLAIMED`. `PRODUCTION_READINESS`: `NOT_CLAIMED`. `SUPPORTED_ANDROID_VERSION_RANGE`: `NOT_CLAIMED`. Phase 5 advanced the Android artifact identity from `versionCode 4 / versionName 0.1.3` to the v0.1.4 target `versionCode 5 / versionName 0.1.4`; Phase 5 did not add a new Android permission, did not add a new Android component, did not introduce a new Gradle dependency, did not introduce a new test dependency, did not change validator architecture, did not make a general Android compatibility claim, and did not make a production-readiness claim. Next lifecycle phase: `Phase 6 — Integrated Audit & Reconciliation`; Phase 6: `Planned / NOT_STARTED / NOT_AUTHORIZED`. The full Phase 5 evidence chain and runtime acceptance facts are recorded in `docs/releases/v0.1.4/phase-list.md` and `EXP-0060.md`; this charter preserves only the policy summary.
+
+### Phase 6 formal closure candidate summary
+
+Phase 6 — Integrated Audit & Reconciliation — is `Complete` for the active v0.1.4 release on `release/v0.1.4`.
+
+Supported by:
+
+- `EXP-0061`;
+- retained Phase-6-A validation (P6V1 `Ran 244 tests` / `OK`; P6V2 `SUMMARY pass=11 fail=0 skip=0` / `release_gate=NOT_SATISFIED`; P6V3 `SUMMARY pass=11 fail=0 skip=0` / `release_gate=NOT_SATISFIED`; P6V4 `SUMMARY pass=22 fail=0 skip=0` / `release_gate=NOT_SATISFIED`);
+- accepted Phase-6-B Recovery R2 (`PASS_CORRECTED_PHASE6A_TWO_PATH_CANDIDATE_ACCEPTED_FOR_PHASE6C`);
+- accepted partial AGENTS audit (`PASS_PARTIAL_AGENTS_MUTATION_ACCEPTED_FOR_SEPARATE_CONTINUATION_RECOVERY`);
+- unchanged product/device nonclaims: `DEVICE_PROOF: ONE_PHYSICAL_DEVICE_ONLY`; `GENERAL_ANDROID_COMPATIBILITY: NOT_CLAIMED`; `MULTI_DEVICE_VALIDATION: NOT_CLAIMED`; `SUPPORTED_ANDROID_VERSION_RANGE: NOT_CLAIMED`; `PRODUCTION_READINESS: NOT_CLAIMED`.
+
+This is a CANDIDATE summary. Phase 6 does NOT yet claim:
+
+- Phase-6 commit;
+- Phase-6 push;
+- Phase-6 remote SHA;
+- Phase-6 exact-head CI;
+- native `S10_LANDED`;
+- terminal Phase-6 maintainer acceptance;
+- full release gate satisfaction.
+
+The full 39-pass all-groups release gate belongs to Phase 7 and is NOT claimed by Phase 6. v0.1.4 is **not** merged, **not** tagged, **not** published, and is not claimed release-ready.
 
 ## Maintenance window
 
