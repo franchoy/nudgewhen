@@ -1,6 +1,6 @@
 # Phase List — NudgeWhen v0.1.4
 
-**Document status:** v0.1.4 current lifecycle authority — Phases 0 through 6 complete; Phase 0 — Release Definition & Bootstrap — is `Complete`; Phase 1 — Done State Architecture Contract — is `Complete`; Phase 2 — Done State Domain Implementation & JVM Proof — is `Complete`; Phase 3 — Persistence Compatibility / Migration Proof — is `Complete`; Phase 4 — Minimal Compose Integration — is `Complete`; Phase 5 — Integration & Device Validation — is `Complete`; Phase 6 — Integrated Audit & Reconciliation — is `Complete`; Phase 7 — Full Pre-Release Gate — is `Planned`; phase model: `7 Complete / 1 Planned`. Phase-7 — Full Pre-Release Gate — is the next lifecycle phase. Phase-5 implementation is `LANDED_AND_EXACT_HEAD_CI_ACCEPTED`. This document is normative for the eight-phase ordering and per-phase scope. It does not claim that v0.1.4 is merged, tagged, published, or release-ready.
+**Document status:** v0.1.4 current lifecycle authority — Phases 0 through 7 complete; Phase 0 — Release Definition & Bootstrap — is `Complete`; Phase 1 — Done State Architecture Contract — is `Complete`; Phase 2 — Done State Domain Implementation & JVM Proof — is `Complete`; Phase 3 — Persistence Compatibility / Migration Proof — is `Complete`; Phase 4 — Minimal Compose Integration — is `Complete`; Phase 5 — Integration & Device Validation — is `Complete`; Phase 6 — Integrated Audit & Reconciliation — is `Complete`; Phase 7 — Full Pre-Release Gate — is `Complete` (closure candidate); phase model: `8 Complete / 0 Planned`. Phase-7 closure candidate is produced but formal terminal acceptance still requires Phase-7-D independent candidate audit, Phase-7-E native nudge-land landing, and Phase-7-F terminal maintainer acceptance. Phase-5 implementation is `LANDED_AND_EXACT_HEAD_CI_ACCEPTED`. This document is normative for the eight-phase ordering and per-phase scope. It does not claim that v0.1.4 is merged, tagged, published, or release-ready.
 
 ## Phase 0 — Release Definition & Bootstrap
 
@@ -379,6 +379,87 @@ Complete
 
 Phase 7 owns the full pre-release gate for v0.1.4, including final exact-head CI, final validator run, and the closure-candidate landing record. Phase 7 does not itself merge, tag, or publish v0.1.4; the release-bearing pull request, tag, and GitHub release are separate maintainer repository actions.
 
+### Phase 7 closure record (candidate)
+
+Phase 7 — Full Pre-Release Gate — is `Complete` for the active v0.1.4 release on `release/v0.1.4` as a closure candidate.
+
+Phase-7 evidence:
+
+`EXP-0062`
+
+Definitive pre-release validation HEAD:
+
+`13454cd45994fa041196f87137d3cbcb77be065a`
+
+Standard regression:
+
+`Ran 244 tests`
+
+`OK`
+
+Clean full validator:
+
+`SUMMARY pass=41 fail=0 skip=0`
+
+`release_gate=SATISFIED`
+
+Base ordinary all-groups inventory:
+
+`39 / 0 / 0`
+
+Android identity re-proof:
+
+`versionCode 5 / versionName 0.1.4`
+
+embedded in full validator.
+
+Android build:
+
+`PASS_EMBEDDED_IN_CLEAN_FULL_GATE`
+
+Physical-device rerun:
+
+`NOT_REQUIRED_BY_CURRENT_V0_1_4_AUTHORITY`
+
+Retained scope:
+
+`ONE_PHYSICAL_DEVICE_ONLY`
+
+`GENERAL_ANDROID_COMPATIBILITY`:
+
+`NOT_CLAIMED`
+
+`MULTI_DEVICE_VALIDATION`:
+
+`NOT_CLAIMED`
+
+`SUPPORTED_ANDROID_VERSION_RANGE`:
+
+`NOT_CLAIMED`
+
+`PRODUCTION_READINESS`:
+
+`NOT_CLAIMED`
+
+Candidate lifecycle projection:
+
+`8 Complete / 0 Planned`
+
+This Phase 7 candidate closure record does NOT yet claim:
+
+- Phase-7 closure Commit;
+- Phase-7 push;
+- Phase-7 remote SHA;
+- Phase-7 exact-head CI;
+- native `S10_LANDED`;
+- terminal Phase-7 maintainer acceptance;
+- release readiness `YES`;
+- merge;
+- tag;
+- publication.
+
+Formal terminal acceptance still requires Phase-7-D independent candidate audit, Phase-7-E native nudge-land landing, and Phase-7-F terminal maintainer acceptance. v0.1.4 is **not** merged, **not** tagged, **not** published, and is not claimed release-ready.
+
 ### Status
 
-Planned
+Complete

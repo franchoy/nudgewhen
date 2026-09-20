@@ -1,6 +1,6 @@
 # Release Charter — NudgeWhen v0.1.4
 
-**Document status:** v0.1.4 current lifecycle charter — Phases 0 through 6 complete; Phase 0 — Release Definition & Bootstrap — is `Complete`; Phase 1 — Done State Architecture Contract — is `Complete`; Phase 2 — Done State Domain Implementation & JVM Proof — is `Complete`; Phase 3 — Persistence Compatibility / Migration Proof — is `Complete`; Phase 4 — Minimal Compose Integration — is `Complete`; Phase 5 — Integration & Device Validation — is `Complete`; Phase 6 — Integrated Audit & Reconciliation — is `Complete`; Phase 7 — Full Pre-Release Gate — is `Planned`; phase model: `7 Complete / 1 Planned`. Phase-5 implementation is `LANDED_AND_EXACT_HEAD_CI_ACCEPTED`. v0.1.4 is **not** merged, **not** tagged, **not** published, and is not claimed release-ready. This charter is normative for v0.1.4 release policy.
+**Document status:** v0.1.4 current lifecycle charter — Phases 0 through 7 complete; Phase 0 — Release Definition & Bootstrap — is `Complete`; Phase 1 — Done State Architecture Contract — is `Complete`; Phase 2 — Done State Domain Implementation & JVM Proof — is `Complete`; Phase 3 — Persistence Compatibility / Migration Proof — is `Complete`; Phase 4 — Minimal Compose Integration — is `Complete`; Phase 5 — Integration & Device Validation — is `Complete`; Phase 6 — Integrated Audit & Reconciliation — is `Complete`; Phase 7 — Full Pre-Release Gate — is `Complete` (closure candidate); phase model: `8 Complete / 0 Planned`. Phase-5 implementation is `LANDED_AND_EXACT_HEAD_CI_ACCEPTED`. v0.1.4 is **not** merged, **not** tagged, **not** published, and is not claimed release-ready. This charter is normative for v0.1.4 release policy.
 
 ## Release identity
 
@@ -138,7 +138,7 @@ The accepted eight-phase model for v0.1.4 is:
 - Phase 6 — Integrated Audit & Reconciliation
 - Phase 7 — Full Pre-Release Gate
 
-Phase 0 — Release Definition & Bootstrap — is `Complete`. Phase 1 — Done State Architecture Contract — is `Complete`. Phase 2 — Done State Domain Implementation & JVM Proof — is `Complete`. Phase 3 — Persistence Compatibility / Migration Proof — is `Complete`. Phase 4 — Minimal Compose Integration — is `Complete`. Phase 5 — Integration & Device Validation — is `Complete`. Phase 6 — Integrated Audit & Reconciliation — is `Complete`. Phase 7 — Full Pre-Release Gate — is `Planned`. Phase 7 — Full Pre-Release Gate — is the next lifecycle phase; Phase-7 implementation has not started and is not authorized. Phase model: `7 Complete / 1 Planned`.
+Phase 0 — Release Definition & Bootstrap — is `Complete`. Phase 1 — Done State Architecture Contract — is `Complete`. Phase 2 — Done State Domain Implementation & JVM Proof — is `Complete`. Phase 3 — Persistence Compatibility / Migration Proof — is `Complete`. Phase 4 — Minimal Compose Integration — is `Complete`. Phase 5 — Integration & Device Validation — is `Complete`. Phase 6 — Integrated Audit & Reconciliation — is `Complete`. Phase 7 — Full Pre-Release Gate — is `Complete` (closure candidate); Phase-7 closure candidate is produced but formal terminal acceptance still requires Phase-7-D independent candidate audit, Phase-7-E native nudge-land landing, and Phase-7-F terminal maintainer acceptance. Phase model: `8 Complete / 0 Planned`.
 
 Phase 0 performed the v0.1.4 release-definition, governance, document-bootstrap synchronization, and the initial dirty-candidate repository-consistency validation. Phase 0 did not implement any done-state functionality, did not modify `app/build.gradle.kts`, did not modify any product Kotlin, did not modify persistence, did not modify Compose, did not perform Android identity alignment, and did not select a concrete persistence representation.
 
@@ -185,6 +185,38 @@ This is a CANDIDATE summary. Phase 6 does NOT yet claim:
 - full release gate satisfaction.
 
 The full 39-pass all-groups release gate belongs to Phase 7 and is NOT claimed by Phase 6. v0.1.4 is **not** merged, **not** tagged, **not** published, and is not claimed release-ready.
+
+### Phase 7 formal closure candidate summary
+
+Phase 7 — Full Pre-Release Gate — is `Complete` for the active v0.1.4 release on `release/v0.1.4` as a closure candidate (`CANDIDATE`).
+
+Required summary:
+
+- `EXP-0062`;
+- `244 / OK` (standard regression);
+- clean full gate `41 / 0 / 0`;
+- `release_gate=SATISFIED`;
+- base ordinary all-groups `39 / 0 / 0`;
+- Android identity `5 / 0.1.4` (`versionCode 5 / versionName 0.1.4`);
+- one-device-only retained scope;
+- general Android compatibility `NOT_CLAIMED`;
+- multi-device validation `NOT_CLAIMED`;
+- production readiness `NOT_CLAIMED`.
+
+This `CANDIDATE` summary does NOT yet claim:
+
+- Phase-7 closure Commit;
+- Phase-7 push;
+- Phase-7 remote SHA;
+- Phase-7 exact-head CI;
+- native `S10_LANDED`;
+- terminal Phase-7 maintainer acceptance;
+- release readiness `YES`;
+- merge;
+- tag;
+- publication.
+
+Formal terminal acceptance still requires Phase-7-D independent candidate audit, Phase-7-E native nudge-land landing, and Phase-7-F terminal maintainer acceptance. v0.1.4 is **not** merged, **not** tagged, **not** published, and is not claimed release-ready.
 
 ## Maintenance window
 
