@@ -1,6 +1,6 @@
 # AGENTS.md
 
-**Document status:** Accepted — stable governance; active v0.1.4 release; Phase 0 — Release Definition & Bootstrap — is `Complete`; Phase 1 — Done State Architecture Contract — is `Complete`; Phase 2 — Done State Domain Implementation & JVM Proof — is `Complete`; Phase 3 — Persistence Compatibility / Migration Proof — is `Complete`; Phase 4 — Minimal Compose Integration — is `Complete`; Phase 5 — Integration & Device Validation — is `Complete`; Phase 6 — Integrated Audit & Reconciliation — is `Complete`; Phase 7 — Full Pre-Release Gate — is `Complete` (closure candidate); phase model: `8 Complete / 0 Planned`; the pre-v0.1.4 maintenance window is closed; PR #11 setup-java v6 is merged into `main`; the setup-java pin is `v6.0.0`; AGP remains `9.2.1`; Gradle remains `9.4.1`; PR #13 / AGP 9.4 migration is outside the v0.1.4 release train and is deferred until after v0.1.4; historical v0.1.3 release evidence remains immutable; v0.1.3 remains the latest stable published release; v0.1.4 is **not** merged, **not** tagged, **not** published, and is not claimed release-ready
+**Document status:** Accepted — stable governance; active v0.1.4 release; Phase 0 — Release Definition & Bootstrap — is `Complete`; Phase 1 — Done State Architecture Contract — is `Complete`; Phase 2 — Done State Domain Implementation & JVM Proof — is `Complete`; Phase 3 — Persistence Compatibility / Migration Proof — is `Complete`; Phase 4 — Minimal Compose Integration — is `Complete`; Phase 5 — Integration & Device Validation — is `Complete`; Phase 6 — Integrated Audit & Reconciliation — is `Complete`; Phase 7 — Full Pre-Release Gate — is `Complete` and formally complete; phase model: `8 Complete / 0 Planned`; no lifecycle phase remains inside the accepted eight-phase v0.1.4 model; the pre-v0.1.4 maintenance window is closed; PR #11 setup-java v6 is merged into `main`; the setup-java pin is `v6.0.0`; AGP remains `9.2.1`; Gradle remains `9.4.1`; PR #13 / AGP 9.4 migration is outside the v0.1.4 release train and is deferred until after v0.1.4; historical v0.1.3 release evidence remains immutable; v0.1.3 remains the latest stable published release; v0.1.4 is **not** merged, **not** tagged, **not** published, and is not claimed release-ready
 
 ## Purpose and scope
 
@@ -276,7 +276,7 @@ Category D items cannot be authorized by a normal maintainer turn. A change to C
 - **Active branch:** `release/v0.1.4`
 - **Active release charter:** `docs/releases/v0.1.4/release-charter.md`
 - **Active phase list:** `docs/releases/v0.1.4/phase-list.md`
-- **Current lifecycle state:** Phase 0 — Release Definition & Bootstrap — is `Complete`; Phase 1 — Done State Architecture Contract — is `Complete`; Phase 2 — Done State Domain Implementation & JVM Proof — is `Complete`; Phase 3 — Persistence Compatibility / Migration Proof — is `Complete`; Phase 4 — Minimal Compose Integration — is `Complete`; Phase 5 — Integration & Device Validation — is `Complete`; Phase 6 — Integrated Audit & Reconciliation — is `Complete`; Phase 7 — Full Pre-Release Gate — is `Complete` (closure candidate); phase model `8 Complete / 0 Planned`; Phase 7 closure candidate is produced but formal terminal acceptance still requires Phase-7-D independent candidate audit, Phase-7-E native nudge-land landing, and Phase-7-F terminal maintainer acceptance.
+- **Current lifecycle state:** Phase 0 — Release Definition & Bootstrap — is `Complete`; Phase 1 — Done State Architecture Contract — is `Complete`; Phase 2 — Done State Domain Implementation & JVM Proof — is `Complete`; Phase 3 — Persistence Compatibility / Migration Proof — is `Complete`; Phase 4 — Minimal Compose Integration — is `Complete`; Phase 5 — Integration & Device Validation — is `Complete`; Phase 6 — Integrated Audit & Reconciliation — is `Complete`; Phase 7 — Full Pre-Release Gate — is `Complete` and formally complete following the accepted Phase-7-D independent candidate audit, Phase-7-E native nudge-land landing, and Phase-7-F terminal maintainer acceptance; phase model `8 Complete / 0 Planned`; no lifecycle phase remains inside the accepted eight-phase v0.1.4 model.
 - **Phase 0 status:** `Complete`
 - **Phase 1 status:** `Complete`
 - **Phase 2 status:** `Complete`
@@ -286,7 +286,7 @@ Category D items cannot be authorized by a normal maintainer turn. A change to C
 - **Phase 6 status:** `Complete`
 - **Phase 7 status:** `Complete`
 - **Phase model:** `8 Complete / 0 Planned`
-- **Current lifecycle phase:** `Phase 7 — Full Pre-Release Gate` (closure candidate produced; formal terminal acceptance still requires Phase-7-D independent candidate audit, Phase-7-E native nudge-land landing, and Phase-7-F terminal maintainer acceptance)
+- **Current lifecycle phase:** no lifecycle phase remains inside the accepted eight-phase v0.1.4 model; `Phase 7 — Full Pre-Release Gate` is formally complete; separately authorized release-bearing repository actions remain
 - **Phase 1 architecture:** `Complete`
 - **Phase 1 product implementation:** `NOT_APPLICABLE_ARCHITECTURE_ONLY`
 - **Phase 2 implementation:** `LANDED_AND_EXACT_HEAD_CI_ACCEPTED`
