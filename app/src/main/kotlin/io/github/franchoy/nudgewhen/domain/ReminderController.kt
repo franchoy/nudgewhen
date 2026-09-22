@@ -45,10 +45,23 @@ class ReminderController(
         if (state[index].text == normalizedText) return true
 
         val mutableCandidate = state.toMutableList()
-        mutableCandidate[index] = Reminder(
-            id = state[index].id,
+        mutableCandidate[index] = state[index].copy(
             text = normalizedText,
         )
+        val candidate: List<Reminder> = mutableCandidate
+        store.save(candidate)
+        state = candidate
+        return true
+    }
+
+    fun setDone(id: String, done: Boolean): Boolean {
+        val index = state.indexOfFirst { it.id == id }
+        if (index < 0) return false
+
+        if (state[index].done == done) return true
+
+        val mutableCandidate = state.toMutableList()
+        mutableCandidate[index] = state[index].copy(done = done)
         val candidate: List<Reminder> = mutableCandidate
         store.save(candidate)
         state = candidate

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -67,6 +68,15 @@ fun ReminderScreen(
                 items(items = reminders, key = { it.id }) { reminder ->
                     if (editingId == reminder.id) {
                         Row(modifier = Modifier.fillMaxWidth()) {
+                            Checkbox(
+                                checked = reminder.done,
+                                onCheckedChange = { newChecked ->
+                                    val accepted = controller.setDone(reminder.id, newChecked)
+                                    if (accepted) {
+                                        reminders = controller.reminders
+                                    }
+                                },
+                            )
                             OutlinedTextField(
                                 value = editBuffer,
                                 onValueChange = { editBuffer = it },
@@ -98,6 +108,15 @@ fun ReminderScreen(
                         }
                     } else {
                         Row(modifier = Modifier.fillMaxWidth()) {
+                            Checkbox(
+                                checked = reminder.done,
+                                onCheckedChange = { newChecked ->
+                                    val accepted = controller.setDone(reminder.id, newChecked)
+                                    if (accepted) {
+                                        reminders = controller.reminders
+                                    }
+                                },
+                            )
                             Text(
                                 text = reminder.text,
                                 modifier = Modifier.weight(1f),
