@@ -1,6 +1,6 @@
 # Release Charter — NudgeWhen v0.1.4
 
-**Document status:** v0.1.4 current lifecycle charter — Phases 0 through 7 complete; Phase 0 — Release Definition & Bootstrap — is `Complete`; Phase 1 — Done State Architecture Contract — is `Complete`; Phase 2 — Done State Domain Implementation & JVM Proof — is `Complete`; Phase 3 — Persistence Compatibility / Migration Proof — is `Complete`; Phase 4 — Minimal Compose Integration — is `Complete`; Phase 5 — Integration & Device Validation — is `Complete`; Phase 6 — Integrated Audit & Reconciliation — is `Complete`; Phase 7 — Full Pre-Release Gate — is `Complete` and formally complete; phase model: `8 Complete / 0 Planned`; no lifecycle phase remains inside the accepted eight-phase v0.1.4 model. Phase-5 implementation is `LANDED_AND_EXACT_HEAD_CI_ACCEPTED`. v0.1.4 is **not** merged, **not** tagged, **not** published, and is not claimed release-ready. This charter is normative for v0.1.4 release policy.
+**Document status:** v0.1.4 current lifecycle charter — v0.1.4 is `RELEASED_AND_CLOSED`; Phases 0 through 7 complete; Phase 0 — Release Definition & Bootstrap — is `Complete`; Phase 1 — Done State Architecture Contract — is `Complete`; Phase 2 — Done State Domain Implementation & JVM Proof — is `Complete`; Phase 3 — Persistence Compatibility / Migration Proof — is `Complete`; Phase 4 — Minimal Compose Integration — is `Complete`; Phase 5 — Integration & Device Validation — is `Complete`; Phase 6 — Integrated Audit & Reconciliation — is `Complete`; Phase 7 — Full Pre-Release Gate — is `Complete` and formally complete; phase model: `8 Complete / 0 Planned`; no lifecycle phase remains inside the accepted eight-phase v0.1.4 model. v0.1.4 has been merged into `main`, tagged with the annotated `v0.1.4` tag, and published as a GitHub Release. v0.1.4 is the latest stable published release; post-v0.1.4 maintenance is complete and formally closed; v0.1.5 is `NOT_STARTED`. This charter is normative for v0.1.4 release policy.
 
 ## Release identity
 
@@ -103,7 +103,7 @@ No other machine capability is authorized. The done / not-done behavior is part 
 
 ## Persistence decision boundary
 
-The latest stable published release `v0.1.3` persistence format is NWR1. Its reminder record stores:
+The historical predecessor release `v0.1.3` persistence format is NWR1. Its reminder record stores:
 
 `id + encoded text`
 
@@ -111,7 +111,7 @@ NWR1 has no completion-state field. Phase 1 selected the persistence-format deci
 
 **Phase 1 selected:** `NWR2_WITH_NWR1_BACKWARD_LOAD`.
 
-After the Phase-3 implementation landing, the active v0.1.4 release-branch `FileReminderStore` candidate behavior is NWR2 writes; NWR1 backward loading; lazy same-file migration on the first successful persistence-changing save; no load-time rewrite; order / id / text / done-state preservation under the frozen Phase-3 contract. The latest stable published v0.1.3 release remains NWR1.
+After the Phase-3 implementation landing, the released v0.1.4 `FileReminderStore` behavior is NWR2 writes; NWR1 backward loading; lazy same-file migration on the first successful persistence-changing save; no load-time rewrite; order / id / text / done-state preservation under the frozen Phase-3 contract. The historical predecessor v0.1.3 release remains NWR1.
 
 Phase 3 owns implementation, backward-load behavior, lazy same-file migration, and persistence proof under the frozen Phase-3 contract.
 
@@ -220,13 +220,16 @@ Formal terminal acceptance still requires Phase-7-D independent candidate audit,
 
 ## Maintenance window
 
-The pre-v0.1.4 maintenance window is closed:
+The pre-v0.1.4 maintenance window is closed and is now explicitly historical. At that historical pre-v0.1.4 closure point:
 
-- PR #11 (setup-java v6) is merged into `main` before v0.1.4 branch creation;
-- the current `setup-java` pin is `v6.0.0`;
-- AGP remains `9.2.1`;
-- Gradle remains `9.4.1`;
-- PR #13 is outside the v0.1.4 release train and is deferred until after v0.1.4.
+- PR #11 (setup-java v6) had been merged into `main` before the `release/v0.1.4` branch was created;
+- the `setup-java` pin at that historical closure point was `v6.0.0`;
+- AGP at that historical closure point was `9.2.1`;
+- Gradle at that historical closure point was `9.4.1`;
+- PR #13 (AGP 9.4 migration) was outside the v0.1.4 release train at that historical closure point and was deferred until after v0.1.4.
 
-This charter does not claim v0.1.4 is merged, tagged, published, or
-complete. Release readiness: `NO`. The release is not ready.
+These are values/state at that historical pre-v0.1.4 closure point, not current tooling.
+
+The v0.1.4 release-bearing merge into `main`, the annotated `v0.1.4` tag, and the GitHub Release for v0.1.4 are complete. v0.1.4 is `RELEASED_AND_CLOSED`. v0.1.4 is the latest stable published release. The post-v0.1.4 / pre-v0.1.5 maintenance window is formally closed. v0.1.5 is `NOT_STARTED`.
+
+No new lifecycle phase has been added. Product scope, technical acceptance criteria, device nonclaims (`DEVICE_PROOF: ONE_PHYSICAL_DEVICE_ONLY`; `GENERAL_ANDROID_COMPATIBILITY: NOT_CLAIMED`; `MULTI_DEVICE_VALIDATION: NOT_CLAIMED`; `SUPPORTED_ANDROID_VERSION_RANGE: NOT_CLAIMED`), and production-readiness nonclaims (`PRODUCTION_READINESS: NOT_CLAIMED`) are unchanged.
