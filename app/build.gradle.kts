@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "io.github.franchoy.nudgewhen"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "io.github.franchoy.nudgewhen"

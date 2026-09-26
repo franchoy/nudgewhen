@@ -47,7 +47,7 @@ ENV PATH="${ANDROID_HOME}/cmdline-tools/latest/bin:${ANDROID_HOME}/platform-tool
 
 # Accept Android SDK licenses and install required SDK packages.
 RUN yes | sdkmanager --licenses > /dev/null \
-    && sdkmanager --install "platforms;android-36" "build-tools;36.0.0" "platform-tools"
+    && sdkmanager --install "platforms;android-37.0" "build-tools;36.0.0" "platform-tools"
 
 # Install OpenCode CLI without modifying shell profile.
 # The official installer places the executable at ${HOME}/.opencode/bin/opencode;

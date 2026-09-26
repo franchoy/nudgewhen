@@ -37,11 +37,11 @@ NS_ANDROID = "http://schemas.android.com/apk/res/android"
 RELEASE_CONTRACT_PATH = REPO / "scripts/release_contract.json"
 
 GRADLEW_BAT_EXPECTED_SHA = (
-    "fedad02c18e266ec094995a5751b7fe1eb6e74f66bf75db64fae2e50eb22c234"
+    "d539676c48b596afda64c963ec8f7ee56c7b3fe7e3b81d1dbe2d1a1e3dd9e9f8"
 )
 
 WRAPPER_JAR_EXPECTED_SHA = (
-    "55243ef57851f12b070ad14f7f5bb8302daceeebc5bce5ece5fa6edb23e1145c"
+    "497c8c2a7e5031f6aa847f88104aa80a93532ec32ee17bdb8d1d2f67a194a9c7"
 )
 
 PRIVATE_PATTERN = re.compile(r"^session-ses_[A-Za-z0-9_]+\.md$")
@@ -1853,6 +1853,26 @@ def find_sdk() -> Path | None:
     return None
 
 
+def _find_sdk_platform(sdk: Path, compile_sdk: int) -> Path | None:
+    """Return the matching SDK platform directory or None.
+
+    Accepts exactly two bounded physical directory layouts:
+      1. ``platforms/android-{compile_sdk}``
+      2. ``platforms/android-{compile_sdk}.0``
+
+    The first matching layout wins. Unrestricted globbing and arbitrary
+    ``android-N.x`` directory names are deliberately rejected.
+    """
+    candidates = (
+        sdk / f"platforms/android-{compile_sdk}",
+        sdk / f"platforms/android-{compile_sdk}.0",
+    )
+    for candidate in candidates:
+        if candidate.is_dir():
+            return candidate
+    return None
+
+
 def check_android_prerequisites() -> Path | None:
     """Emit prerequisite passes and failures. Return SDK path on success, None on failure."""
     if sys.version_info < (3, 10):
@@ -1907,7 +1927,7 @@ def check_android_prerequisites() -> Path | None:
     if sdk is None:
         emit_prereq("sdk", "ANDROID_HOME and ANDROID_SDK_ROOT not set or invalid")
         return None
-    if not (sdk / f"platforms/android-{compile_sdk}").is_dir():
+    if _find_sdk_platform(sdk, compile_sdk) is None:
         emit_prereq("sdk-platform", f"SDK Platform {compile_sdk} missing")
         return None
     emit("PASS", "android", "sdk-platform", f"Platform {compile_sdk} present")
@@ -1938,9 +1958,9 @@ def _version_catalog_failures(text: str) -> list[str]:
     values. Not a generic TOML parser.
     """
     expectations = {
-        "agp": "9.2.1",
-        "kotlinCompose": "2.3.10",
-        "composeBom": "2026.06.00",
+        "agp": "9.4.1",
+        "kotlinCompose": "2.4.20",
+        "composeBom": "2026.09.00",
         "activityCompose": "1.13.0",
     }
     bad: list[str] = []
@@ -2089,8 +2109,8 @@ def check_android_content(args: argparse.Namespace, sdk: Path) -> bool:
     gradle_props = REPO / "gradle/wrapper/gradle-wrapper.properties"
     if gradle_props.is_file():
         text = gradle_props.read_text(encoding="utf-8")
-        if "gradle-9.4.1-bin.zip" in text:
-            emit("PASS", "android", "gradle-wrapper", "wrapper 9.4.1")
+        if "gradle-9.6.1-bin.zip" in text:
+            emit("PASS", "android", "gradle-wrapper", "wrapper 9.6.1")
         else:
             emit("FAIL", "android", "gradle-wrapper", "wrapper version mismatch")
             ok = False
