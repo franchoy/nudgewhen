@@ -30,7 +30,7 @@
     "namespace": "io.github.franchoy.nudgewhen",
     "application_id": "io.github.franchoy.nudgewhen",
     "package_name": "io.github.franchoy.nudgewhen",
-    "compile_sdk": 36,
+    "compile_sdk": 37,
     "min_sdk": 26,
     "target_sdk": 36,
     "current_version_code": 5,

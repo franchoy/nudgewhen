@@ -174,7 +174,7 @@ The suite exposes the groups declared by the validated release contract. For the
 |---|---|
 | `required` | Required file presence, prohibited file absence (no tracked `local.properties`, APK, AAB, `app/build/`, `.gradle/`, `.kotlin/`, screenshot, bytecode, or private-session export), `.gitignore` and `.gitattributes` contracts, Gradle wrapper presence, `gradlew` executable bit, shell entry-point executable bit, and release-contract loading, structural validation, and source cross-checking of `scripts/release_contract.json` (single `release-contract` check added by Phase 3A2). |
 | `docs` | UTF-8 and trailing-whitespace hygiene (including `.json` files), `gradlew.bat` CRLF and SHA-256 verification, Markdown link integrity (relative, root-relative, anchors, optional fragments, optional quoted titles, external URLs), contract-driven active release-document checks (ordered phase headings from the active phase list, per-phase status bounded to the phase section, README active release version and branch, contract-driven charter product-scope consistency), experiment-record minimum structure, EXP-0007 full Phase 4 structure, publishable-content placeholder and privacy scan. |
-| `android` | Prerequisite checks (Python 3.10+, Java 17+, SDK via `ANDROID_HOME`/`ANDROID_SDK_ROOT`, Platform 36, Build Tools 36.0.0, `aapt2`, `gradlew`); root and app `build.gradle.kts` prohibited-Kotlin configuration; version-catalog and `app/build.gradle.kts` configuration; exact source-manifest boundary; AGP-merged-manifest exact contract; Gradle project discovery; JVM unit-test integration (`:app:testDebugUnitTest`); debug assembly; lint; APK existence and metadata. |
+| `android` | Prerequisite checks (Python 3.10+, Java 17+, SDK via `ANDROID_HOME`/`ANDROID_SDK_ROOT`, Platform 37 (the validator accepts the bounded `android-37` and `android-37.0` directory layouts), Build Tools 36.0.0, `aapt2`, `gradlew`); root and app `build.gradle.kts` prohibited-Kotlin configuration; version-catalog and `app/build.gradle.kts` configuration; exact source-manifest boundary; AGP-merged-manifest exact contract; Gradle project discovery; JVM unit-test integration (`:app:testDebugUnitTest`); debug assembly; lint; APK existence and metadata. |
 
 When no `--group` is given, the selection is the contract-declared groups in their contract order. The alias expands to every contract-declared group at the alias's position in the invocation. Repeated groups and overlaps caused by alias expansion are deduplicated. Deduplication preserves the first-seen order of the alias-expanded invocation: if the invocation is `--group required all docs`, the resolved selection is `(required, docs)`; if the invocation is `--group all docs required`, the resolved selection is `(required, docs)` in that order, because `all` expanded first and `required` was the first of its expanded groups to be deduplicated against. The current default and `--group all` therefore produce the same resolved order, namely the contract order, while a hand-written invocation may interleave and still produce a first-seen deduplicated selection.
 
@@ -197,7 +197,7 @@ Explicit `--group android --skip-android` is an invocation conflict: the user ha
 |---|---|
 | `0` | Every selected check passed. |
 | `1` | One or more selected checks failed (a normal repository-content defect). |
-| `2` | Invocation or prerequisite error. Includes missing or outdated `python3` (Python below 3.10); missing Java; Java below 17; neither `ANDROID_HOME` nor `ANDROID_SDK_ROOT` resolving to a usable SDK; missing Platform 36; missing Build Tools 36.0.0; missing or non-executable `aapt2`; missing or non-executable Gradle wrapper; conflicting command-line options such as `--skip-android` combined with explicit `--group android`; release-contract prerequisite failures (a missing, unreadable, malformed, structurally invalid, or internally inconsistent `scripts/release_contract.json` state). Argparse usage errors also exit `2`. |
+| `2` | Invocation or prerequisite error. Includes missing or outdated `python3` (Python below 3.10); missing Java; Java below 17; neither `ANDROID_HOME` nor `ANDROID_SDK_ROOT` resolving to a usable SDK; missing Platform 37; missing Build Tools 36.0.0; missing or non-executable `aapt2`; missing or non-executable Gradle wrapper; conflicting command-line options such as `--skip-android` combined with explicit `--group android`; release-contract prerequisite failures (a missing, unreadable, malformed, structurally invalid, or internally inconsistent `scripts/release_contract.json` state). Argparse usage errors also exit `2`. |
 
 The valid-contract missing-Git behavior added by Phase 3A4a is exactly three output lines from the validator:
 
@@ -238,7 +238,7 @@ The Android group additionally requires:
 
 - `java` on `PATH`, with major version at least 17;
 - `ANDROID_HOME` or `ANDROID_SDK_ROOT` set to a valid SDK directory;
-- SDK Platform 36 present;
+- SDK Platform 37 present; the validator accepts the bounded `android-37` and `android-37.0` directory layouts;
 - SDK Build Tools 36.0.0 present, with `aapt2` present and executable;
 - the repository Gradle wrapper present and executable.
 

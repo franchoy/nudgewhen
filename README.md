@@ -12,9 +12,9 @@ NudgeWhen is currently in the `v0.1.4` release train, **Mark Reminder Done**, on
 - One `:app` module.
 - Kotlin and Jetpack Compose.
 - One launcher activity.
-- Gradle wrapper `9.4.1`.
-- Android Gradle Plugin `9.2.1`.
-- Compile and target SDK `36`; minimum SDK `26`.
+- Gradle wrapper `9.6.1`.
+- Android Gradle Plugin `9.4.1`.
+- Compile SDK `37`; target SDK `36`; minimum SDK `26`.
 - A repeatable local validation suite at [`scripts/validate-local.sh`](scripts/validate-local.sh) and [`scripts/validate_local.py`](scripts/validate_local.py) covering `required`, `docs`, and `android` groups, with a deterministic `release_gate=SATISFIED` literal printed only on the all-groups run.
 - Local validation documentation in [docs/local-validation.md](docs/local-validation.md).
 - A GitHub Actions CI workflow.
@@ -106,7 +106,7 @@ See [docs/local-validation.md](docs/local-validation.md) for the local validatio
 ### Prerequisites
 
 - JDK 17 or newer.
-- Android SDK Platform 36.
+- Android SDK Platform 37 (the validator accepts the android-37 and android-37.0 directory layouts).
 - Android SDK Build Tools 36.0.0.
 - An Android SDK environment configured through `ANDROID_HOME` or `ANDROID_SDK_ROOT`.
 

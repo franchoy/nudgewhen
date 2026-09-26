@@ -829,17 +829,17 @@ class VersionCatalogMalformedInputTests(unittest.TestCase):
     def test_duplicate_expected_version_key_fails_android_content(self) -> None:
         valid_catalog = (
             '[versions]\n'
-            'agp = "9.2.1"\n'
-            'kotlinCompose = "2.3.10"\n'
-            'composeBom = "2026.06.00"\n'
+            'agp = "9.4.1"\n'
+            'kotlinCompose = "2.4.20"\n'
+            'composeBom = "2026.09.00"\n'
             'activityCompose = "1.13.0"\n'
         )
         duplicate_catalog = (
             '[versions]\n'
-            'agp = "9.2.1"\n'
-            'agp = "9.2.1"\n'
-            'kotlinCompose = "2.3.10"\n'
-            'composeBom = "2026.06.00"\n'
+            'agp = "9.4.1"\n'
+            'agp = "9.4.1"\n'
+            'kotlinCompose = "2.4.20"\n'
+            'composeBom = "2026.09.00"\n'
             'activityCompose = "1.13.0"\n'
         )
 
@@ -876,7 +876,7 @@ class VersionCatalogMalformedInputTests(unittest.TestCase):
 
 class WrapperJarSha256Tests(unittest.TestCase):
     """``check_required`` must verify the committed Gradle wrapper JAR's
-    SHA-256 against the approved Gradle 9.4.1 value through the real
+    SHA-256 against the approved Gradle 9.6.1 value through the real
     ``required/wrapper-jar-sha256`` branch.
 
     Test 1 exercises the real repository: the committed wrapper JAR
@@ -895,7 +895,7 @@ class WrapperJarSha256Tests(unittest.TestCase):
     """
 
     def test_committed_wrapper_jar_passes_required_wrapper_jar_sha256(self) -> None:
-        """The real committed Gradle 9.4.1 wrapper JAR must satisfy the
+        """The real committed Gradle 9.6.1 wrapper JAR must satisfy the
         bounded SHA-256 verification and emit the exact PASS line."""
         with _helpers.patched_module_attribute(
             "REQUIRED_FILES", ()
@@ -918,7 +918,7 @@ class WrapperJarSha256Tests(unittest.TestCase):
         # match the maintainer-supplied approved value.
         self.assertEqual(
             validate_local.WRAPPER_JAR_EXPECTED_SHA,
-            "55243ef57851f12b070ad14f7f5bb8302daceeebc5bce5ece5fa6edb23e1145c",
+            "497c8c2a7e5031f6aa847f88104aa80a93532ec32ee17bdb8d1d2f67a194a9c7",
         )
 
     def test_mismatched_wrapper_jar_fails_required_wrapper_jar_sha256(self) -> None:
@@ -1313,6 +1313,36 @@ class AndroidJvmTestsIntegrationTests(unittest.TestCase):
         self.assertNotIn("android/apk-exists", rendered)
         self.assertNotIn("android/apk-metadata", rendered)
         self.assertNotIn("android/merged-manifest", rendered)
+
+
+class FindSdkPlatformHelperTests(unittest.TestCase):
+    """Characterize the bounded ``_find_sdk_platform`` helper.
+
+    Tests the real production helper directly with a temporary
+    directory. No real Android SDK, no Gradle, no network, no
+    reproduction of ``check_android_prerequisites`` business logic.
+    """
+
+    def test_accepts_android_n_and_android_n_dot_zero_layouts(self) -> None:
+        with tempfile.TemporaryDirectory() as sdk_str:
+            sdk = Path(sdk_str)
+            # Layout 1: platforms/android-36
+            (sdk / "platforms/android-36").mkdir(parents=True)
+            # Layout 2: platforms/android-37.0
+            (sdk / "platforms/android-37.0").mkdir(parents=True)
+
+            self.assertEqual(
+                validate_local._find_sdk_platform(sdk, 36),
+                sdk / "platforms/android-36",
+            )
+            self.assertEqual(
+                validate_local._find_sdk_platform(sdk, 37),
+                sdk / "platforms/android-37.0",
+            )
+
+            # No supported layout exists for compile SDK 38.
+            self.assertIsNone(validate_local._find_sdk_platform(sdk, 38))
+
 
 
 if __name__ == "__main__":
