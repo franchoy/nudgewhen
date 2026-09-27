@@ -24,6 +24,7 @@ permission:
     "git diff --name-status -- *": allow
     "git diff --cached --name-status": allow
 
+    "git diff --cached -- .opencode/agents/nudge-build.md": allow
     "git diff --check *": deny
     "git diff --check": allow
     "git diff --check -- *": allow
