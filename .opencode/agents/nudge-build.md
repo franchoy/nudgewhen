@@ -106,6 +106,8 @@ permission:
     "git rev-parse HEAD": allow
     "git rev-parse HEAD^": allow
     "git rev-parse HEAD^^": allow
+    "git rev-parse refs/heads/main": allow
+    "git rev-parse refs/remotes/origin/main": allow
     "git status": allow
     "git status --short": allow
     "git status --short --untracked-files=all": allow
