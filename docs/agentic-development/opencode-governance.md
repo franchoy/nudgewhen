@@ -1,6 +1,6 @@
 # OpenCode Governance — Companion Document
 
-**Document status:** Accepted — stable governance; active v0.1.4 release on branch `release/v0.1.4`; Phase 0 — Release Definition & Bootstrap — is `Complete`; Phase 1 — Done State Architecture Contract — is `Complete`; Phase 2 — Done State Domain Implementation & JVM Proof — is `Complete`; Phase 3 — Persistence Compatibility / Migration Proof — is `Complete`; Phase 4 — Minimal Compose Integration — is `Complete`; Phase 5 — Integration & Device Validation — is `Complete`; Phase 6 — Integrated Audit & Reconciliation — is `Complete`; Phase 7 — Full Pre-Release Gate — is `Complete` and formally complete following the accepted Phase-7-D independent candidate audit, Phase-7-E native nudge-land landing, and Phase-7-F terminal maintainer acceptance; phase model: `8 Complete / 0 Planned`; no lifecycle phase remains inside the accepted eight-phase v0.1.4 model; latest stable published release is `v0.1.3`; v0.1.4 is **not** merged, **not** tagged, **not** published, and is not claimed release-ready; `AGENTS.md` remains authoritative
+**Document status:** Accepted — stable governance; active v0.1.5 — **Set Reminder Time** — release on branch `release/v0.1.5`; Phase 0 — Release Definition & Bootstrap — is `Planned` / current / in progress; Phase 1 — Reminder Time Architecture Contract — is `Planned` / not started; Phase 2 — Reminder Time Domain Implementation & JVM Proof — is `Planned` / not started; Phase 3 — Persistence Compatibility / Migration Proof — is `Planned` / not started; Phase 4 — Minimal Compose Integration — is `Planned` / not started; Phase 5 — Integration & Device Validation — is `Planned` / not started; Phase 6 — Integrated Audit & Reconciliation — is `Planned` / not started; Phase 7 — Full Pre-Release Gate — is `Planned` / not started; phase model: `0 Complete / 8 Planned`; no lifecycle phase has been formally closed inside the accepted eight-phase v0.1.5 model; `V0_1_5_PHASE_0_BOOTSTRAP_EXCEPTION` is `ACTIVE`; the formal Phase 0 → Phase 1 transition requires later independent validation and explicit maintainer acceptance; historical v0.1.4 — **Mark Reminder Done** — release remains the latest stable published release and historical evidence for the v0.1.5 train; v0.1.5 is **not** merged, **not** tagged, **not** published, and is not release-ready; `AGENTS.md` remains authoritative
 
 ## Authority and link to `AGENTS.md`
 
@@ -38,6 +38,19 @@ Branch creation alone does not terminate the exception. The exception must remai
 ## Bootstrap exception closure
 
 Phase 0D directly confirmed the four termination conditions. The maintainer accepted the Phase 0D evidence. The exception is terminated. Branch creation alone was not its termination event. Ordinary baseline rules now apply.
+
+## v0.1.5 Phase 0 bootstrap exception
+
+Identifier: `V0_1_5_PHASE_0_BOOTSTRAP_EXCEPTION`. Status: `ACTIVE`. The exception narrowly bridges the inherited v0.1.4 tracked release identity to the new v0.1.5 Phase 0 release context while the Phase 0C Build synchronizes the active release context, the release charter, the phase list, and `scripts/release_contract.json`. Scope:
+
+- `ACTIVE`;
+- narrow release-context bridge only — the exception may substitute only the stale release-context baseline predicate needed for Phase 0 bootstrap; the existing release-context pointers remain in transition until Phase 0C synchronizes them;
+- no independent authority for: product implementation; arbitrary mutation; staging; commit; push; network; pull request; tag; release; dependencies; toolchain; configuration; or Android identity alignment;
+- remains active after Phase 0C;
+- termination requires later accepted validation that the v0.1.5 current-facing governance / contract synchronization is mutually consistent, plus explicit maintainer acceptance;
+- branch creation alone does NOT terminate the exception.
+
+The historical `POST_V0_1_4_MAIN_MAINTENANCE_BOOTSTRAP_EXCEPTION` remains `TERMINATED`; it is NOT reactivated, renamed, or reused by this v0.1.5 exception.
 
 ## Baseline dirty-state clarification
 
