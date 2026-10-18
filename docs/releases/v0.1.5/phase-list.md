@@ -1,6 +1,6 @@
 # Phase List — NudgeWhen v0.1.5
 
-**Document status:** v0.1.5 current lifecycle authority — v0.1.5 — **Set Reminder Time** — is the active release train on branch `release/v0.1.5`; Phase 0 — Release Definition & Bootstrap — is `Planned` / current / in progress; Phase 1 — Reminder Time Architecture Contract — is `Planned` / not started; Phase 2 — Reminder Time Domain Implementation & JVM Proof — is `Planned` / not started; Phase 3 — Persistence Compatibility / Migration Proof — is `Planned` / not started; Phase 4 — Minimal Compose Integration — is `Planned` / not started; Phase 5 — Integration & Device Validation — is `Planned` / not started; Phase 6 — Integrated Audit & Reconciliation — is `Planned` / not started; Phase 7 — Full Pre-Release Gate — is `Planned` / not started; phase model: `0 Complete / 8 Planned`; no lifecycle phase has been formally closed inside the accepted eight-phase v0.1.5 model. The historical v0.1.4 — **Mark Reminder Done** — release remains the latest stable published release and is preserved as historical evidence. v0.1.5 is **not** merged, **not** tagged, **not** published, and is not release-ready. This document is normative for the eight-phase ordering and per-phase scope.
+**Document status:** v0.1.5 current lifecycle authority — Phases 0 through 0 complete (closure-candidate projection; formal acceptance pending); v0.1.5 — **Set Reminder Time** — is the active release train on branch `release/v0.1.5`; Phase 0 — Release Definition & Bootstrap — is `Complete` in the closure candidate (formal acceptance pending); Phase 1 — Reminder Time Architecture Contract — is `Planned` / not started; Phase 2 — Reminder Time Domain Implementation & JVM Proof — is `Planned` / not started; Phase 3 — Persistence Compatibility / Migration Proof — is `Planned` / not started; Phase 4 — Minimal Compose Integration — is `Planned` / not started; Phase 5 — Integration & Device Validation — is `Planned` / not started; Phase 6 — Integrated Audit & Reconciliation — is `Planned` / not started; Phase 7 — Full Pre-Release Gate — is `Planned` / not started; phase model: `1 Complete / 7 Planned`; Phase 0 completion is a closure-candidate projection pending formal maintainer acceptance. The historical v0.1.4 — **Mark Reminder Done** — release remains the latest stable published release and is preserved as historical evidence. v0.1.5 is **not** merged, **not** tagged, **not** published, and is not release-ready. This document is normative for the eight-phase ordering and per-phase scope.
 
 ## Phase 0 — Release Definition & Bootstrap
 
@@ -21,7 +21,7 @@ Phase 0 non-goals:
 
 ### Status
 
-Planned
+Complete
 
 ## Phase 1 — Reminder Time Architecture Contract
 

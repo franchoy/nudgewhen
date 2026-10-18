@@ -1,6 +1,6 @@
 # AGENTS.md
 
-**Document status:** Accepted — stable governance; active v0.1.5 — **Set Reminder Time** — release on branch `release/v0.1.5`; Phase 0 — Release Definition & Bootstrap — is `Planned` / current / in progress; Phase 1 — Reminder Time Architecture Contract — is `Planned`; Phase 2 — Reminder Time Domain Implementation & JVM Proof — is `Planned`; Phase 3 — Persistence Compatibility / Migration Proof — is `Planned`; Phase 4 — Minimal Compose Integration — is `Planned`; Phase 5 — Integration & Device Validation — is `Planned`; Phase 6 — Integrated Audit & Reconciliation — is `Planned`; Phase 7 — Full Pre-Release Gate — is `Planned`; phase model: `0 Complete / 8 Planned`; v0.1.4 — **Mark Reminder Done** — is the latest stable published release and remains historical evidence for the active v0.1.5 train; v0.1.5 is not merged, not tagged, not published, and is not release-ready; `V0_1_5_PHASE_0_BOOTSTRAP_EXCEPTION` is `ACTIVE`; Phase 0 formal closure synchronization requires later independent validation and explicit maintainer acceptance; historical v0.1.3 release evidence remains immutable
+**Document status:** Accepted — stable governance; active v0.1.5 — **Set Reminder Time** — release on branch `release/v0.1.5`; Phase 0 — Release Definition & Bootstrap — is `Complete` in the closure candidate (formal acceptance pending); Phase 1 — Reminder Time Architecture Contract — is `Planned`; Phase 2 — Reminder Time Domain Implementation & JVM Proof — is `Planned`; Phase 3 — Persistence Compatibility / Migration Proof — is `Planned`; Phase 4 — Minimal Compose Integration — is `Planned`; Phase 5 — Integration & Device Validation — is `Planned`; Phase 6 — Integrated Audit & Reconciliation — is `Planned`; Phase 7 — Full Pre-Release Gate — is `Planned`; phase model: `1 Complete / 7 Planned`; v0.1.4 — **Mark Reminder Done** — is the latest stable published release and remains historical evidence for the active v0.1.5 train; v0.1.5 is not merged, not tagged, not published, and is not release-ready; `V0_1_5_PHASE_0_BOOTSTRAP_EXCEPTION` is `ACTIVE`; Phase 0 formal closure synchronization requires later independent validation and explicit maintainer acceptance; historical v0.1.3 release evidence remains immutable
 
 ## Purpose and scope
 
@@ -276,8 +276,8 @@ Category D items cannot be authorized by a normal maintainer turn. A change to C
 - **Active branch:** `release/v0.1.5`
 - **Active release charter:** `docs/releases/v0.1.5/release-charter.md`
 - **Active phase list:** `docs/releases/v0.1.5/phase-list.md`
-- **Current lifecycle state:** Phase 0 — Release Definition & Bootstrap — is `Planned` / current / in progress; Phase 1 — Reminder Time Architecture Contract — is `Planned`; Phase 2 — Reminder Time Domain Implementation & JVM Proof — is `Planned`; Phase 3 — Persistence Compatibility / Migration Proof — is `Planned`; Phase 4 — Minimal Compose Integration — is `Planned`; Phase 5 — Integration & Device Validation — is `Planned`; Phase 6 — Integrated Audit & Reconciliation — is `Planned`; Phase 7 — Full Pre-Release Gate — is `Planned`; phase model `0 Complete / 8 Planned`; no lifecycle phase has been formally closed inside the accepted eight-phase v0.1.5 model.
-- **Phase 0 status:** `Planned` / current / in progress
+- **Current lifecycle state:** Phase 0 — Release Definition & Bootstrap — is `Complete` in the closure candidate (formal acceptance pending); Phase 1 — Reminder Time Architecture Contract — is `Planned`; Phase 2 — Reminder Time Domain Implementation & JVM Proof — is `Planned`; Phase 3 — Persistence Compatibility / Migration Proof — is `Planned`; Phase 4 — Minimal Compose Integration — is `Planned`; Phase 5 — Integration & Device Validation — is `Planned`; Phase 6 — Integrated Audit & Reconciliation — is `Planned`; Phase 7 — Full Pre-Release Gate — is `Planned`; phase model `1 Complete / 7 Planned`; Phase 0 completion is a closure-candidate projection pending formal maintainer acceptance.
+- **Phase 0 status:** `Complete` (closure-candidate projection; formal acceptance pending)
 - **Phase 1 status:** `Planned` / not started
 - **Phase 2 status:** `Planned` / not started
 - **Phase 3 status:** `Planned` / not started
@@ -285,14 +285,14 @@ Category D items cannot be authorized by a normal maintainer turn. A change to C
 - **Phase 5 status:** `Planned` / not started
 - **Phase 6 status:** `Planned` / not started
 - **Phase 7 status:** `Planned` / not started
-- **Phase model:** `0 Complete / 8 Planned`
-- **Current lifecycle phase:** `Phase 0 — Release Definition & Bootstrap`; Phase 0 is `Planned` / current / in progress; Phase 1 — Reminder Time Architecture Contract — has NOT started; Phase 1 implementation has NOT started; the formal Phase 0 → Phase 1 transition requires later independent validation and explicit maintainer acceptance
+- **Phase model:** `1 Complete / 7 Planned`
+- **Current lifecycle phase:** `Phase 0 — Release Definition & Bootstrap`; Phase 0 is `Complete` in the closure candidate, pending formal acceptance; Phase 1 — Reminder Time Architecture Contract — has NOT started; Phase 1 implementation has NOT started; the formal Phase 0 → Phase 1 transition requires later independent validation and explicit maintainer acceptance
 - **Phase 1 architecture:** `NOT_STARTED`
 - **Phase 1 product implementation:** `NOT_STARTED`
 - **Phase 2 implementation:** `NOT_STARTED`
 - **Phase 3 implementation:** `NOT_STARTED`
 - **Phase 4 implementation:** `NOT_STARTED`
-- **Release state:** `PHASE_0_BOOTSTRAP_IN_PROGRESS`
+- **Release state:** `PHASE_0_CLOSURE_CANDIDATE_PENDING_ACCEPTANCE`
 - **Merged / tagged / published:** `NO / NO / NO`
 - **Product scope:** `["reminders", "persistence"]` (unchanged from v0.1.4; reminder-time state belongs to the existing `reminders` capability; persistent reminder-time state belongs to the existing `persistence` capability)
 - **Persistence-format decision:** `PHASE_1_REQUIRED` (the released v0.1.4 `FileReminderStore` baseline is `NWR2_WITH_NWR1_BACKWARD_LOAD`; Phase 1 must evaluate and freeze the v0.1.5 persistence representation without Phase 0 pre-selecting it)
