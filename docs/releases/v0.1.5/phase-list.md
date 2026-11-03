@@ -1,6 +1,6 @@
 # Phase List — NudgeWhen v0.1.5
 
-**Document status:** v0.1.5 current lifecycle authority — Phases 0 through 0 complete (closure-candidate projection; formal acceptance pending); v0.1.5 — **Set Reminder Time** — is the active release train on branch `release/v0.1.5`; Phase 0 — Release Definition & Bootstrap — is `Complete` in the closure candidate (formal acceptance pending); Phase 1 — Reminder Time Architecture Contract — is `Planned` / not started; Phase 2 — Reminder Time Domain Implementation & JVM Proof — is `Planned` / not started; Phase 3 — Persistence Compatibility / Migration Proof — is `Planned` / not started; Phase 4 — Minimal Compose Integration — is `Planned` / not started; Phase 5 — Integration & Device Validation — is `Planned` / not started; Phase 6 — Integrated Audit & Reconciliation — is `Planned` / not started; Phase 7 — Full Pre-Release Gate — is `Planned` / not started; phase model: `1 Complete / 7 Planned`; Phase 0 completion is a closure-candidate projection pending formal maintainer acceptance. The historical v0.1.4 — **Mark Reminder Done** — release remains the latest stable published release and is preserved as historical evidence. v0.1.5 is **not** merged, **not** tagged, **not** published, and is not release-ready. This document is normative for the eight-phase ordering and per-phase scope.
+**Document status:** v0.1.5 current lifecycle authority — Phases 0 through 0 complete (formally accepted on 2026-10-18); v0.1.5 — **Set Reminder Time** — is the active release train on branch `release/v0.1.5`; Phase 0 — Release Definition & Bootstrap — is `Complete` / formally accepted on 2026-10-18; Phase 1 — Reminder Time Architecture Contract — is `Planned` / not started; Phase 2 — Reminder Time Domain Implementation & JVM Proof — is `Planned` / not started; Phase 3 — Persistence Compatibility / Migration Proof — is `Planned` / not started; Phase 4 — Minimal Compose Integration — is `Planned` / not started; Phase 5 — Integration & Device Validation — is `Planned` / not started; Phase 6 — Integrated Audit & Reconciliation — is `Planned` / not started; Phase 7 — Full Pre-Release Gate — is `Planned` / not started; phase model: `1 Complete / 7 Planned`; Phase 0 formal acceptance is supported by exact-head CI run `39114566018` for `2775cf64069a84adebde36366cddbee5459e67c5`. The historical v0.1.4 — **Mark Reminder Done** — release remains the latest stable published release and is preserved as historical evidence. v0.1.5 is **not** merged, **not** tagged, **not** published, and is not release-ready. This document is normative for the eight-phase ordering and per-phase scope.
 
 ## Phase 0 — Release Definition & Bootstrap
 
@@ -22,6 +22,10 @@ Phase 0 non-goals:
 ### Status
 
 Complete
+
+### Phase 0 formal acceptance
+
+The maintainer accepted Phase 0 on 2026-10-18 after closure commit `2775cf64069a84adebde36366cddbee5459e67c5` was published and exact-head `CI` run `39114566018` / `validate` job `117637601837` succeeded. Python regression: 245 tests / OK; local and hosted clean validation: 41 passed, 0 failed, 0 skipped; `release_gate=SATISFIED`. The Phase 0 bootstrap exception termination is recorded in the terminal governance synchronization. Phase 1 remains `Planned` / `NOT_STARTED`; no Phase 1 work is authorized by this acceptance.
 
 ## Phase 1 — Reminder Time Architecture Contract
 

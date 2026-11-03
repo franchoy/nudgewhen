@@ -1,6 +1,6 @@
 # OpenCode Governance — Companion Document
 
-**Document status:** Accepted — stable governance; active v0.1.5 — **Set Reminder Time** — release on branch `release/v0.1.5`; Phase 0 — Release Definition & Bootstrap — is `Complete` in the closure candidate (formal acceptance pending); Phase 1 — Reminder Time Architecture Contract — is `Planned` / not started; Phase 2 — Reminder Time Domain Implementation & JVM Proof — is `Planned` / not started; Phase 3 — Persistence Compatibility / Migration Proof — is `Planned` / not started; Phase 4 — Minimal Compose Integration — is `Planned` / not started; Phase 5 — Integration & Device Validation — is `Planned` / not started; Phase 6 — Integrated Audit & Reconciliation — is `Planned` / not started; Phase 7 — Full Pre-Release Gate — is `Planned` / not started; phase model: `1 Complete / 7 Planned`; Phase 0 completion is a closure-candidate projection pending formal maintainer acceptance; `V0_1_5_PHASE_0_BOOTSTRAP_EXCEPTION` is `ACTIVE`; the formal Phase 0 → Phase 1 transition requires later independent validation and explicit maintainer acceptance; historical v0.1.4 — **Mark Reminder Done** — release remains the latest stable published release and historical evidence for the v0.1.5 train; v0.1.5 is **not** merged, **not** tagged, **not** published, and is not release-ready; `AGENTS.md` remains authoritative
+**Document status:** Accepted — stable governance; active v0.1.5 — **Set Reminder Time** — release on branch `release/v0.1.5`; Phase 0 — Release Definition & Bootstrap — is `Complete` / formally accepted on 2026-10-18; Phase 1 — Reminder Time Architecture Contract — is `Planned` / not started; Phase 2 — Reminder Time Domain Implementation & JVM Proof — is `Planned` / not started; Phase 3 — Persistence Compatibility / Migration Proof — is `Planned` / not started; Phase 4 — Minimal Compose Integration — is `Planned` / not started; Phase 5 — Integration & Device Validation — is `Planned` / not started; Phase 6 — Integrated Audit & Reconciliation — is `Planned` / not started; Phase 7 — Full Pre-Release Gate — is `Planned` / not started; phase model: `1 Complete / 7 Planned`; Phase 0 formal acceptance is supported by exact-head CI run `39114566018` for `2775cf64069a84adebde36366cddbee5459e67c5`; `V0_1_5_PHASE_0_BOOTSTRAP_EXCEPTION` is `TERMINATED`; Phase 1 remains `NOT_STARTED` and requires separate explicit maintainer authorization; historical v0.1.4 — **Mark Reminder Done** — release remains the latest stable published release and historical evidence for the v0.1.5 train; v0.1.5 is **not** merged, **not** tagged, **not** published, and is not release-ready; `AGENTS.md` remains authoritative
 
 ## Authority and link to `AGENTS.md`
 
@@ -39,16 +39,16 @@ Branch creation alone does not terminate the exception. The exception must remai
 
 Phase 0D directly confirmed the four termination conditions. The maintainer accepted the Phase 0D evidence. The exception is terminated. Branch creation alone was not its termination event. Ordinary baseline rules now apply.
 
-## v0.1.5 Phase 0 bootstrap exception
+## v0.1.5 Phase 0 bootstrap exception — terminated
 
-Identifier: `V0_1_5_PHASE_0_BOOTSTRAP_EXCEPTION`. Status: `ACTIVE`. The exception narrowly bridges the inherited v0.1.4 tracked release identity to the new v0.1.5 Phase 0 release context while the Phase 0C Build synchronizes the active release context, the release charter, the phase list, and `scripts/release_contract.json`. Scope:
+Identifier: `V0_1_5_PHASE_0_BOOTSTRAP_EXCEPTION`. Status: `TERMINATED` following explicit formal maintainer acceptance on 2026-10-18 and the accepted Phase 0 closure evidence. Historical scope and disposition:
 
-- `ACTIVE`;
-- narrow release-context bridge only — the exception may substitute only the stale release-context baseline predicate needed for Phase 0 bootstrap; the existing release-context pointers remain in transition until Phase 0C synchronizes them;
-- no independent authority for: product implementation; arbitrary mutation; staging; commit; push; network; pull request; tag; release; dependencies; toolchain; configuration; or Android identity alignment;
-- remains active after Phase 0C;
-- termination requires later accepted validation that the v0.1.5 current-facing governance / contract synchronization is mutually consistent, plus explicit maintainer acceptance;
-- branch creation alone does NOT terminate the exception.
+- The exception was `ACTIVE` during the narrow v0.1.5 release-context bridge and remained active after Phase 0C. Its temporary substitution covered only the inherited stale release-context baseline predicate.
+- Branch creation alone did not terminate it; the Phase 0 closure commit and exact-head CI, followed by explicit maintainer acceptance, satisfy its termination prerequisites.
+- The current `AGENTS.md` identifies the correct v0.1.5 release and branch, separates stable governance from current release context, and has no normative dependency on the completed v0.1.4 release branch. The active governance, contract, charter, and phase list are mutually consistent.
+- Accepted evidence: closure commit `2775cf64069a84adebde36366cddbee5459e67c5`, `CI` run `39114566018`, `validate` job `117637601837`, success; 245 Python regression tests / OK; full clean local and hosted validator 41/0/0 with `release_gate=SATISFIED`.
+- The exception granted no independent authority for product implementation, arbitrary mutation, staging, commit, push, network, pull request, tag, release, dependencies, toolchain, configuration, or Android identity alignment.
+- Status is `TERMINATED`; no reuse, reactivation, or retrospective compliance waiver. Phase 1 remains `Planned` / `NOT_STARTED` and needs separate explicit maintainer authorization.
 
 The historical `POST_V0_1_4_MAIN_MAINTENANCE_BOOTSTRAP_EXCEPTION` remains `TERMINATED`; it is NOT reactivated, renamed, or reused by this v0.1.5 exception.
 
