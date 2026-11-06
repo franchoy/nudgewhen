@@ -1,6 +1,6 @@
 # Release Charter — NudgeWhen v0.1.5
 
-**Document status:** v0.1.5 current lifecycle charter — Phases 0 through 0 complete (formally accepted on 2026-10-18); v0.1.5 — **Set Reminder Time** — is the active release train; active branch `release/v0.1.5`; Phase 0 — Release Definition & Bootstrap — is `Complete` / formally accepted on 2026-10-18; Phase 1 — Reminder Time Architecture Contract — is `Planned` / not started; Phase 2 — Reminder Time Domain Implementation & JVM Proof — is `Planned` / not started; Phase 3 — Persistence Compatibility / Migration Proof — is `Planned` / not started; Phase 4 — Minimal Compose Integration — is `Planned` / not started; Phase 5 — Integration & Device Validation — is `Planned` / not started; Phase 6 — Integrated Audit & Reconciliation — is `Planned` / not started; Phase 7 — Full Pre-Release Gate — is `Planned` / not started; phase model: `1 Complete / 7 Planned`; Phase 0 formal acceptance is supported by exact-head CI run `39114566018` for `2775cf64069a84adebde36366cddbee5459e67c5`. The historical v0.1.4 — **Mark Reminder Done** — release remains the latest stable published release and is preserved as historical evidence for the v0.1.5 train. v0.1.5 is **not** merged, **not** tagged, **not** published, and is not release-ready. This charter is normative for v0.1.5 release policy.
+**Document status:** v0.1.5 current lifecycle charter — Phases 0 through 1 complete (formally accepted on 2026-10-18 and on 2026-11-04 respectively); v0.1.5 — **Set Reminder Time** — is the active release train; active branch `release/v0.1.5`; Phase 0 — Release Definition & Bootstrap — is `Complete` / formally accepted on 2026-10-18; Phase 1 — Reminder Time Architecture Contract — is `Complete` / formally accepted on 2026-11-04; Phase 2 — Reminder Time Domain Implementation & JVM Proof — is `Planned` / not started; Phase 3 — Persistence Compatibility / Migration Proof — is `Planned` / not started; Phase 4 — Minimal Compose Integration — is `Planned` / not started; Phase 5 — Integration & Device Validation — is `Planned` / not started; Phase 6 — Integrated Audit & Reconciliation — is `Planned` / not started; Phase 7 — Full Pre-Release Gate — is `Planned` / not started; phase model: `2 Complete / 6 Planned`; Phase 0 formal acceptance is supported by exact-head CI run `39114566018` for `2775cf64069a84adebde36366cddbee5459e67c5`; Phase 1 formal acceptance is supported by exact-head CI run `41907797725` for `8f811b61328ff24fb6b8db1589316a81b30450bb`; the accepted v0.1.5 persistence representation is `NWR3` with NWR1/NWR2 backward loading and lazy same-file migration; Phase 2 implementation is `NOT_STARTED`. The historical v0.1.4 — **Mark Reminder Done** — release remains the latest stable published release and is preserved as historical evidence for the v0.1.5 train. v0.1.5 is **not** merged, **not** tagged, **not** published, and is not release-ready. This charter is normative for v0.1.5 release policy.
 
 ## Release identity
 
@@ -119,6 +119,18 @@ Phase 1 owns the evaluation and freezing of the v0.1.5 persistence representatio
 
 The historical v0.1.4 persistence decision boundary (NWR2 writes, NWR1 backward loading, lazy same-file migration) was selected by v0.1.4 Phase 1 and implemented by v0.1.4 Phase 3. v0.1.5 may extend, retain, or replace that representation only through the v0.1.5 Phase 1 architecture contract.
 
+### Accepted Phase 1 persistence decision
+
+The `PHASE_1_REQUIRED` value above is the historical Phase 0 decision value and is preserved as historical evidence: it recorded that Phase 0 did not pre-select a representation. Phase 1 has since evaluated and frozen the v0.1.5 representation, and the maintainer formally accepted that Phase 1 decision on 2026-11-04.
+
+The accepted v0.1.5 persistence-format decision is:
+
+**`NWR3`**
+
+`NWR3` is the accepted v0.1.5 format. It carries NWR1/NWR2 backward loading and lazy same-file migration. It is the maintainer-accepted outcome of the Phase 1 evaluation, it is normative for Phase 2, Phase 3, and Phase 4 implementation, and it supersedes the historical Phase 0 placeholder value for the active lifecycle. The accepted architecture contract is `docs/releases/v0.1.5/reminder-time-architecture.md`.
+
+The machine-readable release contract `scripts/release_contract.json` contains **no** persistence-format decision field. It records the phase statuses and carries no persistence-format key at all.
+
 The persistence decision must:
 
 - preserve the existing v0.1.4 NWR2 reminder data on load;
@@ -141,7 +153,7 @@ The accepted eight-phase model for v0.1.5 is:
 - Phase 6 — Integrated Audit & Reconciliation
 - Phase 7 — Full Pre-Release Gate
 
-Phase 0 — Release Definition & Bootstrap — is `Complete` / formally accepted on 2026-10-18. Phase 1 — Reminder Time Architecture Contract — is `Planned` / not started. Phase 2 — Reminder Time Domain Implementation & JVM Proof — is `Planned` / not started. Phase 3 — Persistence Compatibility / Migration Proof — is `Planned` / not started. Phase 4 — Minimal Compose Integration — is `Planned` / not started. Phase 5 — Integration & Device Validation — is `Planned` / not started. Phase 6 — Integrated Audit & Reconciliation — is `Planned` / not started. Phase 7 — Full Pre-Release Gate — is `Planned` / not started. Phase model: `1 Complete / 7 Planned`; Phase 0 formal acceptance is supported by exact-head CI run `39114566018` for `2775cf64069a84adebde36366cddbee5459e67c5`.
+Phase 0 — Release Definition & Bootstrap — is `Complete` / formally accepted on 2026-10-18. Phase 1 — Reminder Time Architecture Contract — is `Complete` / formally accepted on 2026-11-04. Phase 2 — Reminder Time Domain Implementation & JVM Proof — is `Planned` / not started. Phase 3 — Persistence Compatibility / Migration Proof — is `Planned` / not started. Phase 4 — Minimal Compose Integration — is `Planned` / not started. Phase 5 — Integration & Device Validation — is `Planned` / not started. Phase 6 — Integrated Audit & Reconciliation — is `Planned` / not started. Phase 7 — Full Pre-Release Gate — is `Planned` / not started. Phase model: `2 Complete / 6 Planned`; Phase 0 formal acceptance is supported by exact-head CI run `39114566018` for `2775cf64069a84adebde36366cddbee5459e67c5`; Phase 1 formal acceptance is supported by exact-head CI run `41907797725` for `8f811b61328ff24fb6b8db1589316a81b30450bb`.
 
 Phase 0 is bounded to release-definition, governance, document-bootstrap synchronization, and the initial dirty-candidate repository-consistency validation. Phase 0 does not implement any reminder-time functionality, does not change `app/build.gradle.kts`, does not select a concrete persistence representation, does not modify any product Kotlin, does not modify persistence production code, does not modify Compose, and does not perform Android identity alignment.
 
@@ -153,9 +165,21 @@ Phase 2 owns the domain implementation and JVM proof after Phase 1 freezes the a
 
 The maintainer formally accepted Phase 0 on 2026-10-18 after the exact ten-path closure commit `2775cf64069a84adebde36366cddbee5459e67c5` was published and GitHub Actions `CI` push run `39114566018` / required `validate` job `117637601837` completed successfully. Local and hosted regression: 245 Python tests / OK; clean validator 41/0/0; `release_gate=SATISFIED`. Historical OpenCode deviations remain documented without retrospective compliance waivers. The acceptance does not authorize Phase 1, any new capability, an Android identity change, or a v0.1.5 release.
 
+This section records the lifecycle state as of the 2026-10-18 Phase 0 acceptance and is preserved as historical evidence. Phase 1 — Reminder Time Architecture Contract — was subsequently completed and formally accepted on 2026-11-04, as recorded in the Phase 1 formal acceptance evidence section below. The Phase 0 acceptance authorized neither Phase 1 nor any later phase.
+
+## Phase 1 formal acceptance evidence
+
+The maintainer formally accepted Phase 1 — Reminder Time Architecture Contract — on 2026-11-04 after the accepted architecture commit `8f811b61328ff24fb6b8db1589316a81b30450bb` (parent `3605975ee5bd00c7c7837556dee8d2c0d2ca4fe2`; subject `docs: define v0.1.5 reminder-time architecture`) was published through the native nudge-land transaction `nudgewhen-v0.1.5-phase1-architecture-first-native-land-001`, whose terminal authorization state was `LANDED` and terminal verified state was `S10_LANDED`, and GitHub Actions `CI` push run `41907797725` / job `126847010004` concluded `success` for that exact head. Published validation at that head: Python regression 245 tests / OK; clean validation 41 passed, 0 failed, 0 skipped; `release_gate=SATISFIED`.
+
+The accepted architecture contract is `docs/releases/v0.1.5/reminder-time-architecture.md`. The accepted v0.1.5 persistence representation is `NWR3` with NWR1/NWR2 backward loading and lazy same-file migration. The accepted architecture and its frozen decisions are normative for Phase 2, Phase 3, and Phase 4 implementation.
+
+Phase 1 was architecture-only. It produced no product code, no production tests, and no Compose change. Phase 1 acceptance authorizes no product implementation: Phase 2 — Reminder Time Domain Implementation & JVM Proof — remains `Planned` / `NOT_STARTED` and requires a separate explicit maintainer authorization.
+
+The native nudge-land receipts and the hosted CI run, job, conclusion, test counts, and release-gate value are maintainer-supplied external evidence that was reviewed outside this repository. They are not new network observations by any OpenCode agent.
+
 ## Bootstrap exception
 
-`V0_1_5_PHASE_0_BOOTSTRAP_EXCEPTION` is `TERMINATED` by formal maintainer acceptance on 2026-10-18 following successful publication and exact-head CI of Phase 0 closure commit `2775cf64069a84adebde36366cddbee5459e67c5` (run `39114566018`). The exception historically bridged only the inherited v0.1.4 release-context predicate during v0.1.5 bootstrap; it did not grant independent authority for product implementation, staging, commit, push, network, pull request, tag, release, dependencies, toolchain, configuration changes, or Android identity alignment. The v0.1.5 governance/contract synchronization is accepted and mutually consistent. The exception cannot be reused or reactivated. Phase 1 remains `NOT_STARTED` until separately authorized.
+`V0_1_5_PHASE_0_BOOTSTRAP_EXCEPTION` is `TERMINATED` by formal maintainer acceptance on 2026-10-18 following successful publication and exact-head CI of Phase 0 closure commit `2775cf64069a84adebde36366cddbee5459e67c5` (run `39114566018`). The exception historically bridged only the inherited v0.1.4 release-context predicate during v0.1.5 bootstrap; it did not grant independent authority for product implementation, staging, commit, push, network, pull request, tag, release, dependencies, toolchain, configuration changes, or Android identity alignment. The v0.1.5 governance/contract synchronization is accepted and mutually consistent. The exception cannot be reused or reactivated. As of that 2026-10-18 termination, Phase 1 remained `NOT_STARTED` until separately authorized; that statement describes the state on 2026-10-18 and is preserved as historical evidence, not as a current lifecycle assertion. Phase 1 was subsequently completed and formally accepted on 2026-11-04, as recorded in the Phase 1 formal acceptance evidence section above.
 
 The historical `POST_V0_1_4_MAIN_MAINTENANCE_BOOTSTRAP_EXCEPTION` remains `TERMINATED`; it is not reactivated, renamed, or reused by this v0.1.5 exception.
 
@@ -165,6 +189,6 @@ The historical v0.1.4 release-bearing merge into `main`, the annotated `v0.1.4` 
 
 ## v0.1.5 release state
 
-v0.1.5 is **not** merged, **not** tagged, **not** published, and is not release-ready. Phase 0 is `Complete` and formally accepted on 2026-10-18. Phase 1 — Reminder Time Architecture Contract — remains `Planned` / `NOT_STARTED`; starting Phase 1 requires separate explicit maintainer authorization. No v0.1.5 release action is authorized by this charter.
+v0.1.5 is **not** merged, **not** tagged, **not** published, and is not release-ready. Phase 0 — Release Definition & Bootstrap — is `Complete` / formally accepted on 2026-10-18. Phase 1 — Reminder Time Architecture Contract — is `Complete` / formally accepted on 2026-11-04, with the accepted architecture contract frozen at `docs/releases/v0.1.5/reminder-time-architecture.md` and the accepted persistence representation `NWR3` with NWR1/NWR2 backward loading and lazy same-file migration. Phase 2 — Reminder Time Domain Implementation & JVM Proof — remains `Planned` / `NOT_STARTED`; starting Phase 2 requires a separate explicit maintainer authorization. No v0.1.5 release action is authorized by this charter.
 
-Product scope, the persistence-format decision (`PHASE_1_REQUIRED`), and the Android identity non-mutation rule (`app/build.gradle.kts` remains at `versionCode 5 / versionName 0.1.4`) remain unchanged.
+Product scope remains exactly `["reminders", "persistence"]`. The active persistence-format decision is `NWR3` with NWR1/NWR2 backward loading and lazy same-file migration; the historical Phase 0 placeholder value `PHASE_1_REQUIRED` is preserved above as historical Phase 0 evidence and is not the active decision. The Android identity non-mutation rule is unchanged: `app/build.gradle.kts` remains at `versionCode 5 / versionName 0.1.4`, and the v0.1.5 target identity `versionCode 6 / versionName 0.1.5` remains a future target only.

@@ -2,14 +2,26 @@
 
 ## Status
 
-**Document status:** Phase-1 architecture **candidate** — awaiting independent review and maintainer acceptance.
+**Document status:** Phase-1 architecture **accepted and frozen** — formally
+accepted by the maintainer on 2026-11-04.
 
-This document is the proposed Phase-1 architecture contract for the active
+This document is the accepted Phase-1 architecture contract for the active
 NudgeWhen v0.1.5 release on branch `release/v0.1.5`.
 
-It is a **candidate**. It is not frozen, not formally accepted, and it does not
-close Phase 1. It becomes normative for Phase 2, Phase 3, and Phase 4 only if
-the maintainer accepts it.
+It is **accepted and frozen**. The maintainer formally accepted it on
+2026-11-04, after independent review, source correction, successful native
+nudge-land delivery, and hosted exact-head CI. Its decisions are authoritative
+and normative for Phase 2, Phase 3, and Phase 4 implementation.
+
+Acceptance of the architecture is not repository lifecycle closure. The
+architecture itself is already landed at commit
+`8f811b61328ff24fb6b8db1589316a81b30450bb`. The lifecycle-closure
+synchronization of the tracked phase list, the machine-readable release
+contract, and the current-facing tracked governance has been prepared as a
+local closure candidate that records Phase 1 as `Complete`. Committing and
+publishing that closure candidate is a separate, separately authorized
+repository action and is not performed by this document. Phase 2 implementation
+is not started.
 
 It defines Phase-1 architecture only. It implements no reminder-time behavior,
 no product code, no production test, and no Compose change.
@@ -26,12 +38,43 @@ Target Android identity: `versionCode 6 / versionName 0.1.5` — future target
 only; Android identity alignment is Phase-5 work under separate explicit
 maintainer authorization, and is not Phase-1 work.
 
-Persistence-format decision: currently `PHASE_1_REQUIRED` as recorded by
-Phase 0. This candidate proposes `NWR3` (§4). The recorded decision changes
-only upon maintainer acceptance of this document.
+Persistence-format decision: **accepted** as `NWR3` with NWR1/NWR2 backward
+loading and lazy same-file migration (§4, §5.3). This is the maintainer-accepted
+outcome of the Phase-1 evaluation and remains the accepted persistence
+representation. The historical Phase 0 decision value
+`PHASE_1_REQUIRED` is preserved in the release charter and in `AGENTS.md`, which
+record that Phase 0 did not pre-select a representation. The machine-readable
+release contract `scripts/release_contract.json` does **not** contain a
+persistence-format decision field and carries no persistence-format key at all;
+the prepared lifecycle-closure candidate updates its phase model to record
+Phase 1 as `Complete` without introducing any persistence-format key.
 
-Phase 1 status before the authoring Build: `Planned / NOT_STARTED`. This
-document does not change that status.
+Phase 1 status before the authoring Build: `Planned / NOT_STARTED`. The
+architecture acceptance recorded here did not by itself change the tracked
+Phase 1 lifecycle status; the tracked synchronization is the separately
+authorized Phase 1C-B lifecycle-closure work, prepared as a local closure
+candidate that records Phase 1 as `Complete` and that is committed and
+published only as a separate, separately authorized repository action.
+
+Earlier sections of this document were authored in the pre-acceptance review
+state. Under the separate corrective authorization
+`V0_1_5_PHASE_1CA_POST_AUDIT_CORRECTION_002`, their pre-acceptance wording was
+reconciled to the accepted state, so that no section presents an accepted
+decision as pending, provisional, or awaiting maintainer selection. The
+reconciliation is a wording and status-accuracy correction only: it changes no
+technical decision, no Kotlin API, no time semantics, no persistence grammar,
+no migration rule, no section number, no cross-reference, and no rationale. Two
+section titles that carried the pre-acceptance word "proposal" (§1.1, §3.1) and
+one comparison-table column heading (§3.4) were retitled to state the accepted
+state; no section number, cross-reference, or technical content was changed by
+that retitling.
+
+Historical facts about the original authoring Build are preserved unchanged
+and remain clearly distinct from the present accepted state. In particular, the
+authoring Build's own starting commit in §0.3 remains attributed to that
+Build, and §9 still records that no phase-ownership item was performed by the
+authoring Build. The completed native nudge-land landing is recorded in §13.1.
+The accepted and frozen decisions are recorded in §12.
 
 ## 0. Purpose, scope, and evidence base
 
@@ -80,9 +123,9 @@ read directly at the recorded starting commit
 
 ## 1. Domain Model Contract
 
-### 1.1 Frozen proposal
+### 1.1 Frozen domain model
 
-Propose extending the existing immutable data class as follows:
+The accepted contract extends the existing immutable data class as follows:
 
 ```kotlin
 package io.github.franchoy.nudgewhen.domain
@@ -138,7 +181,7 @@ Java 17 source/target compatibility.
 
 ### 2.1 Precision
 
-Propose **minute precision**.
+The accepted precision is **minute precision**.
 
 An accepted non-null value must satisfy:
 
@@ -153,7 +196,7 @@ reminders ambiguous.
 
 ### 2.2 Accepted calendar-year bounds
 
-Propose the accepted calendar-year range **0001 to 9999 inclusive**.
+The accepted calendar-year range is **0001 to 9999 inclusive**.
 
 Rationale:
 
@@ -166,8 +209,9 @@ Rationale:
 * it excludes proleptic year zero, which is not a user-representable civil
   year.
 
-This bound is a **proposed constraint of this candidate and is subject to
-maintainer acceptance**. It is recorded as an open review question in §12.
+This bound is an **accepted decision**, not a provisional constraint. It is
+recorded as accepted decision 1 in §12 and is frozen for Phase 2, Phase 3, and
+Phase 4 implementation.
 
 ### 2.3 Strict calendar validation
 
@@ -203,7 +247,7 @@ The literal is:
 
 ### 2.5 Formatter construction
 
-Propose an explicitly constructed formatter:
+The accepted contract specifies an explicitly constructed formatter:
 
 ```kotlin
 private val TIME_FORMATTER: DateTimeFormatter =
@@ -237,7 +281,7 @@ proleptic-year field in one place instead of inheriting them implicitly.
 A literal that parses successfully but does not re-serialize identically is
 **not** canonical and must be rejected.
 
-Proposed rule, applied to every candidate literal:
+Accepted rule, applied to every candidate literal:
 
 1. parse the literal with the strict formatter;
 2. reject if parsing fails;
@@ -275,9 +319,10 @@ persisted file content uses `IllegalStateException`.
 
 ## 3. Controller Contract
 
-### 3.1 Frozen proposal
+### 3.1 Frozen controller API
 
-Propose the following exact method on `ReminderController`:
+The accepted contract specifies the following exact method on
+`ReminderController`:
 
 ```kotlin
 fun setTime(id: String, time: LocalDateTime?): Boolean
@@ -358,7 +403,7 @@ fun setDone(id: String, done: Boolean): Boolean {
 
 Comparison:
 
-| Property | Observed `setDone` | Proposed `setTime` | Relation |
+| Property | Observed `setDone` | Accepted `setTime` | Relation |
 |---|---|---|---|
 | ID lookup | exact, case-sensitive, first match by `id` | identical | same |
 | Missing id | `false`, no save | `false`, no save | same |
@@ -387,7 +432,9 @@ well-defined for minute-precision values.
 
 ### 4.1 Decision
 
-Propose **NWR3**, preserving the existing single-file storage design.
+The accepted representation is **NWR3**, preserving the existing single-file
+storage design. It is recorded as accepted decision 4 in §12 and is frozen for
+Phase 3 implementation.
 
 ### 4.2 NWR3 header
 
@@ -427,7 +474,8 @@ year and always contains `T`.
   newline — the byte content is exactly `NWR3`.
 * The persistence file name and location are unchanged. `MainActivity`
   observes `File(filesDir, "reminders-v1.txt")`. The header, not the file
-  name, carries the format version; renaming the file is not proposed.
+  name, carries the format version; renaming the file is not part of this
+  contract.
 
 ### 4.5 Load-time validation
 
@@ -491,7 +539,7 @@ observed behavior.
   in the NWR3 format.
 * Pure loading and no-op controller operations must not rewrite the file.
   Existing `setDone` same-state and normalized-identical `edit` paths were
-  observed to avoid `save`. The **proposed** `setTime` unchanged-value path
+  observed to avoid `save`. The accepted `setTime` unchanged-value path
   must provide the same no-save behavior when Phase 2 implements it.
 
 ### 5.3 Forward compatibility is not promised
@@ -506,8 +554,9 @@ observed v0.1.4 store rejects any header other than `NWR1` and `NWR2` with
 
 Downgrading an installation after v0.1.5 has written NWR3 data is therefore
 not a supported path: the reminder file may be unreadable by the older
-application. This is recorded as an explicit limitation of the candidate,
-subject to maintainer acceptance, and is an open review question in §12.
+application. This is an **accepted limitation** of the v0.1.5 release, not an
+open question and not a pending decision. It is recorded as accepted decision 5
+in §12.
 
 ## 6. Alternatives Considered and Trade-offs
 
@@ -527,8 +576,8 @@ the record.
 * The release charter mandates backward loading of existing NWR2 data; it
   does **not** expressly prohibit an NWR2 extension or require retaining
   every prior malformed-record rejection. Preserving the exact existing
-  NWR2 grammar and its negative-path tests is an **explicit recommendation
-  of this architecture candidate**, not an invented charter prohibition.
+  NWR2 grammar and its negative-path tests is an **explicit accepted decision
+  of this architecture contract**, not an invented charter prohibition.
 * A separate `NWR3` header keeps header-driven migration and validation
   unambiguous, avoiding those compatibility and maintenance trade-offs.
 
@@ -584,12 +633,12 @@ requires. A time-of-day-only value cannot express the calendar date, and
 would make the persisted field ambiguous across days. A `LocalDateTime`
 holds both parts in one value with one absence marker.
 
-### 6.5 Recommended option — candidate awaiting acceptance
+### 6.5 Accepted option
 
-NWR3 keeps: a single file; a single whole-list snapshot per save; one
-explicit format discriminator; one explicit absent marker; a self-describing
-canonical time literal that is independently verifiable on load; and every
-existing NWR2 negative-path guarantee unchanged.
+The accepted option is **NWR3**. It keeps: a single file; a single whole-list
+snapshot per save; one explicit format discriminator; one explicit absent
+marker; a self-describing canonical time literal that is independently
+verifiable on load; and every existing NWR2 negative-path guarantee unchanged.
 
 ## 7. Persistence Test Obligations (Phase 3)
 
@@ -718,9 +767,9 @@ one remains available on that reminder.
 
 ### 8.4 Draft lifetime across Activity recreation
 
-Propose that an **unconfirmed draft is discarded** on Activity recreation,
-while a **confirmed** value remains persisted and survives recreation and
-restart.
+The accepted contract specifies that an **unconfirmed draft is discarded** on
+Activity recreation, while a **confirmed** value remains persisted and survives
+recreation and restart. This is recorded as accepted decision 6 in §12.
 
 The observed `ReminderScreen` uses `remember`, not `rememberSaveable`, for
 `editBuffer`. Consistent with that observed behavior, the time draft should
@@ -739,7 +788,7 @@ blindly through the device's default timezone. A blind conversion through the
 device timezone can shift the selected calendar day, for example in zones
 west of UTC.
 
-The proposed reading rule is: derive the calendar date from the picker's
+The accepted reading rule is: derive the calendar date from the picker's
 millisecond value under a UTC calendar-date convention, and combine it with
 the picker's hour and minute fields to build the `LocalDateTime`. The exact
 API mapping against the resolved Material3 version is a Phase-4
@@ -747,8 +796,8 @@ implementation detail to be confirmed against the pinned dependency.
 
 ### 8.6 Initial display format
 
-Propose a deterministic, locale-independent numeric display format for a
-present time:
+The accepted initial display format is a deterministic, locale-independent
+numeric display format for a present time:
 
 ```text
 yyyy-MM-dd HH:mm
@@ -761,8 +810,9 @@ persisted wire literal `uuuu-MM-dd'T'HH:mm` (§2.4): the display format may be
 refined during Phase 4 without changing the persisted representation, and the
 persisted representation may not change to satisfy a display preference.
 
-The display format is a candidate decision subject to maintainer acceptance
-and is recorded as an open review question in §12.
+The display format is an **accepted decision**, not a candidate awaiting
+maintainer selection. It is recorded as accepted decision 7 in §12 and is
+frozen for Phase 4 implementation.
 
 ### 8.7 Prohibited in the UI boundary
 
@@ -861,59 +911,137 @@ Priority: HIGH.
 
 This is a delivery-infrastructure task, separate from reminder-time product
 functionality. The existing native `stage → commit → push → verify_ci`
-implementation is expected to be used for the first architecture-document
-landing if this candidate is accepted.
+implementation was used for the first architecture-document landing, and that
+landing **has completed successfully**. The transaction identifier, the
+receipts, the terminal authorization state, the terminal verified state, and
+the hard-stop reason are recorded in §13.1.
 
-The maintainer has independently verified local `gh` availability and a
-successful GitHub Actions API response. That verification is maintainer
-evidence; it was not performed or re-verified by the authoring Build.
+The maintainer independently verified local `gh` availability and a successful
+GitHub Actions API response. That verification is maintainer evidence; it was
+not performed or re-verified by the authoring Build.
 
-No nudge-land code change and no OpenCode harness change is authorized by
-this document or by the authoring Build. No nudge-land transaction has been
-created.
+No nudge-land code change and no OpenCode harness change is authorized by this
+document or by the authoring Build. The native nudge-land transaction was
+created and executed by the maintainer, not by the authoring Build; the
+authoring Build created no nudge-land transaction. The receipts in §13.1 are
+maintainer-supplied evidence, not direct observations of the authoring Build.
 
-## 12. Open Review Questions
+## 12. Accepted Decisions
 
-These are the decisions this candidate proposes that require maintainer
-acceptance before they become frozen:
+This section was titled "Open Review Questions" in the reviewed candidate
+document. The maintainer formally accepted the Phase-1 architecture on
+2026-11-04. The ten questions below are now **accepted decisions**: they are
+frozen, they are normative for Phase 2, Phase 3, and Phase 4 implementation,
+and they are no longer outstanding choices. Their technical rationale and
+their source sections are preserved unchanged.
 
-1. **Accepted calendar-year bounds.** Accept `0001`–`9999` inclusive as the
-   accepted range, with fixed-width four-digit years on the wire (§2.2)?
-2. **Canonical persisted literal.** Accept `uuuu-MM-dd'T'HH:mm` with an
-   explicitly constructed `ResolverStyle.STRICT` formatter as the frozen wire
-   literal (§2.4, §2.5)?
-3. **Minute precision with rejection, not truncation.** Accept rejection of
-   any value whose second or nano component is non-zero (§2.1)?
-4. **NWR3 and the reserved absent marker.** Accept `NWR3` as the v0.1.5
-   format and `-` as the absent-time literal (§4)?
-5. **Downgrade is not a supported path.** Accept that a v0.1.4 application
-   cannot read an NWR3 file, and that only backward loading is promised
-   (§5.3)?
-6. **Draft lifetime.** Accept that an unconfirmed draft is discarded on
-   Activity recreation while a confirmed value persists (§8.4)?
-7. **Initial display format.** Accept `yyyy-MM-dd HH:mm` as the deterministic
-   initial display format, distinct from the persisted literal (§8.6)?
-8. **Missing-id precedence.** Accept that a missing id returns `false` even
-   when the supplied time is invalid, because ID lookup precedes time
-   validation (§3.2)?
-9. **Controller exception type.** Accept `IllegalArgumentException` for an
-   invalid caller-supplied time and `IllegalStateException` for malformed
-   persisted content (§2.7)?
-10. **Non-atomic write is a documented limitation.** Accept that no
-    crash-safe atomic replacement is promised and that the guarantee offered
-    is validation-before-write only (§4.6)?
+1. **Accepted calendar-year bounds.** The accepted range is `0001`–`9999`
+   inclusive, with fixed-width four-digit years on the wire (§2.2).
+2. **Canonical persisted literal.** The frozen wire literal is
+   `uuuu-MM-dd'T'HH:mm`, with an explicitly constructed
+   `ResolverStyle.STRICT` formatter (§2.4, §2.5).
+3. **Minute precision with rejection, not truncation.** Any value whose second
+   or nano component is non-zero is rejected (§2.1).
+4. **NWR3 and the reserved absent marker.** `NWR3` is the v0.1.5 format, and
+   `-` is the absent-time literal (§4).
+5. **Downgrade is not a supported path.** A v0.1.4 application cannot read an
+   NWR3 file, and only backward loading is promised (§5.3).
+6. **Draft lifetime.** An unconfirmed draft is discarded on Activity recreation,
+   while a confirmed value persists (§8.4).
+7. **Initial display format.** `yyyy-MM-dd HH:mm` is the deterministic initial
+   display format, distinct from the persisted literal (§8.6).
+8. **Missing-id precedence.** A missing id returns `false` even when the
+   supplied time is invalid, because ID lookup precedes time validation (§3.2).
+9. **Controller exception type.** `IllegalArgumentException` is raised for an
+   invalid caller-supplied time, and `IllegalStateException` for malformed
+   persisted content (§2.7).
+10. **Non-atomic write is a documented limitation.** No crash-safe atomic
+    replacement is promised; the guarantee offered is validation-before-write
+    only (§4.6).
 
-## 13. Document Status
+## 13. Document Status and Acceptance Evidence
 
-This document is a **candidate awaiting independent review and maintainer
-acceptance**.
+**Document status: accepted and frozen** — formally accepted by the maintainer
+on 2026-11-04.
 
-* It does not formally accept Phase 1.
-* It does not change the Phase 0-recorded persistence decision from
-  `PHASE_1_REQUIRED`; that decision changes only upon acceptance.
-* It implements nothing.
-* It authorizes no staging, commit, push, branch operation, pull request,
-  tag, release, dependency change, configuration change, or network access.
-* It does not claim a commit, a push, an exact-head CI result, or a native
-  nudge-land transaction. Landing evidence is open for a separately
-  authorized, append-only reconciliation.
+### 13.1 Acceptance evidence
+
+The maintainer formally accepted this Phase-1 architecture on **2026-11-04**,
+following independent review, source correction, successful native nudge-land
+delivery, and hosted exact-head CI.
+
+Accepted architecture commit:
+
+`8f811b61328ff24fb6b8db1589316a81b30450bb`
+
+Parent commit:
+
+`3605975ee5bd00c7c7837556dee8d2c0d2ca4fe2`
+
+Commit subject:
+
+`docs: define v0.1.5 reminder-time architecture`
+
+Native nudge-land transaction:
+
+| Field | Value |
+|---|---|
+| Transaction authorization ID | `nudgewhen-v0.1.5-phase1-architecture-first-native-land-001` |
+| Authorization digest | `cc5381040794572f98999279955dbff0768dc775a6831fc5f8ea4028b340a379` |
+| Repository identity | `github:franchoy/nudgewhen` |
+| Stage | `S0_NOT_STARTED → S4_STAGED` — Success |
+| Commit | `S4_STAGED → S6_COMMITTED` — Success |
+| Push | `S6_COMMITTED → S8_PUSHED` — Success |
+| VerifyCI | `S8_PUSHED → S10_LANDED` — Success |
+| Terminal authorization state | `LANDED` |
+| Terminal verified state | `S10_LANDED` |
+| Hard-stop reason | `null` |
+
+The transaction authorization is single-use and is not reused by any later
+phase, step, or Build.
+
+Hosted exact-head CI for the accepted commit:
+
+| Field | Value |
+|---|---|
+| Workflow | `CI` |
+| Run | `41907797725` |
+| Job | `126847010004` |
+| Event | `push` |
+| Branch | `release/v0.1.5` |
+| Commit | `8f811b61328ff24fb6b8db1589316a81b30450bb` |
+| Conclusion | `success` |
+| Python regressions | 245 tests / OK |
+| Full clean validation | 41 passed / 0 failed / 0 skipped |
+| Release gate | `SATISFIED` |
+
+**Evidence provenance.** The native transaction receipts and the hosted CI
+results above are maintainer-supplied evidence, independently verified by the
+maintainer's external reviewer using GitHub. They were not produced by an
+OpenCode agent in this repository, and they are not direct observations of the
+authoring Build.
+
+### 13.2 Status distinctions
+
+- **Architecture accepted and frozen.** The maintainer formally accepted this
+  document's Phase-1 architecture on 2026-11-04, including the ten decisions
+  in §12. The accepted architecture is normative for Phase 2, Phase 3, and
+  Phase 4 implementation, and it is already landed at commit
+  `8f811b61328ff24fb6b8db1589316a81b30450bb`.
+- **Repository lifecycle closure synchronization prepared, not yet landed.** The
+  tracked phase list, the machine-readable release contract, and the
+  current-facing tracked governance are synchronized by a prepared local
+  closure candidate that records Phase 1 as `Complete`. Committing and
+  publishing that candidate is a separate, separately authorized repository
+  action; this document does not claim it as landed. The machine-readable
+  release contract carries no persistence-format decision field, and the
+  historical Phase 0 `PHASE_1_REQUIRED` decision remains preserved in the
+  release charter and in `AGENTS.md`.
+- **Phase 2 implementation not started.** No reminder-time product code, no
+  production test, and no Compose change has been produced. Phase 2 — Reminder
+  Time Domain Implementation & JVM Proof — is the next implementation phase
+  and has not started.
+
+This document authorizes no staging, commit, push, branch operation, pull
+request, tag, release, dependency change, configuration change, or network
+access, and it implements nothing.

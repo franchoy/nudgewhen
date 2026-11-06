@@ -1,6 +1,6 @@
 # Phase List — NudgeWhen v0.1.5
 
-**Document status:** v0.1.5 current lifecycle authority — Phases 0 through 0 complete (formally accepted on 2026-10-18); v0.1.5 — **Set Reminder Time** — is the active release train on branch `release/v0.1.5`; Phase 0 — Release Definition & Bootstrap — is `Complete` / formally accepted on 2026-10-18; Phase 1 — Reminder Time Architecture Contract — is `Planned` / not started; Phase 2 — Reminder Time Domain Implementation & JVM Proof — is `Planned` / not started; Phase 3 — Persistence Compatibility / Migration Proof — is `Planned` / not started; Phase 4 — Minimal Compose Integration — is `Planned` / not started; Phase 5 — Integration & Device Validation — is `Planned` / not started; Phase 6 — Integrated Audit & Reconciliation — is `Planned` / not started; Phase 7 — Full Pre-Release Gate — is `Planned` / not started; phase model: `1 Complete / 7 Planned`; Phase 0 formal acceptance is supported by exact-head CI run `39114566018` for `2775cf64069a84adebde36366cddbee5459e67c5`. The historical v0.1.4 — **Mark Reminder Done** — release remains the latest stable published release and is preserved as historical evidence. v0.1.5 is **not** merged, **not** tagged, **not** published, and is not release-ready. This document is normative for the eight-phase ordering and per-phase scope.
+**Document status:** v0.1.5 current lifecycle authority — Phases 0 through 1 complete (formally accepted on 2026-10-18 and on 2026-11-04 respectively); v0.1.5 — **Set Reminder Time** — is the active release train on branch `release/v0.1.5`; Phase 0 — Release Definition & Bootstrap — is `Complete` / formally accepted on 2026-10-18; Phase 1 — Reminder Time Architecture Contract — is `Complete` / formally accepted on 2026-11-04; Phase 2 — Reminder Time Domain Implementation & JVM Proof — is `Planned` / not started; Phase 3 — Persistence Compatibility / Migration Proof — is `Planned` / not started; Phase 4 — Minimal Compose Integration — is `Planned` / not started; Phase 5 — Integration & Device Validation — is `Planned` / not started; Phase 6 — Integrated Audit & Reconciliation — is `Planned` / not started; Phase 7 — Full Pre-Release Gate — is `Planned` / not started; phase model: `2 Complete / 6 Planned`; Phase 0 formal acceptance is supported by exact-head CI run `39114566018` for `2775cf64069a84adebde36366cddbee5459e67c5`; Phase 1 formal acceptance is supported by exact-head CI run `41907797725` for `8f811b61328ff24fb6b8db1589316a81b30450bb`; the accepted v0.1.5 persistence representation is `NWR3` with NWR1/NWR2 backward loading and lazy same-file migration; Phase 2 implementation is `NOT_STARTED`. The historical v0.1.4 — **Mark Reminder Done** — release remains the latest stable published release and is preserved as historical evidence. v0.1.5 is **not** merged, **not** tagged, **not** published, and is not release-ready. This document is normative for the eight-phase ordering and per-phase scope.
 
 ## Phase 0 — Release Definition & Bootstrap
 
@@ -25,13 +25,15 @@ Complete
 
 ### Phase 0 formal acceptance
 
-The maintainer accepted Phase 0 on 2026-10-18 after closure commit `2775cf64069a84adebde36366cddbee5459e67c5` was published and exact-head `CI` run `39114566018` / `validate` job `117637601837` succeeded. Python regression: 245 tests / OK; local and hosted clean validation: 41 passed, 0 failed, 0 skipped; `release_gate=SATISFIED`. The Phase 0 bootstrap exception termination is recorded in the terminal governance synchronization. Phase 1 remains `Planned` / `NOT_STARTED`; no Phase 1 work is authorized by this acceptance.
+The maintainer accepted Phase 0 on 2026-10-18 after closure commit `2775cf64069a84adebde36366cddbee5459e67c5` was published and exact-head `CI` run `39114566018` / `validate` job `117637601837` succeeded. Python regression: 245 tests / OK; local and hosted clean validation: 41 passed, 0 failed, 0 skipped; `release_gate=SATISFIED`. The Phase 0 bootstrap exception termination is recorded in the terminal governance synchronization. Phase 1 remains `Planned` / `NOT_STARTED`; no Phase 1 work is authorized by this acceptance. That Phase-1 status is the state as of the 2026-10-18 Phase 0 acceptance and is preserved as historical evidence; Phase 1 was subsequently completed and formally accepted on 2026-11-04, as recorded in the Phase 1 section below.
 
 ## Phase 1 — Reminder Time Architecture Contract
 
 Phase 1 owns the v0.1.5 reminder-time architecture contract. It decides the exact representation of an optional persistent reminder-time state on top of the existing v0.1.4 NWR2 reminder record while safely loading existing v0.1.4 data and preserving deterministic whole-list semantics. Phase 1 also decides the controller API for setting, changing, and clearing reminder time, the exact-id lookup contract, the UI affordance boundary, and any buffer behavior across Activity recreation. Phase 1 also evaluates and freezes the v0.1.5 persistence-format decision; Phase 0 records that decision as `PHASE_1_REQUIRED` and does not pre-select it.
 
 Phase 1 is architecture-only and produces no product code, no production tests, and no Compose changes. Phase 1 forbids encoding reminder time inside reminder text, inside reminder id, or inside reminder done state. Phase 1 must not implement reminder time; Phase 2 owns the implementation and JVM proof.
+
+Phase 1 is `Complete`. The accepted architecture contract is `docs/releases/v0.1.5/reminder-time-architecture.md`. The maintainer-accepted v0.1.5 persistence representation is **`NWR3`**, with NWR1/NWR2 backward loading and lazy same-file migration. That accepted Phase 1 decision supersedes the historical Phase 0 placeholder value `PHASE_1_REQUIRED` for the active lifecycle; the historical Phase 0 value remains recorded in the release charter and in `AGENTS.md` as historical evidence.
 
 Phase 1 non-goals:
 
@@ -46,7 +48,13 @@ Phase 1 non-goals:
 
 ### Status
 
-Planned
+Complete
+
+### Phase 1 formal acceptance
+
+The maintainer formally accepted Phase 1 on 2026-11-04 after the accepted architecture commit `8f811b61328ff24fb6b8db1589316a81b30450bb` (parent `3605975ee5bd00c7c7837556dee8d2c0d2ca4fe2`; subject `docs: define v0.1.5 reminder-time architecture`) was published through the native nudge-land transaction `nudgewhen-v0.1.5-phase1-architecture-first-native-land-001`, whose terminal state was `LANDED / S10_LANDED`, and exact-head `CI` run `41907797725` / job `126847010004` concluded `success`. Python regression: 245 tests / OK; hosted clean validation: 41 passed, 0 failed, 0 skipped; `release_gate=SATISFIED`. The accepted architecture and its ten decisions are frozen and are normative for Phase 2, Phase 3, and Phase 4 implementation. Phase 1 acceptance authorizes no product implementation: Phase 2 — Reminder Time Domain Implementation & JVM Proof — remains `Planned` / `NOT_STARTED` and requires separate explicit maintainer authorization.
+
+The native nudge-land receipts and the hosted CI run, job, conclusion, test counts, and release-gate value are maintainer-supplied external evidence that was previously reviewed outside this repository. They are not new network observations by any OpenCode agent.
 
 ## Phase 2 — Reminder Time Domain Implementation & JVM Proof
 
