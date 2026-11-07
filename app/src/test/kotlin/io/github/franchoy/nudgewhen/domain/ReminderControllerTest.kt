@@ -2,9 +2,11 @@ package io.github.franchoy.nudgewhen.domain
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertSame
 import org.junit.Assert.assertThrows
 import org.junit.Test
+import java.time.LocalDateTime
 
 class ReminderControllerTest {
 
@@ -722,5 +724,319 @@ class ReminderControllerTest {
         assertEquals(true, editResult)
         assertEquals("new text", controller.reminders[0].text)
         assertEquals(true, controller.reminders[0].done)
+    }
+
+    @Test
+    fun T_01_setTime_sets_a_valid_time_on_the_target_reminder() {
+        val initial = listOf(
+            Reminder("a", "first"),
+            Reminder("b", "second"),
+        )
+        val store = FakeReminderStore(initial)
+        val controller = ReminderController(store) { "x" }
+        val time = LocalDateTime.of(2026, 1, 1, 9, 30)
+        val result = controller.setTime("b", time)
+        assertEquals(true, result)
+        assertEquals(time, controller.reminders[1].time)
+        assertNull(controller.reminders[0].time)
+    }
+
+    @Test
+    fun T_02_setTime_replaces_an_existing_time() {
+        val initial = listOf(
+            Reminder("a", "first", time = LocalDateTime.of(2026, 1, 1, 9, 30)),
+        )
+        val store = FakeReminderStore(initial)
+        val controller = ReminderController(store) { "x" }
+        val replacement = LocalDateTime.of(2026, 6, 15, 18, 45)
+        val result = controller.setTime("a", replacement)
+        assertEquals(true, result)
+        assertEquals(replacement, controller.reminders[0].time)
+        assertEquals(1, store.saveCallCount)
+    }
+
+    @Test
+    fun T_03_setTime_clears_a_non_null_time() {
+        val initial = listOf(
+            Reminder("a", "first", time = LocalDateTime.of(2026, 1, 1, 9, 30)),
+        )
+        val store = FakeReminderStore(initial)
+        val controller = ReminderController(store) { "x" }
+        val result = controller.setTime("a", null)
+        assertEquals(true, result)
+        assertNull(controller.reminders[0].time)
+        assertEquals(1, store.saveCallCount)
+    }
+
+    @Test
+    fun T_04_setTime_clearing_an_already_null_time_returns_true_without_saving() {
+        val initial = listOf(Reminder("a", "first"))
+        val store = FakeReminderStore(initial)
+        val controller = ReminderController(store) { "x" }
+        val result = controller.setTime("a", null)
+        assertEquals(true, result)
+        assertEquals(0, store.saveCallCount)
+        assertEquals(0, store.savedSnapshots.size)
+        assertEquals(initial, controller.reminders)
+    }
+
+    @Test
+    fun T_05_setTime_unchanged_valid_time_returns_true_without_saving() {
+        val initial = listOf(
+            Reminder("a", "first", time = LocalDateTime.of(2026, 1, 1, 9, 30)),
+        )
+        val store = FakeReminderStore(initial)
+        val controller = ReminderController(store) { "x" }
+        val result = controller.setTime("a", LocalDateTime.of(2026, 1, 1, 9, 30))
+        assertEquals(true, result)
+        assertEquals(0, store.saveCallCount)
+        assertEquals(0, store.savedSnapshots.size)
+        assertEquals(initial, controller.reminders)
+    }
+
+    @Test
+    fun T_06_setTime_missing_id_returns_false_without_saving() {
+        val initial = listOf(Reminder("a", "first"))
+        val store = FakeReminderStore(initial)
+        val controller = ReminderController(store) { "x" }
+        val result = controller.setTime("nonexistent", LocalDateTime.of(2026, 1, 1, 9, 30))
+        assertEquals(false, result)
+        assertEquals(0, store.saveCallCount)
+        assertEquals(0, store.savedSnapshots.size)
+        assertEquals(initial, controller.reminders)
+    }
+
+    @Test
+    fun T_07_setTime_missing_id_with_invalid_time_returns_false_without_validation() {
+        val initial = listOf(Reminder("a", "first"))
+        val store = FakeReminderStore(initial)
+        val controller = ReminderController(store) { "x" }
+        val result = controller.setTime("nonexistent", LocalDateTime.of(2026, 1, 1, 9, 30, 30))
+        assertEquals(false, result)
+        assertEquals(0, store.saveCallCount)
+        assertEquals(0, store.savedSnapshots.size)
+        assertEquals(initial, controller.reminders)
+    }
+
+    @Test
+    fun T_08_setTime_invalid_non_null_time_throws_IllegalArgumentException() {
+        val initial = listOf(Reminder("a", "first"))
+        val store = FakeReminderStore(initial)
+        val controller = ReminderController(store) { "x" }
+        assertThrows(IllegalArgumentException::class.java) {
+            controller.setTime("a", LocalDateTime.of(2026, 1, 1, 9, 30, 30))
+        }
+        assertEquals(0, store.saveCallCount)
+        assertEquals(initial, controller.reminders)
+    }
+
+    @Test
+    fun T_09_setTime_rejects_a_non_zero_second() {
+        val initial = listOf(Reminder("a", "first"))
+        val store = FakeReminderStore(initial)
+        val controller = ReminderController(store) { "x" }
+        assertThrows(IllegalArgumentException::class.java) {
+            controller.setTime("a", LocalDateTime.of(2026, 1, 1, 9, 30, 1))
+        }
+        assertEquals(0, store.saveCallCount)
+        assertEquals(initial, controller.reminders)
+    }
+
+    @Test
+    fun T_10_setTime_rejects_a_non_zero_nanosecond() {
+        val initial = listOf(Reminder("a", "first"))
+        val store = FakeReminderStore(initial)
+        val controller = ReminderController(store) { "x" }
+        assertThrows(IllegalArgumentException::class.java) {
+            controller.setTime("a", LocalDateTime.of(2026, 1, 1, 9, 30, 0, 1))
+        }
+        assertEquals(0, store.saveCallCount)
+        assertEquals(initial, controller.reminders)
+    }
+
+    @Test
+    fun T_11_setTime_rejects_year_zero() {
+        val initial = listOf(Reminder("a", "first"))
+        val store = FakeReminderStore(initial)
+        val controller = ReminderController(store) { "x" }
+        assertThrows(IllegalArgumentException::class.java) {
+            controller.setTime("a", LocalDateTime.of(0, 1, 1, 0, 0))
+        }
+        assertEquals(0, store.saveCallCount)
+        assertEquals(initial, controller.reminders)
+    }
+
+    @Test
+    fun T_12_setTime_rejects_year_10000() {
+        val initial = listOf(Reminder("a", "first"))
+        val store = FakeReminderStore(initial)
+        val controller = ReminderController(store) { "x" }
+        assertThrows(IllegalArgumentException::class.java) {
+            controller.setTime("a", LocalDateTime.of(10000, 1, 1, 0, 0))
+        }
+        assertEquals(0, store.saveCallCount)
+        assertEquals(initial, controller.reminders)
+    }
+
+    @Test
+    fun T_13_setTime_accepts_year_one_and_year_9999() {
+        val store = FakeReminderStore(listOf(Reminder("a", "first")))
+        val controller = ReminderController(store) { "x" }
+        val yearOne = LocalDateTime.of(1, 1, 1, 0, 0)
+        assertEquals(true, controller.setTime("a", yearOne))
+        assertEquals(yearOne, controller.reminders[0].time)
+        val yearNineThousandNineHundredNinetyNine = LocalDateTime.of(9999, 12, 31, 23, 59)
+        assertEquals(true, controller.setTime("a", yearNineThousandNineHundredNinetyNine))
+        assertEquals(yearNineThousandNineHundredNinetyNine, controller.reminders[0].time)
+        assertEquals(2, store.saveCallCount)
+    }
+
+    @Test
+    fun T_14_setTime_rejects_an_invalid_supplied_time_equal_to_an_invalid_stored_time() {
+        val invalid = LocalDateTime.of(2026, 1, 1, 9, 30, 30)
+        val initial = listOf(Reminder("a", "first", time = invalid))
+        val store = FakeReminderStore(initial)
+        val controller = ReminderController(store) { "x" }
+        assertThrows(IllegalArgumentException::class.java) {
+            controller.setTime("a", invalid)
+        }
+        assertEquals(0, store.saveCallCount)
+        assertEquals(initial, controller.reminders)
+    }
+
+    @Test
+    fun T_15_setTime_effective_change_saves_exactly_once_with_the_complete_candidate() {
+        val initial = listOf(
+            Reminder("a", "first"),
+            Reminder("b", "second"),
+            Reminder("c", "third"),
+        )
+        val store = FakeReminderStore(initial)
+        val controller = ReminderController(store) { "x" }
+        val time = LocalDateTime.of(2026, 1, 1, 9, 30)
+        controller.setTime("b", time)
+        val expected = listOf(
+            Reminder("a", "first"),
+            Reminder("b", "second", time = time),
+            Reminder("c", "third"),
+        )
+        assertEquals(1, store.saveCallCount)
+        assertEquals(1, store.savedSnapshots.size)
+        assertEquals(expected, store.savedSnapshots[0])
+        assertEquals(expected, controller.reminders)
+    }
+
+    @Test
+    fun T_16_setTime_old_state_is_observable_during_the_save_callback() {
+        val initial = listOf(
+            Reminder("a", "first"),
+            Reminder("b", "second"),
+            Reminder("c", "third"),
+        )
+        val store = FakeReminderStore(initial)
+        val controller = ReminderController(store) { "x" }
+        var stateDuringSave: List<Reminder>? = null
+        store.saveCallback = { _ ->
+            stateDuringSave = controller.reminders.toList()
+        }
+        val result = controller.setTime("b", LocalDateTime.of(2026, 1, 1, 9, 30))
+        assertEquals(true, result)
+        assertNotNull(stateDuringSave)
+        assertEquals(initial, stateDuringSave!!)
+        assertEquals(LocalDateTime.of(2026, 1, 1, 9, 30), controller.reminders[1].time)
+    }
+
+    @Test
+    fun T_17_setTime_save_failure_propagates_the_same_exception_and_preserves_state() {
+        val initial = listOf(Reminder("a", "existing"))
+        val store = FakeReminderStore(initial)
+        val controller = ReminderController(store) { "x" }
+        val original = IllegalStateException("save failure")
+        store.saveException = original
+        val thrown = assertThrows(IllegalStateException::class.java) {
+            controller.setTime("a", LocalDateTime.of(2026, 1, 1, 9, 30))
+        }
+        assertSame(original, thrown)
+        assertEquals(initial, controller.reminders)
+    }
+
+    @Test
+    fun T_18_setTime_never_invokes_idGenerator() {
+        val initial = listOf(Reminder("a", "first"))
+        val store = FakeReminderStore(initial)
+        var idCalls = 0
+        val controller = ReminderController(store) {
+            idCalls += 1
+            "unused-$idCalls"
+        }
+        controller.setTime("a", LocalDateTime.of(2026, 1, 1, 9, 30))          // effective change
+        controller.setTime("a", LocalDateTime.of(2026, 1, 1, 9, 30))          // unchanged
+        controller.setTime("a", null)                                         // effective clear
+        controller.setTime("nonexistent", LocalDateTime.of(2026, 1, 1, 9, 30)) // missing id
+        assertEquals(0, idCalls)
+    }
+
+    @Test
+    fun T_19_setTime_preserves_id_text_done_size_index_and_neighbors() {
+        val initial = listOf(
+            Reminder("a", "first"),
+            Reminder("b", "second", done = true),
+            Reminder("c", "third"),
+            Reminder("d", "fourth"),
+        )
+        val store = FakeReminderStore(initial)
+        val controller = ReminderController(store) { "x" }
+        val time = LocalDateTime.of(2026, 1, 1, 9, 30)
+        val result = controller.setTime("b", time)
+        assertEquals(true, result)
+        val reminders = controller.reminders
+        assertEquals(4, reminders.size)
+        assertEquals(listOf("a", "b", "c", "d"), reminders.map { it.id })
+        assertEquals("b", reminders[1].id)
+        assertEquals("second", reminders[1].text)
+        assertEquals(true, reminders[1].done)
+        assertEquals(time, reminders[1].time)
+        assertEquals("first", reminders[0].text)
+        assertEquals("third", reminders[2].text)
+        assertEquals("fourth", reminders[3].text)
+        assertNull(reminders[0].time)
+        assertNull(reminders[2].time)
+        assertNull(reminders[3].time)
+    }
+
+    @Test
+    fun T_20_setTime_composes_with_create_remove_edit_and_setDone() {
+        val initial = listOf(
+            Reminder("a", "first", time = LocalDateTime.of(2026, 1, 1, 9, 30)),
+        )
+        val store = FakeReminderStore(initial)
+        val controller = ReminderController(store) { "new-id" }
+        val time = LocalDateTime.of(2026, 1, 1, 9, 30)
+
+        // create: a newly created reminder carries no time
+        controller.create("second")
+        assertEquals(2, controller.reminders.size)
+        assertNull(controller.reminders[1].time)
+
+        // edit preserves an existing time
+        assertEquals(true, controller.edit("a", "first-edited"))
+        assertEquals(time, controller.reminders[0].time)
+
+        // setDone preserves an existing time
+        assertEquals(true, controller.setDone("a", true))
+        assertEquals(time, controller.reminders[0].time)
+        assertEquals(true, controller.reminders[0].done)
+
+        // setTime preserves the text and the done state
+        val replacement = LocalDateTime.of(2026, 2, 2, 8, 15)
+        assertEquals(true, controller.setTime("a", replacement))
+        assertEquals(replacement, controller.reminders[0].time)
+        assertEquals("first-edited", controller.reminders[0].text)
+        assertEquals(true, controller.reminders[0].done)
+
+        // remove removes the reminder that carried the time
+        controller.remove("a")
+        assertEquals(1, controller.reminders.size)
+        assertEquals("new-id", controller.reminders[0].id)
     }
 }
