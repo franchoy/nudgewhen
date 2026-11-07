@@ -8,12 +8,16 @@ import java.nio.CharBuffer
 import java.nio.charset.CharacterCodingException
 import java.nio.charset.CodingErrorAction
 import java.nio.charset.StandardCharsets
+import java.time.DateTimeException
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.time.format.ResolverStyle
 import java.util.Base64
 
 /**
  * File-backed [ReminderStore] using a line-oriented wire format.
  *
- * Two header versions are supported on load:
+ * Three header versions are supported on load:
  *
  *   NWR1
  *   <id><TAB><base64url-encoded-utf-8-text>
@@ -23,32 +27,59 @@ import java.util.Base64
  *   <id><TAB><base64url-encoded-utf-8-text><TAB><done-literal>
  *   ...
  *
+ *   NWR3
+ *   <id><TAB><base64url-encoded-utf-8-text><TAB><done-literal><TAB><time-literal>
+ *   ...
+ *
  * `done-literal` is `0` for `done = false` and `1` for `done = true`.
+ *
+ * `time-literal` is `-` for an absent reminder time, or a minute-precision
+ * local wall-clock timestamp written as `uuuu-MM-dd'T'HH:mm`, for example
+ * `2024-01-31T08:30`.
  *
  * Records are separated by a single LF (`\n`). There is no trailing LF after
  * the final record, and `save(emptyList())` produces exactly the header line
- * `NWR2`. ID grammar rules and Base64URL-with-padding are used both when
+ * `NWR3`. ID grammar rules and Base64URL-with-padding are used both when
  * loading and when saving.
  *
- * NWR1 records are loaded with `done = false`; NWR1 is read-only. The first
- * later successful ordinary `save` rewrites the same file as NWR2 (lazy
- * in-place format migration). No migration flag and no load-time rewrite
- * are performed.
+ * Backward compatibility on load:
+ * - NWR1 records load with `done = false` and `time = null`.
+ * - NWR2 records load with their stored `done` value and `time = null`.
+ * - NWR3 records load with their stored `done` value and their stored time.
  *
- * Headers other than `NWR1` and `NWR2` are rejected with
+ * NWR1 and NWR2 are read-only formats: loading never rewrites the file. The
+ * first later successful persistence-changing save rewrites the same file as
+ * NWR3 (lazy in-place format migration). No migration flag, no separate
+ * migration file and no load-time rewrite are performed.
+ *
+ * Headers other than `NWR1`, `NWR2` and `NWR3` are rejected with
  * `IllegalStateException`.
+ *
+ * Date/time validation:
+ * - One explicitly constructed strict formatter is used in both directions:
+ *   `DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm").withResolverStyle(ResolverStyle.STRICT)`.
+ * - A loaded time literal is parsed with that formatter, is rejected when the
+ *   year is outside `1..9999` or when seconds/nanoseconds are non-zero, and
+ *   is then re-serialized with the very same formatter. The re-serialized
+ *   text must be exactly equal to the original literal, so only canonical
+ *   timestamps are accepted.
+ * - A save-side time is accepted when it is `null`, when seconds and
+ *   nanoseconds are zero and when the year is inside `1..9999`; otherwise an
+ *   `IllegalArgumentException` is raised.
+ * - Malformed persisted data raises `IllegalStateException`.
  *
  * Validation correctness boundary:
  * - `save` validates the complete input list before opening/truncating the
  *   target file, so a failed validation cannot destroy an existing valid
  *   file on disk.
  * - `save` serializes the complete output in memory before writing.
- * - NWR1-on-disk lazy migration to NWR2 is provided by controller-level
- *   no-save paths (same-state `setDone` and normalized-identical `edit`),
- *   which do not invoke `save`. The first successful `save` rewrites the
- *   complete file as NWR2.
+ * - Legacy-format lazy migration to NWR3 is provided by controller-level
+ *   no-save paths (same-state `setDone`, same-state `setTime` and
+ *   normalized-identical `edit`), which do not invoke `save`. The first
+ *   successful persistence-changing save rewrites the complete file as NWR3.
  * - This implementation does not promise preservation of old on-disk bytes
- *   after an actual filesystem I/O failure during write.
+ *   after an actual filesystem I/O failure during write, and it does not
+ *   claim crash-safe atomic filesystem replacement.
  */
 class FileReminderStore(
     private val file: File,
@@ -72,7 +103,7 @@ class FileReminderStore(
         }
 
         val header = lines[0]
-        if (header != HEADER_NWR1 && header != HEADER_NWR2) {
+        if (header != HEADER_NWR1 && header != HEADER_NWR2 && header != HEADER_NWR3) {
             throw IllegalStateException("Unsupported persistence file header")
         }
 
@@ -93,8 +124,31 @@ class FileReminderStore(
             val id: String
             val encodedText: String
             val doneLiteral: String?
+            val timeLiteral: String?
 
-            if (header == HEADER_NWR2) {
+            if (header == HEADER_NWR3) {
+                val secondTab = record.indexOf('\t', firstTab + 1)
+                if (secondTab < 0) {
+                    throw IllegalStateException(
+                        "NWR3 reminder record missing done field TAB separator",
+                    )
+                }
+                val thirdTab = record.indexOf('\t', secondTab + 1)
+                if (thirdTab < 0) {
+                    throw IllegalStateException(
+                        "NWR3 reminder record missing time field TAB separator",
+                    )
+                }
+                if (record.indexOf('\t', thirdTab + 1) >= 0) {
+                    throw IllegalStateException(
+                        "NWR3 reminder record with extra TAB separator",
+                    )
+                }
+                id = record.substring(0, firstTab)
+                encodedText = record.substring(firstTab + 1, secondTab)
+                doneLiteral = record.substring(secondTab + 1, thirdTab)
+                timeLiteral = record.substring(thirdTab + 1)
+            } else if (header == HEADER_NWR2) {
                 val secondTab = record.indexOf('\t', firstTab + 1)
                 if (secondTab < 0) {
                     throw IllegalStateException(
@@ -109,6 +163,7 @@ class FileReminderStore(
                 id = record.substring(0, firstTab)
                 encodedText = record.substring(firstTab + 1, secondTab)
                 doneLiteral = record.substring(secondTab + 1)
+                timeLiteral = null
             } else {
                 if (record.indexOf('\t', firstTab + 1) >= 0) {
                     throw IllegalStateException("Reminder record with multiple TAB separators")
@@ -116,6 +171,7 @@ class FileReminderStore(
                 id = record.substring(0, firstTab)
                 encodedText = record.substring(firstTab + 1)
                 doneLiteral = null
+                timeLiteral = null
             }
 
             validateLoadedId(id)
@@ -132,7 +188,12 @@ class FileReminderStore(
                     "Invalid done literal for reminder id: $id",
                 )
             }
-            reminders.add(Reminder(id, decodedText, done))
+            val time: LocalDateTime? = when {
+                timeLiteral == null -> null
+                timeLiteral == ABSENT_TIME_LITERAL -> null
+                else -> parseLoadedTime(timeLiteral, id)
+            }
+            reminders.add(Reminder(id, decodedText, done, time))
         }
 
         return reminders
@@ -145,6 +206,7 @@ class FileReminderStore(
             if (!seenIds.add(reminder.id)) {
                 throw IllegalArgumentException("Duplicate reminder id: ${reminder.id}")
             }
+            validateSaveTime(reminder.time)
         }
 
         val encoded: ByteArray = serialize(reminders)
@@ -153,7 +215,7 @@ class FileReminderStore(
 
     private fun serialize(reminders: List<Reminder>): ByteArray {
         val builder = StringBuilder()
-        builder.append(HEADER_NWR2)
+        builder.append(HEADER_NWR3)
         for (reminder in reminders) {
             val textBytes = reminder.text.toByteArray(StandardCharsets.UTF_8)
             val encodedText = Base64.getUrlEncoder().encodeToString(textBytes)
@@ -163,6 +225,9 @@ class FileReminderStore(
             builder.append(encodedText)
             builder.append('\t')
             builder.append(if (reminder.done) "1" else "0")
+            builder.append('\t')
+            val time = reminder.time
+            builder.append(if (time == null) ABSENT_TIME_LITERAL else formatSaveTime(time))
         }
         return builder.toString().toByteArray(StandardCharsets.UTF_8)
     }
@@ -226,8 +291,71 @@ class FileReminderStore(
         }
     }
 
+    private fun validateSaveTime(time: LocalDateTime?) {
+        if (time == null) return
+
+        if (time.second != 0 || time.nano != 0) {
+            throw IllegalArgumentException(
+                "Reminder time must have minute precision: $time",
+            )
+        }
+
+        if (time.year < MIN_TIME_YEAR || time.year > MAX_TIME_YEAR) {
+            throw IllegalArgumentException(
+                "Reminder time year is outside the accepted bounds " +
+                    "$MIN_TIME_YEAR..$MAX_TIME_YEAR: $time",
+            )
+        }
+    }
+
+    private fun formatSaveTime(time: LocalDateTime): String = TIME_FORMATTER.format(time)
+
+    private fun parseLoadedTime(literal: String, id: String): LocalDateTime {
+        val parsed: LocalDateTime = try {
+            LocalDateTime.parse(literal, TIME_FORMATTER)
+        } catch (e: DateTimeException) {
+            throw IllegalStateException(
+                "Invalid time literal for reminder id: $id",
+                e,
+            )
+        }
+
+        if (parsed.year < MIN_TIME_YEAR || parsed.year > MAX_TIME_YEAR) {
+            throw IllegalStateException(
+                "Time literal year outside the accepted bounds for reminder id: $id",
+            )
+        }
+
+        if (parsed.second != 0 || parsed.nano != 0) {
+            throw IllegalStateException(
+                "Time literal with non-zero seconds or nanoseconds for reminder id: $id",
+            )
+        }
+
+        // Canonical-form gate: the parsed value is re-serialized with the very
+        // same strict formatter and the result must equal the original literal
+        // exactly. Any non-canonical spelling is rejected.
+        val canonical: String = TIME_FORMATTER.format(parsed)
+        if (canonical != literal) {
+            throw IllegalStateException(
+                "Non-canonical time literal for reminder id: $id",
+            )
+        }
+
+        return parsed
+    }
+
     companion object {
         const val HEADER_NWR1: String = "NWR1"
         const val HEADER_NWR2: String = "NWR2"
+        const val HEADER_NWR3: String = "NWR3"
+
+        private const val ABSENT_TIME_LITERAL: String = "-"
+        private const val MIN_TIME_YEAR: Int = 1
+        private const val MAX_TIME_YEAR: Int = 9999
+
+        private val TIME_FORMATTER: DateTimeFormatter = DateTimeFormatter
+            .ofPattern("uuuu-MM-dd'T'HH:mm")
+            .withResolverStyle(ResolverStyle.STRICT)
     }
 }
