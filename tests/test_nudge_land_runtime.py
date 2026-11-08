@@ -510,12 +510,26 @@ class TestWorktreeStatusParsing(unittest.TestCase):
         self.assertEqual(entries[0].path, "a.txt")
 
     def test_real_untracked_new_parsed(self) -> None:
-        self._commit("initial", {"a.txt": "a\n"})
+        self._commit(
+            "initial",
+            {
+                "a.txt": "a\n",
+                "tracked/domain/ReminderTest.kt": "existing\n",
+            },
+        )
         (pathlib.Path(self.tmp) / "new.txt").write_text("new\n", encoding="utf-8")
+        nested = pathlib.Path(self.tmp) / "tracked/ui/ReminderTimeUiTest.kt"
+        nested.parent.mkdir(parents=True)
+        nested.write_text("new test\n", encoding="utf-8")
+
         entries = runtime.capture_worktree_status(self.tmp)
-        self.assertEqual(len(entries), 1)
-        self.assertEqual(entries[0].status, runtime.STATUS_UNTRACKED_NEW)
-        self.assertEqual(entries[0].path, "new.txt")
+        self.assertEqual(
+            sorted((entry.status, entry.path) for entry in entries),
+            [
+                (runtime.STATUS_UNTRACKED_NEW, "new.txt"),
+                (runtime.STATUS_UNTRACKED_NEW, "tracked/ui/ReminderTimeUiTest.kt"),
+            ],
+        )
 
     def _record(self, xy: str, sub: str, path: str) -> bytes:
         # ``1 <XY> <sub> <mH> <mI> <mW> <hH> <hI> <path>\0``

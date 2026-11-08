@@ -896,8 +896,9 @@ def capture_worktree_status(
 ) -> list[WorktreeStatusEntry]:
     """Capture the worktree status and return parsed entries.
 
-    Uses ``git -C <worktree> status --porcelain=v2 -z --untracked-files=normal``
-    so the payload is NUL-delimited and machine-safe to parse.
+    Uses ``git -C <worktree> status --porcelain=v2 -z --untracked-files=all``
+    to enumerate individual files even inside entirely new untracked
+    directories. This preserves the exact-path Stage authorization check.
     """
     cwd = str(pathlib.Path(os.fspath(worktree)).resolve())
     runner_fn: ProcessRunner = runner if runner is not None else run_process
@@ -908,7 +909,7 @@ def capture_worktree_status(
         "status",
         "--porcelain=v2",
         "-z",
-        "--untracked-files=normal",
+        "--untracked-files=all",
     ]
     result = runner_fn(argv, cwd=cwd)
     if result.returncode != 0:
