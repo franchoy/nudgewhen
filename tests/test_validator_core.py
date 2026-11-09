@@ -1315,6 +1315,87 @@ class AndroidJvmTestsIntegrationTests(unittest.TestCase):
         self.assertNotIn("android/merged-manifest", rendered)
 
 
+class GradleProjectsFailureDiagnosticTests(unittest.TestCase):
+    """Failure-only diagnostics expose classifications, never Gradle output."""
+
+    def setUp(self) -> None:
+        self._saved = _helpers.save_validator_state()
+        _helpers.reset_validator_state()
+
+    def tearDown(self) -> None:
+        _helpers.restore_validator_state(self._saved)
+
+    def test_wrapper_timeout_with_secret_is_fixed_category_only(self) -> None:
+        sensitive = (
+            "Could not install Gradle distribution from "
+            "https://private.example/download?token=SECRET123\n"
+            "java.net.SocketTimeoutException: Read timed out\n"
+            "/home/private-user/private-token.txt\n"
+        )
+        actual = validate_local._gradle_projects_failure_diagnostic("", sensitive)
+        self.assertEqual(
+            actual,
+            "diagnostic=WRAPPER_DISTRIBUTION,NETWORK_TIMEOUT; "
+            "stdout=empty; stderr=present",
+        )
+        for prohibited in ("SECRET123", "private.example", "/home/", "token="):
+            self.assertNotIn(prohibited, actual)
+
+    def test_dependency_failure_and_empty_outputs(self) -> None:
+        actual = validate_local._gradle_projects_failure_diagnostic(
+            "Could not resolve all files for configuration ':classpath'", ""
+        )
+        self.assertEqual(
+            actual,
+            "diagnostic=DEPENDENCY_RESOLUTION; stdout=present; stderr=empty",
+        )
+        self.assertEqual(
+            validate_local._gradle_projects_failure_diagnostic("", ""),
+            "diagnostic=UNCLASSIFIED; stdout=empty; stderr=empty",
+        )
+
+    def test_gradle_projects_nonzero_emits_one_safe_fail_and_aborts(self) -> None:
+        contract = validate_local.get_release_contract()
+        self.assertIsNotNone(contract)
+        activity_name = contract["android"]["launcher_activity_source"]
+        with tempfile.TemporaryDirectory() as td_str:
+            repo = Path(td_str)
+            gradlew = repo / "gradlew"
+            gradlew.write_text(
+                "#!/bin/bash\n"
+                "printf '%s\\n' 'Private URL https://private.example/?token=SECRET123' >&2\n"
+                "printf '%s\\n' 'java.net.SocketTimeoutException: Read timed out' >&2\n"
+                "exit 1\n",
+                encoding="utf-8",
+            )
+            gradlew.chmod(0o755)
+            AndroidJvmTestsIntegrationTests._make_source_manifest(
+                repo, activity_name
+            )
+            with _helpers.patched_module_attribute(
+                "REPO", repo
+            ), _helpers.capture_stdout_stderr() as (out, _):
+                result = validate_local.check_android_content(
+                    _make_args(), repo / "sdk"
+                )
+        self.assertFalse(result)
+        rendered = out.getvalue()
+        failures = [
+            line for line in rendered.splitlines()
+            if line.startswith("FAIL android/gradle-projects")
+        ]
+        self.assertEqual(len(failures), 1)
+        self.assertEqual(
+            failures[0],
+            "FAIL android/gradle-projects \u2014 exit 1; "
+            "diagnostic=NETWORK_TIMEOUT; stdout=empty; stderr=present",
+        )
+        self.assertNotIn("SECRET123", rendered)
+        self.assertNotIn("private.example", rendered)
+        self.assertNotIn("android/jvm-tests", rendered)
+        self.assertNotIn("android/gradle-build", rendered)
+
+
 class FindSdkPlatformHelperTests(unittest.TestCase):
     """Characterize the bounded ``_find_sdk_platform`` helper.
 

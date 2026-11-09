@@ -2081,6 +2081,64 @@ def _dependabot_failures(text: str) -> list[str]:
     return bad
 
 
+def _gradle_projects_failure_diagnostic(stdout: str, stderr: str) -> str:
+    """Classify a failed Gradle discovery without exposing captured output.
+
+    These are fixed, non-sensitive indicators, not a rendering of Gradle
+    stdout/stderr. Inspect only bounded tails so exceptionally large logs
+    cannot increase diagnostic cost. Unrecognized errors remain unknown.
+    """
+    text = (stderr[-65536:] + "\n" + stdout[-65536:]).lower()
+    rules = (
+        ("WRAPPER_DISTRIBUTION", (
+            "could not install gradle distribution",
+            "failed to install gradle distribution",
+            "gradle distribution from",
+            "gradle-wrapper.jar",
+            "distribution sha256 checksum",
+        )),
+        ("NETWORK_TIMEOUT", (
+            "sockettimeoutexception", "read timed out", "connect timed out",
+            "connection timed out", "network is unreachable",
+        )),
+        ("NETWORK_DNS", (
+            "unknownhostexception", "name or service not known",
+            "temporary failure in name resolution", "nodename nor servname",
+        )),
+        ("NETWORK_TLS", (
+            "sslhandshakeexception", "pkix path building failed",
+            "unable to find valid certification path", "certificate_unknown",
+        )),
+        ("NETWORK_CONNECTION", (
+            "connectexception", "connection refused", "connection reset",
+            "remote host terminated the handshake", "http 429", "http 503",
+        )),
+        ("DEPENDENCY_RESOLUTION", (
+            "could not resolve", "could not find", "no cached version",
+            "plugin [id:", "could not get resource", "could not get unknown property",
+        )),
+        ("GRADLE_CONFIGURATION", (
+            "script compilation error", "a problem occurred configuring",
+            "a problem occurred evaluating", "settings file", "build file",
+        )),
+        ("JAVA_RUNTIME", (
+            "unsupportedclassversionerror", "could not create the java virtual machine",
+            "could not find or load main class", "unable to access jarfile",
+        )),
+        ("RESOURCE_EXHAUSTION", (
+            "outofmemoryerror", "unable to create native thread",
+            "cannot allocate memory", "no space left on device",
+        )),
+    )
+    matches = [name for name, markers in rules if any(marker in text for marker in markers)]
+    category = ",".join(matches[:3]) if matches else "UNCLASSIFIED"
+    return (
+        f"diagnostic={category}; "
+        f"stdout={'present' if stdout else 'empty'}; "
+        f"stderr={'present' if stderr else 'empty'}"
+    )
+
+
 def check_android_content(args: argparse.Namespace, sdk: Path) -> bool:
     ok = True
     prohibited = ("org.jetbrains.kotlin.android", "android.kotlinOptions", "kotlinCompilerExtensionVersion")
@@ -2207,7 +2265,8 @@ def check_android_content(args: argparse.Namespace, sdk: Path) -> bool:
     gradle = REPO / "gradlew"
     r = subprocess.run([str(gradle), "projects", *gradle_common], cwd=REPO, env=env, capture_output=True, text=True)
     if r.returncode != 0:
-        emit("FAIL", "android", "gradle-projects", f"exit {r.returncode}")
+        safe_diagnostic = _gradle_projects_failure_diagnostic(r.stdout, r.stderr)
+        emit("FAIL", "android", "gradle-projects", f"exit {r.returncode}; {safe_diagnostic}")
         return False
     if ":app" not in r.stdout:
         emit("FAIL", "android", "gradle-projects", "':app' not in projects output")
