@@ -1,6 +1,6 @@
 # Experiment Protocol — Agent-Assisted Tasks
 
-**Document status:** Accepted stable experiment and evidence protocol; current v0.1.5 — **Set Reminder Time** — Phase 4 `Complete` **in the unlanded lifecycle-closure candidate only**, with accepted implementation and bounded one-device evidence; proposed model `5 Complete / 3 Planned`, Phases 5–7 `Planned`. All earlier phase acceptance qualifications, provenance requirements, and stable rules remain unchanged; no v0.1.5 release is claimed.
+**Document status:** Accepted stable experiment and evidence protocol; current v0.1.5 — **Set Reminder Time** — Phase 4 `Complete` / formally accepted 2026-11-09 following implementation `7879830a6310a3f9ea7a80e4cd6f86aff6414372`, bounded device evidence, documentary closure `0861dfcdf031c39167afccc5130365b2472ff237`, native `LANDED / S10_LANDED`, and exact-head CI `42571032275` attempt 3 / success; `5 Complete / 3 Planned`, Phases 5–7 `Planned`, Phase 5 `NOT_AUTHORIZED`. Earlier phase acceptance qualifications, provenance requirements, and stable rules remain unchanged; no v0.1.5 release is claimed.
 
 ## Purpose
 
