@@ -1,6 +1,6 @@
 # OpenCode Governance — Companion Document
 
-**Document status:** Accepted stable OpenCode governance; current v0.1.5 — **Set Reminder Time** — Phase 4 `Complete` / formally accepted 2026-11-09 following implementation `7879830a6310a3f9ea7a80e4cd6f86aff6414372`, bounded device evidence, documentary closure `0861dfcdf031c39167afccc5130365b2472ff237`, native `LANDED / S10_LANDED`, and exact-head CI `42571032275` attempt 3 / success; `5 Complete / 3 Planned`, Phases 5–7 `Planned`, Phase 5 `NOT_AUTHORIZED`. Existing Phase 0–3 acceptance qualifications and stable rules are unchanged; v0.1.5 remains unpublished.
+**Document status:** Accepted stable OpenCode governance; current v0.1.5 — **Set Reminder Time** — Phase 4 `Complete` / formally accepted 2026-11-09 following implementation `7879830a6310a3f9ea7a80e4cd6f86aff6414372`, bounded device evidence, documentary closure `0861dfcdf031c39167afccc5130365b2472ff237`, native `LANDED / S10_LANDED`, and exact-head CI `42571032275` attempt 3 / success; `5 Complete / 3 Planned`, Phases 5–7 `Planned`, Phase 5 identity and bounded device validation technically completed under separate approvals; Phase 5 formal lifecycle closure is not yet accepted. Existing Phase 0–3 acceptance qualifications and stable rules are unchanged; v0.1.5 remains unpublished.
 
 ## Authority and link to `AGENTS.md`
 
