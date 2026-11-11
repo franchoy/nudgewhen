@@ -1,6 +1,6 @@
 # Phase List — NudgeWhen v0.1.5
 
-**Document status:** Active v0.1.5 phase-ordering authority; Phases 0 through 4 complete. Phases 0–3 remain `Complete` under their retained historical qualifications; Phase 4 — Minimal Compose Integration — is `Complete` / formally accepted 2026-11-09 after implementation `7879830a6310a3f9ea7a80e4cd6f86aff6414372`, bounded one-device proof, documentary closure `0861dfcdf031c39167afccc5130365b2472ff237`, native `LANDED / S10_LANDED`, and exact-head CI `42571032275` attempt 3 / `success`. Phases 5–7 remain `Planned` (`5 Complete / 3 Planned`); Phase 5 identity and bounded device validation technically completed under separate approvals; Phase 5 formal lifecycle closure is not yet accepted. v0.1.4 is the latest stable release; v0.1.5 is not merged, tagged, published, or release-ready.
+**Document status:** Active v0.1.5 phase-ordering authority; Phases 0 through 5 complete in the documentary closure candidate. Phases 0–3 remain `Complete` under their retained historical qualifications; Phase 4 — Minimal Compose Integration — is `Complete` / formally accepted 2026-11-09 after implementation `7879830a6310a3f9ea7a80e4cd6f86aff6414372`, bounded one-device proof, documentary closure `0861dfcdf031c39167afccc5130365b2472ff237`, native `LANDED / S10_LANDED`, and exact-head CI `42571032275` attempt 3 / `success`. Phase 5 is `Complete` only in the closure candidate (`6 Complete / 2 Planned`); Phases 6–7 remain `Planned`. Work Package A `a07797a7f00007bc9c3a0e355276f00d0942cbd9` reached `LANDED / S10_LANDED` and CI `42903894967` success; new closure commit/CI and terminal acceptance are not established. v0.1.4 is the latest stable release; v0.1.5 is not merged, tagged, published, or release-ready.
 
 ## Phase 0 — Release Definition & Bootstrap
 
@@ -154,15 +154,19 @@ Phase 5 non-goals:
 
 ### Status
 
-Planned
+Complete
 
-### Technical evidence — documentary closure outstanding
+### Technical evidence — documentary closure candidate
 
 The Phase 5B identity alignment landed at `964399500ead73357ad5be56fe48beea60ed8d24` (parent `e4bfdcd272d1801ed374c572ddf2ebbef23f792f`) through native `LANDED / S10_LANDED`; exact-head GitHub Actions CI run `42655303813` / `validate` job `129292108839` concluded `success` with 245 Python tests, clean 41/0/0, and `release_gate=SATISFIED`. A later separate maintainer clean local validation also reported 41/0/0 without an explicit HEAD line.
 
 One Android 13 device reported successful signature compatibility, a private integrity-verified NWR3 backup, data-preserving installation of the `6 / 0.1.5` APK, byte-identical original reminder preservation after install and launch, and Set/Change/Clear functional acceptance on exactly one disposable reminder. D1 and D2 UI observations were expressly maintainer-confirmed. D2-08 restart succeeded as maintainer observation, but its process-ID/log output was not supplied. Original retrieval, USB and signing failures, repeated single-use USB inventory, and installation before explicit approval remain qualified, as recorded in `EXP-0091`.
 
-No independent multi-device, production-readiness, backup-restore, or final APK NWR2-migration acceptance is claimed. Formal Phase 5 lifecycle closure, its new documentary landing and exact-head CI remain outstanding. Phases 6 and 7 remain `Planned`; v0.1.5 is not merged, tagged or published.
+No independent multi-device, production-readiness, backup-restore, or final APK NWR2-migration acceptance is claimed. Work Package A evidence reconciliation `a07797a7f00007bc9c3a0e355276f00d0942cbd9` is already landed through native `LANDED / S10_LANDED`; exact-head CI `42903894967` / `validate` succeeded. Only the new formal Phase 5 closure-candidate landing, its own exact-head CI, and terminal maintainer acceptance remain outstanding. Phases 6 and 7 remain `Planned`; v0.1.5 is not merged, tagged or published.
+
+### Formal Phase 5 lifecycle-closure candidate (2026-11-11)
+
+This separately authorized documentary Build advances only Phase 5 from `Planned` to `Complete` in the release contract, yielding `6 Complete / 2 Planned`. Work Package A `a07797a7f00007bc9c3a0e355276f00d0942cbd9` and `EXP-0091` remain the accepted source of reconciled technical evidence; `EXP-0092` is the distinct formal-closure candidate. The future closure commit, hosted CI, and terminal maintainer acceptance are not yet established. Prior Phase 2/3 acceptance qualifications, original device deviations, D2-08 process-ID evidence limitation, untested backup restoration, and one-device-only acceptance remain unchanged. Phase 6 and Phase 7 are still `Planned`, not authorized for implementation.
 
 ## Phase 6 — Integrated Audit & Reconciliation
 
